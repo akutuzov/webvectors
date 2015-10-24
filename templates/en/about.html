@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <h1>About</h1>
+<p>This service computes semantic similarity between words in Russian (detects the degree of their "quazy-synonymy"). It is named after <a href="http://ruscorpora.ru/en">RusCorpora</a>, the site for Russian National Corpus. They provide access to corpora, we provide access to lexical vectors (<i>vectōrēs</i> in Latin).</p>
+<p>Recently, <a href="https://en.wikipedia.org/wiki/Distributional_semantics">distributional semantics</a> received a substantially growing attention. The main reason for this is a very promising approach of employing neural network language models (NNLMs) trained on large corpora to learn distributional vectors for words. The most well-known tool in this field now is possibly <i><a href="https://code.google.com/p/word2vec/">word2vec</a></i>, which allows fast training on huge amounts of raw linguistic data.</p>
+<blockquote><p><i>In distributional semantics, words are usually represented as vectors in a multi-dimensional space. Semantic similarity between two words is then trivially calculated as a <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a> between their corresponding vectors; it takes values between 0 and 1. <strong>0</strong> value means the words lack similar contexts. <strong>1</strong> value means that the words' contexts are absolutely identical.</i></p></blockquote>
+<p><i>Word2vec</i> and similar approaches are being extensively studied and tested in application to English language. However, for Russian the surface is barely scratched. Thus, it is important to provide access to relevant tools for Russian linguistic community.</p>
+<p>Unfortunately, training and querying neural vector models for large corpora can be challenging for desktop PCs or even for some servers. That is the reason behind our service: we aim to lower the “entry threshold” for those who want to work in this new and exciting field.</p>
+<h2>What is <i>RusVectōrēs</i>?</h2>
+<p><i>RusVectōrēs</i> is basically a semantic calculator which operates on relations between words in distributional models. A user can choose one or several models to work with: currently we provide <a href="/dsm/{{lang}}/models">five models</a> trained on different corpora (some of them have won top-ranking positions in the <a href="http://russe.nlpub.ru/">RUSSE evaluation track</a>). The models contain from 200K to 1M lemmas each.</p>
+<p>After choosing a model, it is possible to:</p>
+<ol>
+<li><a href="/dsm/{{lang}}/calculator">calculate semantic similarity</a> between pairs of words;</li>
+<li><a href="/dsm/{{lang}}/similar">find words semantically closest to the query word</a> (optionally with PoS filters);</li>
+<li><a href="/dsm/{{lang}}/similar">get the raw vector (array of real values) for the query word in the chosen model</a>;</li>
+<li><a href="/dsm/{{lang}}/calculator">apply simple algebraic operations to word vectors</a> (addition, subtraction, finding average vector for a group of words and distances to this average value).</li>
+</ol>
+<p>The last operation returns interesting results. For example, the model trained on Russian Wikipedia and Russian National Corpus returns <span style="color:green;"><i>быт</i></span> if we subtract <span style="color:green;"><i>смысл</i></span> from <span style="color:green;"><i>жизнь</i></span>. This may sound like something not very practical, but the existing research in English models has already proved that such relationships can be useful for many applications including machine translation.</p>
+<p>Naturally, one can compare results from different models. In order not to limit the users with the models we chose, there is the possibility to <a href="/dsm/{{lang}}/upload">upload one's own corpus</a>. The server will train <i>word2vec</i> model on it with user-defined settings.</p>
+<blockquote><p><i>In the spirit of Semantic Web, each word in each model has its own unique URI explicitly stating lemma, model and PoS (for example, <a href="/dsm/{{lang}}/news/кризисный_A">http://ling.go.mail.ru/dsm/news/кризисный_A</a>). In response to requests for these addresses, lists of the nearest semantic associates for the given lemma in the given model are returned, belonging to the same PoS as the lemma itself.</i></p></blockquote>
+<p>We would like <i>RusVectōrēs</i> to become a hub of scholarly knowledge about neural language models for Russian, that's why there is a <a href="/dsm/{{lang}}/publications">section with published academic papers and links to other relevant resources</a>. At the same time, we hope that <i>RusVectōrēs</i> will also to some extent popularize distributional semantics and computational linguistics, making it more understandable and attractive to the Russian-speaking public.</p>
+
+{% endblock %}

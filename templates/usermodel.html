@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <h1>{{strings['usermodel1']}}</h1>
+        <big>
+        {% if model %}
+        <p>{{strings['usermodel2']}}</p>
+        <p>{{strings['usermodel3']}}</p>
+        <p><strong><a href="http://ling.go.mail.ru/static/models/{{ model }}">{{ model }}</a></strong></p>
+        {% elif queue %}
+        <p>{{strings['usermodel4']}} <b>{{ queue }}</b> {{strings['usermodel5']}}</p>
+        {% else %}
+        <p>{{strings['usermodel6']}}</p>
+        {% endif %}
+        </big>
+
+{% endblock %}

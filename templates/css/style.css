@@ -1,0 +1,10 @@
+.row div {
+    height: 300px;
+}
+.col-sm-8 {
+    background: red;
+}
+
+.col-md-6 {
+    background: pink;
+}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+        <h1>Контакты</h1>
+          <p>Проектом <strong><i>RusVectōrēs</i></strong> занимаются:</p>
+            <table class="table" style="border-width:0;">
+            <tr>
+            <td>
+            <div class="avatar">
+             <img alt="Андрей Кутузов" src="/static/akutuzov2.png">
+            </div>
+            </td>
+            <td><p><a href="mailto:andrey.kutuzov@corp.mail.ru">Андрей Кутузов</a></p>
+            <p>Андрей Кутузов - научный сотрудник и докторант <a href="https://www.mn.uio.no/ifi/english/research/groups/ltg/">исследовательской группы языковых технологий</a> в университете Осло</p>
+            <p><a href="https://uio.academia.edu/AndreyKutuzov">Личная страница Андрея</a></p>
+            </td>
+            </tr>
+            <tr>
+            <td>
+            <div class="avatar">
+             <img alt="Елизавета Кузьменко" src="/static/liza2_ico.jpg">
+             </div>
+            </td>
+            <td style="text-align: left;"><p><a href="mailto:lizaku77@gmail.com">Елизавета Кузьменко</a></p>
+            <p>Елизавета Кузьменко - студент бакалавриата <a href="http://ling.hse.ru">Школы Лингвистики НИУ ВШЭ</a></p>
+            <p><a href="https://hse-ru.academia.edu/ElizavetaKuzmenko">Личная страница Елизаветы</a></p>
+            </td>
+            </tr>
+            </table>
+            
+            <p>Если вы используете <i>RusVectōrēs</i> в своей научной работе, пожалуйста, процитируйте эту публикацию:</p>
+            <p><strong>Kutuzov, Andrey and Andreev, Igor. “Texts in, meaning out: neural language models in semantic similarity task for Russian.”, in Proceedings of the Dialog 2015 Conference, Moscow, Russia (2015).</strong> (<a href="http://arxiv.org/pdf/1504.08183.pdf">pdf</a>, <a href="/static/nnlm_rus.bib">bibtex</a>)</p>
+{% endblock %}

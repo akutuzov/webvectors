@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <h1>{{strings['home1']}}</h1>
+          <p class="lead">"You shall know a word by the company it keeps." (Firth 1957)</p>
+
+	<p>{{strings['home2']}}</p>
+            <form method=post>
+              <div class="form-group">
+        {% if word %}
+        <input type="text" class="form-control" name="list_query" value="{{ word }}" maxlength=100>
+        {% else %}
+        <input type="text" class="form-control" name="list_query" placeholder="вычислять_V" maxlength=100>
+        {% endif %}
+      </div>
+      <button type="submit" class="btn btn-primary" name="list_query" value = "Produce a list of quazy-synonyms">{{strings['home3']}}</button>
+            </form>
+      {% if list_value %}
+        <h3><strong>{{strings['home4']}} <i><a href="/{{request.script_root}}/{{lang}}/{{ model }}/{{ word }}/">{{ word.split("_")[0] }}</a></i> ({{strings['home5']}} <a href="/{{request.script_root}}/{{lang}}/models#{{model}}">{{ model}}</a>)</strong></h3>
+        <big>
+        <ol>
+        {% for res in list_value if not "unknown to the model" in list_value and res[0] != "No results" and res != "Incorrect PoS!"  %}
+        <li>
+        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
+        </li>
+        {% endfor %}
+        </ol>
+        </big>
+        {% for res in list_value if "unknown to the model" in res or res[0] == "No results" %}
+	{% if res[0] == "No results" %}
+        <big><strong>{{ res[0] }}</strong></big>
+        {% else %}
+        <big><strong>{{ res }}</strong></big>
+        {% endif %}
+        {% endfor %}
+        {% for res in list_value if res == "Incorrect PoS!"  %}
+        <big><strong>{{ res }}</strong></big>
+        {% endfor %}
+        
+        
+        {% endif %}
+        
+     {% if error %}
+     <big><strong>
+     <p>{{ error }}</p>
+    </strong></big>
+     {% endif %}
+{% endblock %}

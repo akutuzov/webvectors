@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <h1>{{strings['upload1']}}</h1>
+        <p class="lead">{{strings['upload2']}}</p>
+	<form method=post>
+              <div class="form-group">
+                  <p>{{strings['upload3']}}</p>
+                <input type="text" class="form-control" name="training_corpus_url">
+              </div>
+              
+    <div class="radio">
+		<p>{{strings['upload12']}}</p>
+                <small>
+                <label>
+                  <input type="radio" name="algo" value="cbow" checked> CBOW
+                </label>
+                  <label>
+                  <input type="radio" name="algo" value="skipgram"> SkipGram
+                </label>
+                </small>
+                </div><br/>
+     <div class="radio">
+    		<p>{{strings['upload11']}}</p>
+                <small>
+                <label>
+                  <input type="radio" name="vectorsize" value="100"> 100
+                </label>
+                  <label>
+                  <input type="radio" name="vectorsize" value="300" checked> 300
+                </label>
+                  <label>
+                  <input type="radio" name="vectorsize" value="500"> 500
+                </label>
+                  <label>
+                  <input type="radio" name="vectorsize" value="1000"> 1000
+                </label>
+                </small>
+                </div><br/>
+    
+	     <div class="radio">
+	        <p>{{strings['upload13']}}</p>
+                <small>
+                <label>
+                  <input type="radio" name="windowsize" value="1"> 1
+                </label>
+                  <label>
+                  <input type="radio" name="windowsize" value="2" checked> 2
+                </label>
+                  <label>
+                  <input type="radio" name="windowsize" value="5"> 5
+                </label>
+                  <label>
+                  <input type="radio" name="windowsize" value="10"> 10
+                </label>
+                </small>
+                </div>
+    <button type="submit" class="btn btn-primary" name="training_corpus">{{strings['upload4']}}</button>
+</form>
+        {% if url %}
+        <big>
+        <p>{{strings['upload5']}} <a href="{{url}}">{{url}}</a> {{strings['upload6']}}</p>
+        <p>{{strings['upload7']}}<strong>{{ hash }}</strong>. {{strings['upload8']}}</p>
+        <p>{{strings['upload9']}}</p>
+        <p>{{strings['upload10']}} <a href="http://ling.go.mail.ru/{{request.script_root}}/{{lang}}/usermodel/{{ hash }}">http://ling.go.mail.ru/dsm/usermodel/{{ hash }}</a>.</p>
+        </big>
+        {% endif %}
+
+{% endblock %}
