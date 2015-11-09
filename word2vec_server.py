@@ -8,15 +8,30 @@ from thread import *
 import sys, gensim, logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
+root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
 
-our_models = set("news ruscorpora ruwikiruscorpora web".split())
+
+# Loading models
+
+our_models = {}
+for line in open(root+'models.csv','r').readlines():
+    if line.startswith("#"):
+	continue
+    res = line.strip().split('\t')
+    (identifier,description,path,string) = res
+    our_models[identifier] = path
 
 models_dic = {}
 
 for m in our_models:
-    models_dic[m] = gensim.models.Word2Vec.load('/home/sites/ling.go.mail.ru/quazy-synonyms/models/%s.model' % m)
+    if our_models[m].endswith('.bin.gz'):
+	models_dic[m] = gensim.models.Word2Vec.load_word2vec_format(our_models[m], binary=True)
+    else:
+	models_dic[m] = gensim.models.Word2Vec.load(our_models[m])
     models_dic[m].init_sims(replace=True)
-    print "Model", m, "loaded successfully."
+    print "Model", m, "from file",our_models[m], "loaded successfully."
+
+# Vector functions
 
 def find_synonyms(query):
     (q,pos,usermodel) = query
@@ -27,6 +42,7 @@ def find_synonyms(query):
         candidates_set = set()
         candidates_set.add(q.split('_')[0]+'_UNKN')
         candidates_set.add(q.upper())
+	candidates_set.add(q.lower())
         candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         noresults = True
         for candidate in candidates_set:
@@ -35,11 +51,14 @@ def find_synonyms(query):
                 noresults = False
                 break
         if noresults == True:
-            results.append(q+" is unknown to the model")
-            return results
+	    results.append(q+" is unknown to the model")
+    	    return results
     if pos == 'ALL':
         for i in model.most_similar(positive=qf, topn=10):
-            results.append(i[0]+"#"+str(i[1]))
+            #if i[0].replace('_','').replace('-','').isalpha():
+	    results.append(i[0]+"#"+str(i[1]))
+	    #if len(results) == 10:
+	#	break
     else:
         counter = 0
         for i in model.most_similar(positive=qf, topn=20):
@@ -68,6 +87,7 @@ def find_similarity(query):
             candidates_set = set()
             candidates_set.add(q1.split('_')[0]+'_UNKN')
             candidates_set.add(q1.upper())
+	    candidates_set.add(q1.lower())
             candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
             noresults = True
             for candidate in candidates_set:
@@ -83,6 +103,7 @@ def find_similarity(query):
             candidates_set = set()
             candidates_set.add(q2.split('_')[0]+'_UNKN')
             candidates_set.add(q2.upper())
+	    candidates_set.add(q2.lower())
             candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
             noresults = True
             for candidate in candidates_set:
@@ -116,6 +137,7 @@ def scalculator(query):
             candidates_set = set()
             candidates_set.add(word.split('_')[0]+'_UNKN')
             candidates_set.add(word.upper())
+	    candidates_set.add(word.lower())
             candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
             noresults = True
             for candidate in candidates_set:
@@ -137,6 +159,7 @@ def scalculator(query):
             candidates_set = set()
             candidates_set.add(word.split('_')[0]+'_UNKN')
             candidates_set.add(word.upper())
+	    candidates_set.add(word.lower())
             candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
             noresults = True
             for candidate in candidates_set:
@@ -159,8 +182,32 @@ def scalculator(query):
                 break
     return results
 
+def vector(query):
+    (q,usermodel) = query
+    qf = q
+    model = models_dic[usermodel]
+    if not q in model:
+        candidates_set = set()
+        candidates_set.add(q.split('_')[0]+'_UNKN')
+        candidates_set.add(q.upper())
+	candidates_set.add(q.lower())
+        candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
+        noresults = True
+        for candidate in candidates_set:
+            if candidate in model:
+                qf = candidate
+                noresults = False
+                break
+        if noresults == True:
+	    return q+" is unknown to the model"
+    vector = model[qf]
+    vector = vector.tolist()
+    str_vector = ','.join([str(e) for e in vector])
+    return str_vector
 
-operations = {'1':find_synonyms,'2':find_similarity,'3':scalculator}
+
+
+operations = {'1':find_synonyms,'2':find_similarity,'3':scalculator,'4':vector}
 
 HOST = 'localhost' # Symbolic name meaning all available interfaces
 PORT = 12666 # Arbitrary non-privileged port
@@ -186,7 +233,7 @@ def clientthread(conn,addr):
     #Sending message to connected client
     conn.send('word2vec model server') #send only takes string
 
-	#infinite loop so that function do not terminate and thread do not end.
+    #infinite loop so that function do not terminate and thread do not end.
     while True:
     #Receiving from client
 	data = conn.recv(1024)
@@ -202,6 +249,9 @@ def clientthread(conn,addr):
 	    vector = output[-1].tolist()
 	    str_vector = ','.join([str(e) for e in vector])
 	    conn.sendall(reply.encode('utf-8')+"&"+str_vector)
+	elif query[0] == "4":
+	    reply = output
+	    conn.sendall(reply.encode('utf-8'))
 	else:
 	    reply = ' '.join(output)
 	    conn.sendall(reply.encode('utf-8'))

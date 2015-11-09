@@ -8,11 +8,13 @@ the strings, and lets the main app use it
 import codecs, csv
 from flask import Markup
 
+root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
+
 # the encoding to use
 encoding = 'utf8'
 
 # open the strings database:
-csvfile = open('/home/sites/ling.go.mail.ru/quazy-synonyms/strings.csv', 'rU')
+csvfile = open(root+'strings.csv', 'rU')
 acrobat = csv.reader(csvfile, dialect='excel', delimiter=',')
 
 # initialize a dictionary for each language:

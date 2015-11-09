@@ -1,0 +1,4 @@
+ruscorpora	Russian National Corpus	/home/sites/ling.go.mail.ru/quazy-synonyms/models/ruscorpora.model	similar4
+ruwikiruscorpora	Russian National Corpus and Russian Wikipedia	/home/sites/ling.go.mail.ru/quazy-synonyms/models/ruwikiruscorpora.model	similar6
+web	Web corpus	/home/sites/ling.go.mail.ru/quazy-synonyms/models/web.model	similar7
+news	News corpus	/home/sites/ling.go.mail.ru/quazy-synonyms/models/news.model	similar8

@@ -8,16 +8,22 @@ from flask import render_template, Blueprint, redirect
 from flask import request, url_for
 from flask import current_app
 from string import Template
-
+import numpy as np
 from lemmatizer import freeling_lemmatizer
 from flask import g
+import hashlib
 
-#from plot import singularplot
+from plot import singularplot
+from plot import embed
+from sparql import getdbpediaimage
 
 import socket #for sockets
 
 # import strings data from respective module
 from strings_reader import language_dicts
+
+root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
+
 
 # Establishing connection to model server
 host = 'localhost';
@@ -58,7 +64,13 @@ def serverquery(message):
 
 postags = set("S A NUM A-NUM V ADV PRAEDIC PARENTH S-PRO A-PRO ADV-PRO PRAEDIC-PRO PR CONJ PART INTJ UNKN".split())
 
-our_models = set("news ruscorpora ruwikiruscorpora web".split())
+our_models = {}
+for line in open(root+'models.csv','r').readlines():
+    if line.startswith("#"):
+	continue
+    res = line.strip().split('\t')
+    (identifier,description,path,string) = res
+    our_models[identifier] = string
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -85,7 +97,7 @@ def process_query(userquery):
 		if userquery[0].isupper():
 		    query = userquery[0].lower()+userquery[1:]
 	    else:
-		return "Incorrect PoS!"
+		return "Incorrect POS!"
 	else:
 	    pos_tag = freeling_lemmatizer(userquery)
 	    if pos_tag == "A" and userquery.endswith(u'о'):
@@ -103,13 +115,6 @@ def download_corpus(url,urlhash,algo,vectorsize,windowsize):
     open(x, 'a').close()
     return a
 
-# @synonyms.route('/',methods=['GET', 'POST'])
-# def home_nolang():
-#     lang="en"
-#     g.lang=lang
-#     g.strings=language_dicts[lang]
-#     return render_template('home.html')
-
 @synonyms.route('/<lang:lang>/',methods=['GET', 'POST'])
 def home(lang):
 
@@ -126,6 +131,8 @@ def home(lang):
             pass
         if list_data != 'dummy' and list_data.replace('_','').isalnum():
 	    query = process_query(list_data)
+	    if query == "Incorrect PoS!":
+		return render_template('home.html', error = query)
             pos_value = request.form.getlist('pos')
             model_value = request.form.getlist('model')
             if len(pos_value) < 1:
@@ -247,15 +254,16 @@ def similar_page(lang):
             
             pos_value = request.form.getlist('pos')
             model_value = request.form.getlist('model')
+            if len(model_value) < 1:
+                model = "news"
             if len(pos_value) < 1:
                 pos = query.split('_')[-1]
             else:
                 pos = pos_value[0]
             if query == "Incorrect PoS!":
-		return render_template('similar.html', list_value=[query], word = list_data,model=model)
+		return render_template('similar.html', list_value=[query], word = list_data)
             
-            if len(model_value) < 1:
-                model = "news"
+            
             else:
             #    model = model_value[0]
         	models_row = {}
@@ -277,11 +285,82 @@ def similar_page(lang):
 			    w = word.split("#")
                 	    associates_list.append((w[0].decode('utf-8'),float(w[1])))
             		models_row[model] = associates_list
-		return render_template('similar.html', list_value=models_row, word=query,pos=pos,number=len(model_value))
+		return render_template('similar.html', list_value=models_row, word=query,pos=pos,number=len(model_value), model = model)
         else:
             error_value = "Incorrect query!"
             return render_template("similar.html", error=error_value)
     return render_template('similar.html')
+
+@synonyms.route('/<lang:lang>/visual',methods=['GET', 'POST'])
+def visual_page(lang):
+    g.lang=lang
+    g.strings=language_dicts[lang]
+    
+    if request.method == 'POST':
+        list_data = 'dummy'
+        try:
+            list_data = request.form['list_query']
+        except:
+            pass
+        if list_data != 'dummy':
+	    querywords = set([process_query(w) for w in list_data.split() if len(w) > 1 and w.replace('_','').replace('-','').isalnum()][:20])
+	    if len(querywords) < 4:
+		error_value = "Too few words!"
+        	return render_template("visual.html", error=error_value,models = our_models)
+
+            model_value = request.form.getlist('model')
+            if "Incorrect PoS!" in querywords:
+		return render_template('visual.html', list_value=[query], word = list_data,model=model, models = our_models)
+            
+            if len(model_value) < 1:
+                model_value = ["ruscorpora"]
+	    unknown = {}
+	    models_row = {}
+	    for model in model_value:
+		if not model.strip() in our_models:
+		    return render_template('home.html')
+		print 'Embedding!'
+		unknown[model] = set()
+		words2vis = querywords
+		m = hashlib.md5()
+		name = '_'.join(words2vis).encode('ascii','backslashreplace')
+		m.update(name)
+		fname = m.hexdigest()
+		plotfile = model+'_'+fname+'.png'
+		models_row[model] = plotfile
+		labels = []
+		if os.access(root+'/static/tsneplots/'+plotfile,os.F_OK) == False:
+		    print 'No previous image found'
+		    vectors = []
+		    for w in words2vis:
+			message = "4;"+w+";"+model
+        		result = serverquery(message)
+			if 'is unknown' in result:
+			    unknown[model].add(w)
+			    continue
+			vector = np.array(result.split(','))
+			vectors.append(vector)
+			labels.append(w)
+		    if len(vectors) > 1:
+			matrix2vis = np.vstack(([v for v in vectors]))
+			embed(labels,matrix2vis.astype('float64'),model)
+			m = hashlib.md5()
+			name = '_'.join(labels).encode('ascii','backslashreplace')
+			m.update(name)
+			fname = m.hexdigest()
+			plotfile = model+'_'+fname+'.png'
+			models_row[model] = plotfile
+		    else:
+			models_row[model] = "Too few words!"
+			
+	    return render_template('visual.html', visual=models_row, words=querywords,number=len(model_value), models = our_models, unknown = unknown)
+        else:
+            error_value = "Incorrect query!"
+            return render_template("visual.html", error=error_value,models = our_models)
+    return render_template('visual.html',models = our_models)
+
+
+
 
 @synonyms.route('/<lang:lang>/calculator', methods=['GET', 'POST'])
 def finder(lang):
@@ -362,7 +441,6 @@ def finder(lang):
             if len(calcmodel_value) < 1:
                 model = "ruscorpora"
             else:
-                #model = calcmodel_value[0]
 		models_row = {}
 		for model in calcmodel_value:
 		    if not model.strip() in our_models:
@@ -395,10 +473,11 @@ def raw_finder(lang, model, userquery):
     model = model.strip()
     if not model.strip() in our_models:
 	return render_template('home.html')
-    if userquery.strip().replace('_','').isalnum():
+    if userquery.strip().replace('_','').replace('-','').isalnum():
         query = process_query(userquery.strip())
+	if len(query.split('_')) < 2:
+	    return render_template('synonyms_raw.html', error = query)
         pos_tag = query.split('_')[-1]
-        
         message = "1;"+query+";"+pos_tag+";"+model
         result = serverquery(message)
         associates_list = []
@@ -412,8 +491,13 @@ def raw_finder(lang, model, userquery):
 		for word in associates.split():
 		    w = word.split("#")
                     associates_list.append((w[0].decode('utf-8'),float(w[1])))
-		#singularplot(word,vector)
-		return render_template('synonyms_raw.html', list_value=associates_list, word=query, model=model,pos=pos_tag,vector=vector)
+		plotfile = root+'static/singleplots/'+model+'_'+query.encode('ascii','backslashreplace')+'.png'
+		if os.access(plotfile,os.F_OK) == False:
+		    vector2 = output[1].split(',')
+		    vector2 = [float(a) for a in vector2]
+		    singularplot(query,model,vector2)
+		image = getdbpediaimage(query.split('_')[0].encode('utf-8'))
+		return render_template('synonyms_raw.html', list_value=associates_list, word=query, model=model,pos=pos_tag,vector=vector,image = image)
     else:
         error_value = u'Incorrect query: %s' % userquery
         return render_template("synonyms_raw.html", error=error_value)
@@ -424,6 +508,7 @@ def raw_finder(lang, model, userquery):
 @synonyms.route('/about', methods=['GET', 'POST'])
 @synonyms.route('/calculator', methods=['GET', 'POST'])
 @synonyms.route('/similar', methods=['GET', 'POST'])
+@synonyms.route('/visual', methods=['GET', 'POST'])
 @synonyms.route('/models', methods=['GET', 'POST'])
 @synonyms.route('/upload', methods=['GET', 'POST'])
 @synonyms.route('/publications', methods=['GET', 'POST'])
@@ -435,3 +520,6 @@ def redirect_main():
 @synonyms.route('/usermodel/<hash>', methods=['GET', 'POST'])
 def redirect_usermodel(hash):
     return redirect(request.script_root + '/en' + request.path)
+
+
+
