@@ -14,8 +14,9 @@
 
     {%- block styles %}
     <!-- Bootstrap -->
-    <link href="/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="/dist/css/avatar.css" rel="stylesheet" media="screen">
+      <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous"-->
+      <link href="/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+      <link href="/dist/css/avatar.css" rel="stylesheet" media="screen">
     {%- endblock styles %}
     {%- endblock head %}
   </head>
@@ -39,9 +40,7 @@
             <li><a href="{{request.script_root}}/{{lang}}/similar">{{strings['base6']}}</a></li>
             <li><a href="{{request.script_root}}/{{lang}}/visual">{{strings['base13']}}</a></li>
             <li><a href="{{request.script_root}}/{{lang}}/calculator">{{strings['base5']}}</a></li>
-            <li><a href="{{request.script_root}}/{{lang}}/models">{{strings['base7']}}</a></li>
             <li><a href="{{request.script_root}}/{{lang}}/upload">{{strings['base8']}}</a></li>
-            <li><a href="{{request.script_root}}/{{lang}}/publications">{{strings['base9']}}</a></li>
             <li><a href="{{request.script_root}}/{{lang}}/about">{{strings['base4']}}</a></li>
             <li><a href="{{request.script_root}}/{{lang}}/contacts">{{strings['base10']}}</a></li>
             {% if lang=="ru" %}
@@ -69,8 +68,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="/dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="/dist/js/ie10-viewport-bug-workaround.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
     {%- endblock scripts %}
     {%- endblock body %}

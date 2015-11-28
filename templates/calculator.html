@@ -16,132 +16,82 @@
         </script>
 
         <h1>{{strings['calc1']}}</h1>
-                <div class="row">
-              <div class="col-md-6">
               <form method=post>
               <div class="form-group">
-                <h2>{{strings['calc2']}}</h2>
-                <p>{{strings['calc3']}}</p>
-                <div class="vector" id="HiddenDiv" style="DISPLAY: none" >
-                <p><small>{{strings['calc4']}}</small></p>
-                </div>
-                {% if plist %}
-                <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive" value="{{ ' '.join(plist) }}" maxlength=300>
-                <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative" value="{{ ' '.join(nlist) }}" maxlength=300>
-                {% else %}
-                <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive" placeholder="крыло машина" maxlength=300>
-                <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative" placeholder="самолет" maxlength=300>
-                {% endif %}
+                <p>{{strings['calc4']}}
+		<div class = "row">
+		<div class = "col-md-5">
+		<input type="text" class="form-control" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="мать"{% endif %} maxlength=100><center><img src = "/static/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}"></center><input type="text" class="form-control" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="дочь"{% endif %} maxlength=100>
+		</div>
+		<div class = "col-md-5">
+
+		<input type="text" class="form-control" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} placeholder="отец"{% endif %} maxlength=100><center><img src = "/static/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}"></center>
+		<p style = "text-align:center;"><strong>???</strong></p>
+		</div>
+		</div>
               </div>
-              {% if calc_value %}
-        {% for model in calc_value%}
-        <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ model}}</a></strong></h3>
-        <span style = "font-size:larger;"><ol>
-        {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect PoS!" and not 'does not know' in res %}
-        <li>
-        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
-        </li>
-        {% endfor %}
-        </ol></span>
-        {% for res in calc_value[model] if res == "No similar words of this part of speech." or res  == "Incorrect PoS!" or 'does not know' in res %}
-        <strong>{{ res.decode('utf-8') }}</strong>
-        {% endfor %}
-        {% endfor %}
+        {% if calc_value %}
+        <div class = "row">
+
+	{% for model in calc_value %}
+	    <div class = "col-md-4">
+    	    <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
+    	    <span style = "font-size:larger;">
+    	    <ol>
+        
+    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect PoS!" and not 'does not know' in res %}
+    		<li>
+    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
+    		</li>
+    	    {% endfor %}
+        
+    	    </ol></span>
+        
+    	    {% for res in calc_value[model] if res == "No similar words of this part of speech." or res  == "Incorrect PoS!" or 'does not know' in res %}
+    		<strong>{{ res.decode('utf-8') }}</strong>
+    	    {% endfor %}
+        </div>
+	{% endfor %}
+	</div>
     {% endif %}
+    
     {% if error %}
     <p> <span style = "font-size:larger;"><strong>{{ error }}</strong></span><p>
     {% endif %}
+
               <div class="checkbox">
                   <p><small><em>{{strings['calc6']}}</em></small></p>
-                <fieldset>
-                <small>
-                <label>
-                  <input type="checkbox" name="calcmodel" value="ruscorpora" checked>{{strings['calc7']}}
-                </label>
-                  <label>
-                  <input type="checkbox" name="calcmodel" value="ruwikiruscorpora"> {{strings['calc9']}}
-                </label>
-                  <label>
-                  <input type="checkbox" name="calcmodel" value="web"> {{strings['calc10']}}
-                </label>
-                  <label>
-                  <input type="checkbox" name="calcmodel" value="news"> {{strings['calc11']}}
-                </label>
-                </small>
-                </fieldset>
+                  <fieldset>
+                      <small>
+                        {% for m in models %}
+                      <label>
+                          <input type="checkbox" name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
+                      </label>
+                      {% endfor %}
+                      </small>
+                  </fieldset>
               </div>
-                <p><small><em>{{strings['calc12']}}</em></small></p>
-                <div class="radio">
-                <small>
-                <label>
-                  <input type="radio" name="calcpos" value="S"> {{strings['calc13']}}
-                </label>
-                  <label>
-                  <input type="radio" name="calcpos" value="V"> {{strings['calc14']}}
-                </label>
-                  <label>
-                  <input type="radio" name="calcpos" value="ADV"> {{strings['calc15']}}
-                </label>
-                  <label>
-                  <input type="radio" name="calcpos" value="A"> {{strings['calc16']}}
-                </label>
-                  <label>
-                  <input type="radio" name="calcpos" value="ALL" checked> {{strings['calc17']}}
-                </label>
-                </small>
-                </div>
+                  <p><small><em>{{strings['calc12']}}</em></small></p>
+                  <div class="radio">
+                      <small>
+                          <label>
+                              <input type="radio" name="calcpos" value="S"> {{strings['calc13']}}
+                          </label>
+                          <label>
+                              <input type="radio" name="calcpos" value="V"> {{strings['calc14']}}
+                          </label>
+                          <label>
+                              <input type="radio" name="calcpos" value="ADV"> {{strings['calc15']}}
+                          </label>
+                          <label>
+                              <input type="radio" name="calcpos" value="A"> {{strings['calc16']}}
+                          </label>
+                          <label>
+                              <input type="radio" name="calcpos" value="ALL" checked> {{strings['calc17']}}
+                          </label>
+                      </small>
+                  </div>
+
               <button type="submit" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
             </form>
-              </div>
-
-              <div class="col-md-6">
-                  <form method=post>
-              <div class="form-group">
-                <h2>{{strings['calc19']}}</h2>
-                <p>{{strings['calc20']}}</p>
-                <p><small><i>{{strings['calc21']}}</i></small></p>
-                {% if query %}
-                <input type="text" class="form-control" name="query" value="{% for res in value if not "unknown to the model" in res  %}{{' '.join(res[:-1])+','}}{% endfor %}" maxlength=300>
-                {% else %}
-                <input type="text" class="form-control" name="query" placeholder="дом здание,фильм кино" maxlength=300>
-                {% endif %}
-              </div>
-              <div class="radio">
-                  <p><small><em>{{strings['calc22']}}</em></small></p>
-                <small>
-                <label>
-                  <input type="radio" name="simmodel" value="ruscorpora"> {{strings['calc23']}}
-                </label>
-                  <label>
-                  <input type="radio" name="simmodel" value="ruwikiruscorpora"> {{strings['calc25']}}
-                </label>
-                  <label>
-                  <input type="radio" name="simmodel" value="web"> {{strings['calc26']}}
-                </label>
-                  <label>
-                  <input type="radio" name="simmodel" value="news"> {{strings['calc27']}}
-                </label>
-                </small>
-              </div>
-              
-              <button type="submit" class="btn btn-primary" name="query" value = "{{strings['calc28']}}">{{strings['calc28']}}</button>
-            </form>
-          {% if value %}
-            <span style = "font-size:larger;">
-            <table class="table"><tr>
-            <td><strong>{{strings['calc29']}}</strong></td><td><strong>{{strings['calc30']}} <a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ model }} </a></strong></td></tr>
-            {% for res in value if not "unknown to the model" in res and not "Incorrect PoS!" in res  %}
-            <tr><td style="vertical-align:top"><em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0]}}</a></em> <em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.5f} ".format(res[2]) }}</td></tr>
-            {% endfor %}
-            {% for res in value if "unknown to the model" in res or "Incorrect PoS!" in res  %}
-            <tr><td style="vertical-align:top"><em>{{res}}</em></td> <td></td></tr>
-            {% endfor %}
-            </table>
-            </span>
-            {% endif %}
-            {% if error_sim %}
-            <p> <span style = "font-size:larger;"><strong>{{ error_sim.decode('utf-8') }}</strong></span><p>
-            {% endif %}
-              </div>
-                </div>
 {% endblock %}

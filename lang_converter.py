@@ -9,10 +9,10 @@ http://stackoverflow.com/questions/5870188/does-flask-support-regular-expression
 
 # validate the language in URL & stuff
 class LangConverter(BaseConverter):
-	def to_python(self, value):
-		if value not in language_dicts:
-			raise ValidationError()
-		return value
+    def to_python(self, value):
+        if value not in language_dicts:
+            raise ValidationError()
+        return value
 
-	def to_url(self, value):
-		return value
+    def to_url(self, value):
+        return value

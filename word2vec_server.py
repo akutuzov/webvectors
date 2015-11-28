@@ -3,9 +3,10 @@
 
 
 import socket
-import sys,datetime
+import sys, datetime
 from thread import *
 import sys, gensim, logging
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
@@ -14,35 +15,35 @@ root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
 # Loading models
 
 our_models = {}
-for line in open(root+'models.csv','r').readlines():
+for line in open(root + 'models.csv', 'r').readlines():
     if line.startswith("#"):
-	continue
+        continue
     res = line.strip().split('\t')
-    (identifier,description,path,string) = res
+    (identifier, description, path, string) = res
     our_models[identifier] = path
 
 models_dic = {}
 
 for m in our_models:
     if our_models[m].endswith('.bin.gz'):
-	models_dic[m] = gensim.models.Word2Vec.load_word2vec_format(our_models[m], binary=True)
+        models_dic[m] = gensim.models.Word2Vec.load_word2vec_format(our_models[m], binary=True)
     else:
-	models_dic[m] = gensim.models.Word2Vec.load(our_models[m])
+        models_dic[m] = gensim.models.Word2Vec.load(our_models[m])
     models_dic[m].init_sims(replace=True)
-    print "Model", m, "from file",our_models[m], "loaded successfully."
+    print "Model", m, "from file", our_models[m], "loaded successfully."
 
 # Vector functions
 
 def find_synonyms(query):
-    (q,pos,usermodel) = query
+    (q, pos, usermodel) = query
     results = []
     qf = q
     model = models_dic[usermodel]
     if not q in model:
         candidates_set = set()
-        candidates_set.add(q.split('_')[0]+'_UNKN')
+        candidates_set.add(q.split('_')[0] + '_UNKN')
         candidates_set.add(q.upper())
-	candidates_set.add(q.lower())
+        candidates_set.add(q.lower())
         candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         noresults = True
         for candidate in candidates_set:
@@ -51,21 +52,21 @@ def find_synonyms(query):
                 noresults = False
                 break
         if noresults == True:
-	    results.append(q+" is unknown to the model")
-    	    return results
+            results.append(q + " is unknown to the model")
+            return results
     if pos == 'ALL':
         for i in model.most_similar(positive=qf, topn=10):
-            #if i[0].replace('_','').replace('-','').isalpha():
-	    results.append(i[0]+"#"+str(i[1]))
-	    #if len(results) == 10:
-	#	break
+            # if i[0].replace('_','').replace('-','').isalpha():
+            results.append(i[0] + "#" + str(i[1]))
+            #if len(results) == 10:
+        # break
     else:
         counter = 0
         for i in model.most_similar(positive=qf, topn=20):
             if counter == 10:
                 break
             if i[0].split('_')[-1] == pos:
-                results.append(i[0]+"#"+str(i[1]))
+                results.append(i[0] + "#" + str(i[1]))
                 counter += 1
     if len(results) == 0:
         results.append('No results')
@@ -76,7 +77,7 @@ def find_synonyms(query):
 
 
 def find_similarity(query):
-    (q,usermodel) = query
+    (q, usermodel) = query
     model = models_dic[usermodel]
     results = []
     for pair in q.split(','):
@@ -85,9 +86,9 @@ def find_similarity(query):
         qf2 = q2
         if not q1 in model:
             candidates_set = set()
-            candidates_set.add(q1.split('_')[0]+'_UNKN')
+            candidates_set.add(q1.split('_')[0] + '_UNKN')
             candidates_set.add(q1.upper())
-	    candidates_set.add(q1.lower())
+            candidates_set.add(q1.lower())
             candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
             noresults = True
             for candidate in candidates_set:
@@ -96,14 +97,14 @@ def find_similarity(query):
                     noresults = False
                     break
             if noresults == True:
-        	return ["The model does not know the word %s" % q1]
-                #results.append(q1+" is unknown to the model")
+                return ["The model does not know the word %s" % q1]
+                # results.append(q1+" is unknown to the model")
                 #return results
         if not q2 in model:
             candidates_set = set()
-            candidates_set.add(q2.split('_')[0]+'_UNKN')
+            candidates_set.add(q2.split('_')[0] + '_UNKN')
             candidates_set.add(q2.upper())
-	    candidates_set.add(q2.lower())
+            candidates_set.add(q2.lower())
             candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
             noresults = True
             for candidate in candidates_set:
@@ -112,17 +113,17 @@ def find_similarity(query):
                     noresults = False
                     break
             if noresults == True:
-		return ["The model does not know the word %s" % q2]
-                #results.append(q2+" is unknown to the model")
+                return ["The model does not know the word %s" % q2]
+                # results.append(q2+" is unknown to the model")
                 #return results
-        pair2 = (qf1,qf2)
+        pair2 = (qf1, qf2)
         result = model.similarity(qf1, qf2)
-        results.append('#'.join(pair2)+"#"+str(result))
+        results.append('#'.join(pair2) + "#" + str(result))
     return results
 
 
 def scalculator(query):
-    (q,pos,usermodel) = query
+    (q, pos, usermodel) = query
     model = models_dic[usermodel]
     results = []
     positive_list = q.split("&")[0].split(',')
@@ -135,9 +136,9 @@ def scalculator(query):
             continue
         elif not word in model:
             candidates_set = set()
-            candidates_set.add(word.split('_')[0]+'_UNKN')
+            candidates_set.add(word.split('_')[0] + '_UNKN')
             candidates_set.add(word.upper())
-	    candidates_set.add(word.lower())
+            candidates_set.add(word.lower())
             candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
             noresults = True
             for candidate in candidates_set:
@@ -150,16 +151,16 @@ def scalculator(query):
             else:
                 plist.append(q)
     for word in negative_list:
-	if len(word) < 2:
-	    continue
+        if len(word) < 2:
+            continue
         if word in model:
             nlist.append(word)
             continue
         elif not word in model:
             candidates_set = set()
-            candidates_set.add(word.split('_')[0]+'_UNKN')
+            candidates_set.add(word.split('_')[0] + '_UNKN')
             candidates_set.add(word.upper())
-	    candidates_set.add(word.lower())
+            candidates_set.add(word.lower())
             candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
             noresults = True
             for candidate in candidates_set:
@@ -172,25 +173,26 @@ def scalculator(query):
             else:
                 nlist.append(q)
     if pos == "ALL":
-	for w in model.most_similar(positive=plist, negative=nlist,topn=5):
-		results.append(w[0]+"#"+str(w[1]))
+        for w in model.most_similar(positive=plist, negative=nlist, topn=5):
+            results.append(w[0] + "#" + str(w[1]))
     else:
-	for w in model.most_similar(positive=plist, negative=nlist,topn=20):
+        for w in model.most_similar(positive=plist, negative=nlist, topn=20):
             if w[0].split('_')[-1] == pos:
-                results.append(w[0]+"#"+str(w[1]))
+                results.append(w[0] + "#" + str(w[1]))
             if len(results) == 5:
                 break
     return results
 
+
 def vector(query):
-    (q,usermodel) = query
+    (q, usermodel) = query
     qf = q
     model = models_dic[usermodel]
     if not q in model:
         candidates_set = set()
-        candidates_set.add(q.split('_')[0]+'_UNKN')
+        candidates_set.add(q.split('_')[0] + '_UNKN')
         candidates_set.add(q.upper())
-	candidates_set.add(q.lower())
+        candidates_set.add(q.lower())
         candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         noresults = True
         for candidate in candidates_set:
@@ -199,26 +201,25 @@ def vector(query):
                 noresults = False
                 break
         if noresults == True:
-	    return q+" is unknown to the model"
+            return q + " is unknown to the model"
     vector = model[qf]
     vector = vector.tolist()
     str_vector = ','.join([str(e) for e in vector])
     return str_vector
 
 
+operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': vector}
 
-operations = {'1':find_synonyms,'2':find_similarity,'3':scalculator,'4':vector}
-
-HOST = 'localhost' # Symbolic name meaning all available interfaces
-PORT = 12666 # Arbitrary non-privileged port
+HOST = 'localhost'  # Symbolic name meaning all available interfaces
+PORT = 12666  # Arbitrary non-privileged port
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print 'Socket created'
 
-#Bind socket to local host and port
+# Bind socket to local host and port
 try:
     s.bind((HOST, PORT))
-except socket.error , msg:
+except socket.error, msg:
     print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
     sys.exit()
 
@@ -229,44 +230,44 @@ s.listen(100)
 print 'Socket now listening on port', PORT
 
 #Function for handling connections. This will be used to create threads
-def clientthread(conn,addr):
+def clientthread(conn, addr):
     #Sending message to connected client
-    conn.send('word2vec model server') #send only takes string
+    conn.send('word2vec model server')  #send only takes string
 
     #infinite loop so that function do not terminate and thread do not end.
     while True:
-    #Receiving from client
-	data = conn.recv(1024)
-	data = data.decode("utf-8")
-	query = data.split(";")
-	output = operations[query[0]]((query[1:]))
-	if not data:
-	    break
-	now = datetime.datetime.now()
-	print now.strftime("%Y-%m-%d %H:%M"),'\t',addr[0]+':'+str(addr[1]), '\t',data
-	if query[0] == "1" and not 'unknown to the' in output[0] and not "No results" in output[0]:
-	    reply = ' '.join(output[:-1])
-	    vector = output[-1].tolist()
-	    str_vector = ','.join([str(e) for e in vector])
-	    conn.sendall(reply.encode('utf-8')+"&"+str_vector)
-	elif query[0] == "4":
-	    reply = output
-	    conn.sendall(reply.encode('utf-8'))
-	else:
-	    reply = ' '.join(output)
-	    conn.sendall(reply.encode('utf-8'))
+        #Receiving from client
+        data = conn.recv(1024)
+        data = data.decode("utf-8")
+        query = data.split(";")
+        output = operations[query[0]]((query[1:]))
+        if not data:
+            break
+        now = datetime.datetime.now()
+        print now.strftime("%Y-%m-%d %H:%M"), '\t', addr[0] + ':' + str(addr[1]), '\t', data
+        if query[0] == "1" and not 'unknown to the' in output[0] and not "No results" in output[0]:
+            reply = ' '.join(output[:-1])
+            vector = output[-1].tolist()
+            str_vector = ','.join([str(e) for e in vector])
+            conn.sendall(reply.encode('utf-8') + "&" + str_vector)
+        elif query[0] == "4":
+            reply = output
+            conn.sendall(reply.encode('utf-8'))
+        else:
+            reply = ' '.join(output)
+            conn.sendall(reply.encode('utf-8'))
 
-	break
+        break
 
-	#came out of loop
+    #came out of loop
     conn.close()
 
 #now keep talking with the client
 while 1:
     #wait to accept a connection - blocking call
     conn, addr = s.accept()
-    
+
     #start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
-    start_new_thread(clientthread ,(conn,addr))
+    start_new_thread(clientthread, (conn, addr))
 
 s.close()

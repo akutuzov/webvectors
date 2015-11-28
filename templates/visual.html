@@ -29,6 +29,9 @@
             </form>
       {% if visual %}
 	<h3>{{strings['visual3']}}<sup>*</sup></h3>
+	{% for word in words%}
+	<a href="{{request.script_root}}/{{lang}}/{{ visual.keys()[0] }}/{{word}}">{{ word.split('_')[0] }}</a>
+	{% endfor %}
         <div class="row">
         {% for model in visual %}
         <div class="col-md-4">

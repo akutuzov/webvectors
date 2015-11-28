@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-        <h1>{{strings['similar1']}}</h1>
+        <div class="row">
+            <div class="col-md-7">
+        <h2>{{strings['similar1']}}</h2>
         <form method=post>
               <div class="form-group">
                   <p>{{strings['similar2']}}</p>
@@ -17,18 +18,11 @@
                   <p><small><em>{{strings['similar3']}}</em></small></p>
                 <fieldset>
                 <small>
-                <label>
-                  <input type="checkbox" name="model" value="ruscorpora" checked> {{strings['similar4']}}
-                </label>
-                  <label>
-                  <input type="checkbox" name="model" value="ruwikiruscorpora"> {{strings['similar6']}}
-                </label>
-                  <label>
-                  <input type="checkbox" name="model" value="web"> {{strings['similar7']}}
-                </label>
-                  <label>
-                  <input type="checkbox" name="model" value="news"> {{strings['similar8']}}
-                </label>
+                {% for m in models %}
+		    <label>
+                	<input type="checkbox" name="model" value="{{ m }}">{{ strings[models[m]] }}
+            	    </label>
+                {% endfor %}
                 </small>
                 </fieldset>
               </div>
@@ -55,42 +49,92 @@
                 
               <button type="submit" class="btn btn-primary" name="list_query" value = "Produce a list of quazy-synonyms">{{strings['similar15']}}</button>
             </form>
-      {% if list_value %}
-      <h2><strong>{{strings['similar16']}} <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{word}}"><i>{{ word.split('_')[0] }}</i></a></strong></h2>
+ {% if list_value %}
+      <h3><strong>{{strings['similar16']}} <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{word}}"><i>{{ word.split('_')[0] }}</i></a></strong></h3>
         <div class="row">
-        {% for model in list_value%}
-        <div class="col-md-3">
-        <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ model}}</a></strong></h3>
+    {% for model in list_value%}
+        <div class="col-md-4">
+        <h4><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
         <big>
+        {% if list_value[model] == "Unknown!" %}
+        {{ strings['similar18'] }} "{{ word.split('_')[0] }}"</big>
+	{% else %}
         <ol>
-        {% for res in list_value[model] if not "unknown to the model" in res and res[0] != "No results" and res != "Incorrect PoS!" %}
+        {% for res in list_value[model] if res[0] != "No results" and res != "Incorrect PoS!" %}
         <li>
         <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
         </li>
         {% endfor %}
         </ol>
         </big>
-        {% for res in list_value[model] if "unknown to the model" in res or res[0] == "No results"  %}
+        {% for res in list_value[model] if res[0] == "No results"  %}
         {% if res[0] == "No results" %}
         <big><strong>{{ res[0] }}</strong></big>
         {% else %}
         <big><strong>{{ res }}</strong></big>
         {% endif %}
         {% endfor %}
-        
+
         {% for res in list_value[model] if res == "Incorrect PoS!"  %}
         <big><strong>{{ res }}</strong></big>
         {% endfor %}
-        </div>
-        {% endfor %}
-        </div>
+
         {% endif %}
+        </div>
+    {% endfor %}
+        </div>
+{% endif %}
+        
+        
+        
          {% if error %}
          <big><strong>
          <p>{{ error }}</p>
          </strong></big>
          
          {% endif %}
-         
-         
+         </div>
+      <div class="col-md-5">
+                  <form method=post>
+              <div class="form-group">
+                <h2>{{strings['calc19']}}</h2>
+                <p>{{strings['calc20']}}</p>
+                {% if query %}
+                <input type="text" class="form-control" name="query" value="{% for res in value if not "unknown to the model" in res  %}{{' '.join(res[:-1])+','}}{% endfor %}" maxlength=300>
+                {% else %}
+                <input type="text" class="form-control" name="query" placeholder="movie film,city town" maxlength=300>
+                {% endif %}
+              </div>
+              <div class="radio">
+                  <p><small><em>{{strings['calc22']}}</em></small></p>
+                  <small>
+                  {% for m in models %}
+		    <label>
+                	<input type="radio" name="simmodel" value="{{ m }}">{{ strings[models[m]] }}
+            	    </label>
+                {% endfor %}
+                  </small>
+              </div>
+
+
+              <button type="submit" class="btn btn-primary" name="query" value = "{{strings['calc28']}}">{{strings['calc28']}}</button>
+            </form>
+          {% if value %}
+            <span style = "font-size:larger;">
+            <table class="table"><tr>
+            <td><strong>{{strings['calc29']}}</strong></td><td><strong>{{strings['calc30']}}</strong><br/>(<a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
+            {% for res in value if not "unknown to the model" in res and not "Incorrect PoS!" in res  %}
+            <tr><td style="vertical-align:top"><em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0]}}</a></em> <em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.5f} ".format(res[2]) }}</td></tr>
+            {% endfor %}
+            {% for res in value if "unknown to the model" in res or "Incorrect PoS!" in res  %}
+            <tr><td style="vertical-align:top"><em>{{res}}</em></td> <td></td></tr>
+            {% endfor %}
+            </table>
+            </span>
+            {% endif %}
+            {% if error_sim %}
+            <p> <span style = "font-size:larger;"><strong>{{ error_sim.decode('utf-8') }}</strong></span><p>
+            {% endif %}
+              </div>
+                </div>
 {% endblock %}
