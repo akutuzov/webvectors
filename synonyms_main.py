@@ -1,10 +1,12 @@
-#!/usr/local/python/bin/python
+#!/usr/bin/python2
 # coding: utf-8
 
-# test comment
+# This is the main WebVectors code.
+# This script defines the behavior of all web pages and queries word2vec service (word2vec_service.py).
+
 import codecs, logging, urllib, hashlib, os, sys
 
-from flask import render_template, Blueprint, redirect
+from flask import render_template, Blueprint, redirect, Response
 from flask import request, url_for
 from flask import current_app
 from string import Template
@@ -22,8 +24,8 @@ import socket  # for sockets
 # import strings data from respective module
 from strings_reader import language_dicts
 
-root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
-
+root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectores resides
+postags = set("S A NUM ANUM V ADV SPRO APRO ADVPRO PR CONJ PART INTJ UNKN".split()) # Define the list of valid parts of speech, if we need it.
 
 # Establishing connection to model server
 host = 'localhost';
@@ -35,6 +37,7 @@ except socket.gaierror:
     print 'Hostname could not be resolved. Exiting'
     sys.exit()
 
+synonyms = Blueprint('synonyms', __name__, template_folder='templates')
 
 def serverquery(message):
     # create an INET, STREAMing socket
@@ -63,8 +66,8 @@ def serverquery(message):
     return reply
 
 
-postags = set("S A NUM A-NUM V ADV PRAEDIC PARENTH S-PRO A-PRO ADV-PRO PRAEDIC-PRO PR CONJ PART INTJ UNKN".split())
-
+# Loading models list
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 our_models = {}
 for line in open(root + 'models.csv', 'r').readlines():
     if line.startswith("#"):
@@ -72,10 +75,6 @@ for line in open(root + 'models.csv', 'r').readlines():
     res = line.strip().split('\t')
     (identifier, description, path, string) = res
     our_models[identifier] = string
-
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
-synonyms = Blueprint('synonyms', __name__, template_folder='templates')
 
 
 def after_this_request(func):
@@ -95,10 +94,9 @@ def per_request_callbacks(response):
 def process_query(userquery):
     userquery = userquery.strip().replace(u'ё', u'е')
     if "_" in userquery:
-        if userquery.split("_")[-1] in postags:
-            query = userquery
-            if userquery[0].isupper():
-                query = userquery[0].lower() + userquery[1:]
+        query_split = userquery.split("_")
+        if query_split[-1] in postags:
+            query = ''.join(query_split[:-1]).lower() + '_' + query_split[-1]
         else:
             return "Incorrect POS!"
     else:
@@ -114,11 +112,13 @@ def download_corpus(url, urlhash, algo, vectorsize, windowsize):
     if url.endswith('/'):
         url = url[:-1]
     fname = urlhash + '__' + algo + '__' + str(vectorsize) + '__' + str(windowsize) + '.gz'
-    a = urllib.urlretrieve(url.strip(), '/home/sites/ling.go.mail.ru/tmp/' + fname)
-    x = '/home/sites/ling.go.mail.ru/tmp/' + fname.split('__')[0]
+    a = urllib.urlretrieve(url.strip(), root+'/tmp/' + fname)
+    x = root+'/tmp/' + fname.split('__')[0]
     open(x, 'a').close()
     return a
 
+
+# Start defining functions for particular pages...
 
 @synonyms.route('/<lang:lang>/', methods=['GET', 'POST'])
 def home(lang):
@@ -133,9 +133,9 @@ def home(lang):
             list_data = request.form['list_query']
         except:
             pass
-        if list_data != 'dummy' and list_data.replace('_', '').isalnum():
+        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').isalnum():
             query = process_query(list_data)
-            if query == "Incorrect PoS!":
+            if query == "Incorrect POS!":
                 return render_template('home.html', error=query)
             pos_value = request.form.getlist('pos')
             model_value = request.form.getlist('model')
@@ -147,15 +147,14 @@ def home(lang):
                 model = "ruscorpora"
             else:
                 model = model_value[0]
-            message = "1;" + query + ";" + pos + ";" + model
+            message = "1;" + query + ";" + 'ALL' + ";" + model
             result = serverquery(message)
             associates_list = []
-            if "unknown to the" in result:
+            if "unknown to the" in result or "No result" in result:
                 return render_template('home.html', error=result.decode('utf-8'))
             else:
                 output = result.split('&')
                 associates = output[0]
-                vector = output[1]
                 for word in associates.split():
                     w = word.split("#")
                     associates_list.append((w[0].decode('utf-8'), float(w[1])))
@@ -202,15 +201,13 @@ def usermodel_page(lang, hash):
     g.strings = language_dicts[lang]
 
     modelfilename = hash.strip() + '.model'
-    if os.path.isfile('/home/sites/ling.go.mail.ru/static/models/' + modelfilename):
+    if os.path.isfile(root+'/static/models/' + modelfilename):
         return render_template('usermodel.html', model=modelfilename)
-    elif os.path.isfile('/home/sites/ling.go.mail.ru/training/' + hash + '.gz.training') or os.path.isfile(
-                    '/home/sites/ling.go.mail.ru/tmp/' + hash):
+    elif os.path.isfile(root+'/training/' + hash + '.gz.training') or os.path.isfile(
+                    root+'/tmp/' + hash):
         return render_template('usermodel.html', queue=hash)
 
     return render_template('usermodel.html')
-
-
 
 
 @synonyms.route('/<lang:lang>/similar', methods=['GET', 'POST'])
@@ -248,9 +245,9 @@ def similar_page(lang):
                     query = query.split()
                     words = []
                     for w in query[:2]:
-                        if w.replace('_', '').isalnum():
+                        if w.replace('_', '').replace('-', '').isalnum():
                             w = process_query(w)
-                            if "Incorrect PoS!" in w:
+                            if "Incorrect POS!" in w:
                                 return render_template('similar.html', value=["Incorrect PoS!"], models=our_models)
                             words.append(w.strip())
                     if len(words) == 2:
@@ -272,7 +269,7 @@ def similar_page(lang):
                 error_value = "Incorrect query!"
                 return render_template("similar.html", error_sim=error_value, models=our_models)
 
-        if list_data != 'dummy' and list_data.replace('_', '').isalnum():
+        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').isalnum():
             list_data = list_data.split()[0].strip()
             query = process_query(list_data)
 
@@ -280,12 +277,12 @@ def similar_page(lang):
             model_value = request.form.getlist('model')
             if len(model_value) < 1:
                 model_value = ["news"]
-            if len(pos_value) < 1:
+            if len(pos_value) < 1 or pos_value[0] == 'Q':
                 pos = query.split('_')[-1]
             else:
                 pos = pos_value[0]
-            if query == "Incorrect PoS!":
-                return render_template('similar.html', list_value=[query], word=list_data,models=our_models)
+            if query == "Incorrect POS!":
+                return render_template('similar.html', error=query, word=list_data, models=our_models)
 
             else:
                 models_row = {}
@@ -295,10 +292,13 @@ def similar_page(lang):
                     message = "1;" + query + ";" + pos + ";" + model
                     result = serverquery(message)
                     associates_list = []
-                    if "unknown to the" in result or "No results" in result:
+                    if "unknown to the" in result:
                         models_row[model] = "Unknown!"
                         continue
-                        #return render_template('similar.html', error=result.decode('utf-8'))
+                    elif "No results" in result:
+                        associates_list.append(result)
+                        models_row[model] = associates_list
+                        continue
                     else:
                         output = result.split('&')
                         associates = output[0]
@@ -335,7 +335,7 @@ def visual_page(lang):
                 return render_template("visual.html", error=error_value, models=our_models)
 
             model_value = request.form.getlist('model')
-            if "Incorrect PoS!" in querywords:
+            if "Incorrect POS!" in querywords:
                 return render_template('visual.html', list_value=[query], word=list_data, model=model,
                                        models=our_models)
 
@@ -394,17 +394,23 @@ def finder(lang):
     g.strings = language_dicts[lang]
 
     if request.method == 'POST':
-        positive_data = 'dummy'
-        positive2_data = 'dummy'
-        negative_data = 'dummy'
+        positive_data = ''
+        positive2_data = ''
+        negative_data = ''
+        positive1_data = ''
+        negative1_data = ''
         try:
             positive_data = request.form['positive']
             positive2_data = request.form['positive2']
             negative_data = request.form['negative']
         except:
             pass
-
-        if negative_data != 'dummy' and positive_data != 'dummy' and positive2_data != 'dummy':
+        try:
+            positive1_data = request.form['positive1']
+            negative1_data = request.form['negative1']
+        except:
+            pass
+        if negative_data != '' and positive_data != '' and positive2_data != '':
             negative_data = negative_data.split()[0].split()
             positive_data = positive_data.split()[0]
             positive2_data = positive2_data.split()[0]
@@ -416,14 +422,13 @@ def finder(lang):
             if len(positive_list) < 2 or len(negative_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", error=error_value, models=our_models)
-            if "Incorrect PoS!" in negative_list or "Incorrect PoS!" in positive_list:
+            if "Incorrect POS!" in negative_list or "Incorrect POS!" in positive_list:
                 return render_template('calculator.html', calc_value=["Incorrect PoS!"], models=our_models)
             calcpos_value = request.form.getlist('calcpos')
             if len(calcpos_value) < 1:
                 pos = "S"
             else:
                 pos = calcpos_value[0]
-            #pos = 'dummy'
 
             calcmodel_value = request.form.getlist('calcmodel')
             if len(calcmodel_value) < 1:
@@ -436,26 +441,64 @@ def finder(lang):
                 message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
                 result = serverquery(message)
                 results = []
-                if len(result) == 0:
+                if len(result) == 0 or 'No results' in result:
                     results.append("No similar words of this part of speech.")
-                    return render_template('calculator.html', calc_value=results, pos=pos, model=model,
-                                           plist=positive_list, nlist=negative_list, models=our_models)
+                    models_row[model] = results
+                    continue
                 if "does not know" in result:
                     results.append(result)
                     unknown_words = True
                     models_row[model] = results
                     continue
-                    #return render_template('calculator.html', calc_value=results, pos=pos, model=model,
-                    #                           plist=positive_list, nlist=negative_list)
                 for word in result.split():
                     w = word.split("#")
                     results.append((w[0].decode('utf-8'), float(w[1])))
                 models_row[model] = results
-            return render_template('calculator.html', calc_value=models_row, pos=pos, plist=positive_list,
+            return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
                                    nlist=negative_list, models=our_models)
+
+        if positive1_data != '':
+            negative_list = [process_query(w) for w in negative1_data.split() if len(w) > 1 and w.replace('_','').replace('-', '').isalnum()][:10]
+            positive_list = [process_query(w) for w in positive1_data.split() if len(w) > 1 and w.replace('_','').replace('-', '').isalnum()][:10]
+            if len(positive_list) == 0:
+                error_value = "Incorrect query!"
+                return render_template("calculator.html", error=error_value)
+            if "Incorrect POS!" in negative_list or "Incorrect POS!" in positive_list:
+                return render_template('calculator.html', calc_value=["Incorrect PoS!"])
+            calcpos_value = request.form.getlist('calcpos')
+            if len(calcpos_value) < 1:
+                pos = "S"
+            else:
+                pos = calcpos_value[0]
+            calcmodel_value = request.form.getlist('calcmodel')
+            if len(calcmodel_value) < 1:
+                calcmodel_value = ["ruscorpora"]
+            models_row = {}
+            for model in calcmodel_value:
+                if not model.strip() in our_models:
+                    return render_template('home.html')
+                message = "3;"+",".join(positive_list)+"&"+','.join(negative_list)+";"+pos+";"+model
+                result = serverquery(message)
+                results = []
+                if len(result) == 0:
+                    results.append("No similar words of this part of speech.")
+                    models_row[model] = results
+                    continue
+                if "does not know" in result:
+                    results.append(result)
+                    unknown_words = True
+                    models_row[model] = results
+                    continue
+                for word in result.split():
+                    w = word.split("#")
+                    results.append((w[0].decode('utf-8'),float(w[1])))
+                models_row[model] = results
+            return render_template('calculator.html', calc_value=models_row, pos=pos, plist2 = positive_list,
+                                   nlist2 = negative_list, models=our_models)
+
         else:
             error_value = "Incorrect query!"
-            return render_template("calculator.html", error=error_value, models=our_models)
+            return render_template("calculator.html", calc_error=error_value, models=our_models)
     return render_template("calculator.html", models=our_models)
 
 
@@ -504,6 +547,39 @@ def raw_finder(lang, model, userquery):
     return render_template("synonyms_raw.html")
 
 
+@synonyms.route('/<model>/<word>/api', methods=['GET'])
+def api(model, word):
+    model = model.strip()
+
+    def generate(word, model):
+        if word.strip().replace('_', '').replace('-', '').isalnum():
+            query = process_query(word.strip())
+        if len(query.split('_')) < 2 or not model.strip() in our_models:
+            yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
+        else:
+            #pos_tag = query.split('_')[-1]
+            message = "1;" + query + ";" + 'ALL' + ";" + model
+            result = serverquery(message)
+            associates_list = []
+            if "unknown to the" in result or "No results" in result:
+                yield query + '\t' + result.decode('utf-8')
+            else:
+                output = result.split('&')
+                associates = output[0]
+                if len(associates) > 1:
+                    vector = ','.join(output[1:])
+                for word in associates.split():
+                    w = word.split("#")
+                    associates_list.append((w[0].decode('utf-8'), float(w[1])))
+                yield model + '\n'
+                yield query + '\n'
+                for associate in associates_list:
+                    yield associate[0] + '\t' + str(associate[1]) + '\n'
+
+    return Response(generate(word, model), mimetype='text/csv',
+                    headers={"Content-Disposition": "attachment;filename=%s.csv" % word.encode('utf-8')})
+
+
 @synonyms.route('/<lang:lang>/publications')
 def publications_page(lang):
     g.lang = lang
@@ -535,9 +611,7 @@ def about_page(lang):
 
     return render_template('%s/about.html' % lang)
 
-
-
-# redirecting requests with no lang:
+# redirecting requests with no language:
 @synonyms.route('/about', methods=['GET', 'POST'])
 @synonyms.route('/calculator', methods=['GET', 'POST'])
 @synonyms.route('/similar', methods=['GET', 'POST'])
@@ -550,10 +624,6 @@ def about_page(lang):
 def redirect_main():
     return redirect(request.script_root + '/en' + request.path)
 
-
 @synonyms.route('/usermodel/<hash>', methods=['GET', 'POST'])
 def redirect_usermodel(hash):
     return redirect(request.script_root + '/en' + request.path)
-
-
-

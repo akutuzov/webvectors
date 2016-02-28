@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{%- block title %}
+     <title>RusVectōrēs: {{strings['similar1']}}</title>
+{%- endblock title %}
+         
+
 {% block content %}
         <div class="row">
             <div class="col-md-7">
@@ -44,13 +49,16 @@
                   <label>
                   <input type="radio" name="pos" value="ALL" checked> {{strings['similar14']}}
                 </label>
+                <label>
+                  <input type="radio" name="pos" value="Q"> {{strings['similar19']}}
+                </label>
                 </small>
                 </div>
                 
               <button type="submit" class="btn btn-primary" name="list_query" value = "Produce a list of quazy-synonyms">{{strings['similar15']}}</button>
             </form>
  {% if list_value %}
-      <h3><strong>{{strings['similar16']}} <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{word}}"><i>{{ word.split('_')[0] }}</i></a></strong></h3>
+      <h3><strong>{{strings['similar16']}} <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{word}}"><i>{{ word.split('_')[0] }}</i></a></strong> ({{ pos }})</h3>
         <div class="row">
     {% for model in list_value%}
         <div class="col-md-4">
@@ -60,14 +68,14 @@
         {{ strings['similar18'] }} "{{ word.split('_')[0] }}"</big>
 	{% else %}
         <ol>
-        {% for res in list_value[model] if res[0] != "No results" and res != "Incorrect PoS!" %}
+        {% for res in list_value[model] if not "No results" in res and res != "Incorrect PoS!" %}
         <li>
         <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
         </li>
         {% endfor %}
         </ol>
         </big>
-        {% for res in list_value[model] if res[0] == "No results"  %}
+        {% for res in list_value[model] if res == "No results"  %}
         {% if res[0] == "No results" %}
         <big><strong>{{ res[0] }}</strong></big>
         {% else %}

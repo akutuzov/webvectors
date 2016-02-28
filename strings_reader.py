@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 # coding:utf8
 
 """
@@ -8,8 +9,7 @@ the strings, and lets the main app use it
 import codecs, csv
 from flask import Markup
 
-root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
-#root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
+root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectores resides
 
 # the encoding to use
 encoding = 'utf8'

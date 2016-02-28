@@ -1,17 +1,19 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python2
 # -!- coding: utf-8 -!-
+
+# This module queries Freeling service to find out parts of speech for words.
+# You need it only if you want to automatically detect PoS for user queries.
 
 import codecs, subprocess
 
+port = u'50006' # Port on which Freeling listens in your environment.
 
 def freeling_lemmatizer(word):
-    freeling = subprocess.Popen([u'/usr/local/bin/analyzer_client', u'50005'], stdin=subprocess.PIPE,
+    freeling = subprocess.Popen([u'/usr/local/bin/analyzer_client', port], stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE)
     tagged = freeling.communicate(word.encode('utf-8').strip())
     tagged = tagged[0].split('\n')[0]
-    # print tagged
     freeling_pos = tagged.split()[2][0]
-    #print freeling_pos
     if freeling_pos == 'A':
         mystem_pos = 'A'
     elif freeling_pos == 'N':

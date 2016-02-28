@@ -1,28 +1,40 @@
 {% extends "base.html" %}
+{%- block title %}
+     <title>RusVectōrēs: About</title>
+ {%- endblock title %}
+
+
 
 {% block content %}
         <h1>About</h1>
-<p>This service computes semantic similarity between words in Russian (detects the degree of their "quazy-synonymy"). It is named after <a href="http://ruscorpora.ru/en">RusCorpora</a>, the site for Russian National Corpus. They provide access to corpora, we provide access to lexical vectors (<i>vectōrēs</i> in Latin).</p>
-<p>Recently, <a href="https://en.wikipedia.org/wiki/Distributional_semantics">distributional semantics</a> received a substantially growing attention. The main reason for this is a very promising approach of employing neural network language models (NNLMs) trained on large corpora to learn distributional vectors for words. The most well-known tool in this field now is possibly <i><a href="https://code.google.com/p/word2vec/">word2vec</a></i>, which allows fast training on huge amounts of raw linguistic data.</p>
-<blockquote><p><i>In distributional semantics, words are usually represented as vectors in a multi-dimensional space. Semantic similarity between two words is then trivially calculated as a <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a> between their corresponding vectors; it takes values between 0 and 1. <strong>0</strong> value means the words lack similar contexts. <strong>1</strong> value means that the words' contexts are absolutely identical.</i></p></blockquote>
-<p><i>Word2vec</i> and similar approaches are being extensively studied and tested in application to English language. However, for Russian the surface is barely scratched. Thus, it is important to provide access to relevant tools for Russian linguistic community.</p>
-<p>Unfortunately, training and querying neural vector models for large corpora can be challenging for desktop PCs or even for some servers. That is the reason behind our service: we aim to lower the “entry threshold” for those who want to work in this new and exciting field.</p>
-<h2>What is <i>RusVectōrēs</i>?</h2>
-<p><i>RusVectōrēs</i> is basically a semantic calculator which operates on relations between words in distributional models. A user can choose one or several models to work with: currently we provide <a href="/dsm/{{lang}}/models">five models</a> trained on different corpora (some of them have won top-ranking positions in the <a href="http://russe.nlpub.ru/">RUSSE evaluation track</a>). The models contain from 200K to 1M lemmas each.</p>
+<p>This service computes semantic relations between words in Russian. It is named after <a href="http://ruscorpora.ru/en">RusCorpora</a>, the site for Russian National Corpus. They provide access to corpora, we provide access to semantic vectors (<i>vectōrēs</i> in Latin). These vectors reflect meaning based on word co-occurrence <strong>distribution</strong> in the training corpus (huge amounts of raw linguistic data).</p>
+<blockquote><p>In <a href="https://en.wikipedia.org/wiki/Distributional_semantics">distributional semantics</a>, words are usually represented as vectors in a multi-dimensional space of their contexts. Semantic similarity between two words is then trivially calculated as a <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a> between their corresponding vectors; it takes values between 0 and 1. <strong>0</strong> value means the words lack similar contexts, and thus their meanings are unrelated to each other. <strong>1</strong> value means that the words' contexts are absolutely identical, and thus their meaning is very similar.</p></blockquote>
+<p>Recently, distributional semantics received a substantially growing attention. The main reason for this is a very promising approach of employing artificial neural networks to learn hiqh-quality dense vectors (<strong>embeddings</strong>), using the so-called <strong>predictive models</strong>. The most well-known tool in this field now is possibly <i><a href="https://code.google.com/p/word2vec/">word2vec</a></i>, which allows very fast training, compared to previous approaches.</p>
+
+<p><i>Word2vec</i>'s Skipgram and CBOW algorithms (and other similar methods) are being extensively studied and tested in application to English language. However, for Russian the surface is barely scratched. Thus, it is important to provide access to relevant tools and models for Russian linguistic community.</p>
+<p>Unfortunately, training and querying neural embedding models for large corpora can be computationally expensive. Thus, we provide ready-made models trained on several Russian corpora, and a convenient web interface to query them. You can also download the models to process them on your own. Moreover, our web service features a bunch of (hopefully) useful visualizations for semantic relations between words. In general, the reason behind <i>RusVectōrēs</i> is to lower the entry threshold for those who want to work in this new and exciting field.</p>
+
+<h2>What <i>RusVectōrēs</i> can do?</h2>
+<p><i>RusVectōrēs</i> is basically a tool to explore relations between words in distributional models. You can think about it as a kind of <strong>`semantic calculator'</strong>. A user can choose one or several models to work with: currently we provide <a href="#models">four models</a> trained on different corpora (some of them have won top-ranking positions in the <a href="http://russe.nlpub.ru/">RUSSE evaluation track</a>). The models contain from 150K to 600K lemmas each.</p>
 <p>After choosing a model, it is possible to:</p>
 <ol>
-<li><a href="/dsm/{{lang}}/calculator">calculate semantic similarity</a> between pairs of words;</li>
-<li><a href="/dsm/{{lang}}/similar">find words semantically closest to the query word</a> (optionally with PoS filters);</li>
-<li><a href="/dsm/{{lang}}/similar">get the raw vector (array of real values) for the query word in the chosen model</a>;</li>
-<li><a href="/dsm/{{lang}}/calculator">apply simple algebraic operations to word vectors</a> (addition, subtraction, finding average vector for a group of words and distances to this average value).</li>
+<li><a href="/dsm/{{lang}}/similar">calculate semantic similarity</a> between pairs of words;</li>
+<li><a href="/dsm/{{lang}}/similar">find words semantically closest to the query word</a> (optionally with part-of-speech filters);</li>
+<li><a href="/dsm/{{lang}}/calculator">perform analogical inference</a>: find a word <strong>X</strong> which is related to the word <strong>Y</strong> in the same way as the word <strong>A</strong> is related to the word <strong>B</strong>;</li>
+<li><a href="/dsm/{{lang}}/calculator">apply simple algebraic operations to word vectors</a> (addition, subtraction, finding average vector for a group of words and distances to this average value);</li>
+<li><a href="/dsm/{{lang}}/visual">draw semantic maps</a> of relations between input words (it is useful to explore clusters and oppositions);</li>
+<li><a href="/dsm/{{lang}}/similar">get the raw vectors (arrays of real values) and their visualizations for words in the chosen model</a>: just click on any word anywhere, or use a direct URI to the word of interest, as described below.</li>
 </ol>
-<p>The last operation returns interesting results. For example, the model trained on Russian Wikipedia and Russian National Corpus returns <span style="color:green;"><i>быт</i></span> if we subtract <span style="color:green;"><i>смысл</i></span> from <span style="color:green;"><i>жизнь</i></span>. This may sound like something not very practical, but the existing research in English models has already proved that such relationships can be useful for many applications including machine translation.</p>
-<p>Naturally, one can compare results from different models. In order not to limit the users with the models we chose, there is the possibility to <a href="/dsm/{{lang}}/upload">upload one's own corpus</a>. The server will train <i>word2vec</i> model on it with user-defined settings.</p>
-<blockquote><p><i>In the spirit of Semantic Web, each word in each model has its own unique URI explicitly stating lemma, model and PoS (for example, <a href="/dsm/{{lang}}/news/кризисный_A">http://ling.go.mail.ru/dsm/news/кризисный_A</a>). In response to requests for these addresses, lists of the nearest semantic associates for the given lemma in the given model are returned, belonging to the same PoS as the lemma itself.</i></p></blockquote>
-<p>We would like <i>RusVectōrēs</i> to become a hub of scholarly knowledge about neural language models for Russian, that's why there is a <a href="/dsm/{{lang}}/publications">section with published academic papers and links to other relevant resources</a>. At the same time, we hope that <i>RusVectōrēs</i> will also to some extent popularize distributional semantics and computational linguistics, making it more understandable and attractive to the Russian-speaking public.</p>
+<blockquote><p>In the spirit of Semantic Web, each word in each model has its own unique URI explicitly stating lemma, model and part of speech (for example, <a href="/dsm/{{lang}}/news/кризисный_A">http://ling.go.mail.ru/dsm/en/news/кризисный_A</a>). Web pages at these URIs contain lists of the nearest semantic associates for the corresponding word, belonging to the same PoS as the word itself. Other information about the word is also shown.</p>
+<p>We also provide a simple API to get the list of semantic associate for a given word in a given model. Perform GET requests to URLs following the pattern <i>http://ling.go.mail.ru/dsm/MODEL/WORD/api</i> where MODEL is the <a href="#models">identifier</a> for the chosen model and WORD is the query word. We will return a tab-separated text file with the first 10 associates.</p>
+</blockquote>
+<p>We recommend to experiment with algebraic operations on vectors, as they return interesting results. For example, the model trained on Russian Wikipedia and Russian National Corpus returns <span style="color:green;"><i>быт</i></span> if we subtract <span style="color:green;"><i>смысл</i></span> from <span style="color:green;"><i>жизнь</i></span>. This may sound like something not very practical, but the existing research in English models has already proved that such relationships can be useful for many applications including machine translation.</p>
+<p>Naturally, one can compare results from different models on one screen. In order not to limit the users with the models of our choice, there is the possibility to <a href="/dsm/{{lang}}/upload">use one's own corpus</a>. The server will train a neural embedding model on it with user-defined settings.</p>
 
-        <h1>Publications</h1>
-        <p class="lead">If you are interested in distributional semantic models, you should really check these publications:</p>
+<p>We would like <i>RusVectōrēs</i> to become a hub of scholarly knowledge about neural semantic models for Russian, that's why there is a <a href="#publications">section with published academic papers and links to other relevant resources</a>. At the same time, we hope that <i>RusVectōrēs</i> will also popularize distributional semantics and computational linguistics, making it more understandable and attractive to the Russian-speaking public.</p>
+
+        <h1><a name="publications"></a>Publications</h1>
+        <p class="lead">If you are interested in distributional semantic models, you should really check these publications (in the chronological order):</p>
             <ol>
                 <li>Bybee, J. <a href="http://www.citeulike.org/group/220/article/989323">Frequency of use and the organization of language</a>. (2006)</li>
                 <li>Miller, G.A., and Walter, Ch. <a href="http://www.tandfonline.com/doi/abs/10.1080/01690969108406936">Contextual correlates of semantic similarity</a>. // in Language and cognitive processes 6.1 (1991): 1-28.</li>
@@ -45,38 +57,33 @@
                 </li>
                 </ol>
 
-        <h1>Models</h1>
+        <h1><a name="models"></a>Models</h1>
         <p>As of now, you can choose from the following models:</p>
     <table class="table">
         <tr><td>
-        * <strong><a name="ruscorpora">Russian national corpus</a></strong> (<i><a href="/static/models/ruscorpora.model.bin.gz">download model</a>, 410 Mb</i>)
-        <p>Trained on full <a href="http://ruscorpora.ru/en">Russian national corpus</a>. Corpus size is <strong>107 561 399 tokens</strong>. The model knows <strong>381 848 different lemmas</strong>; lemmas occurring only once were ignored.</p>
+        * <strong><a name="ruscorpora">Russian national corpus</a></strong> (<i><a href="/static/models/ruscorpora.model.bin.gz">download model</a>, 302 Mb</i>) <strong>ruscorpora</strong>
+        <p>Trained on full <a href="http://ruscorpora.ru/en">Russian national corpus</a>. Corpus size is <strong>107 561 399 tokens</strong>. The model knows <strong>281 776 different lemmas</strong>; lemmas occurring less than 3 times were ignored.</p>
         <p>Trained using Continuous Bag-of-Words algorithm.</p>
         <p>Vector dimensionality was set to 300, window size 2.</p>
         </td></tr>
         <tr><td>
-        * <strong><a name="ruwikiruscorpora">Russian national corpus and Russian Wikipedia together</a></strong> (<i><a href="/static/models/ruwikiruscorpora.model.bin.gz">download model</a>, 1.1 Gb</i>)
+        * <strong><a name="ruwikiruscorpora">Russian national corpus and Russian Wikipedia together</a></strong> (<i><a href="/static/models/ruwikiruscorpora.model.bin.gz">download model</a>, 1.1 Gb</i>) <strong>ruwikiruscorpora</strong>
         <p>Two corpora above were simply concatenated and the model trained on the resulting corpus. Corpus size is <strong>280 187 401 tokens</strong>. The model knows <strong>604 043 different lemmas</strong>; lemmas occurring less than 5 times were ignored.</p>
         <p>Trained using Continuous Bag-of-Words algorithm.</p>
         <p>Vector dimensionality was set to 500, window size 2.</p>
         </td></tr>
         <tr><td>
-        * <strong><a name="web">Web corpus</a></strong> (<i><a href="/static/models/web.model.bin.gz">download model</a>, 630 MBytes</i>)
-        <p>Trained on a collection of random Russian web pages, 9 million documents in total. Corpus size is <strong>660 628 738 tokens</strong>. The model knows <strong>353 608 different lemmas</strong>; lemmas occurring less than 30 times were ignored.</p>
+        * <strong><a name="web">Web corpus</a></strong> (<i><a href="/static/models/web.model.bin.gz">download model</a>, 630 MBytes</i>) <strong>web</strong>
+        <p>Trained on a collection of random Russian web pages crawled in December 2014, 9 million documents in total. Corpus size is <strong>660 628 738 tokens</strong>. The model knows <strong>353 608 different lemmas</strong>; lemmas occurring less than 30 times were ignored.</p>
         <p>Trained using Continuous Skip-Gram algorithm.</p>
         <p>Vector dimensionality was set to 500, window size 2.</p>
         </td></tr>
         <tr><td>
-        * <strong><a name="news">News corpus</a></strong> (<i><a href="/static/models/news.model.bin.gz">download model</a>, 594 MBytes</i>)
-        <p>Trained on news stream from 1500 Russian news sites (dated from September, 2013 to June, 2014, 9 million documents in total). Corpus size is <strong>1 289 145 897 tokens</strong>. The model knows <strong>166 725 different lemmas</strong>; lemmas occurring less than 100 times were ignored.</p>
+        * <strong><a name="news">News corpus</a></strong> (<i><a href="/static/models/news.model.bin.gz">download model</a>, 524 MBytes</i>) <strong>news</strong>
+        <p>Trained on news stream from 1500 primarily Russian-language news sites (15 million documents in total, dated from September 2013 to October 2015). Corpus size is <strong>2 439 237 751 tokens</strong>. The model knows <strong>147 358 different lemmas</strong>; lemmas occurring less than 200 times were ignored.</p>
         <p>Trained using Continuous Skip-Gram algorithm. Largest corpora, but with the highest frequency threshold!</p>
         <p>Vector dimensionality was set to 1000, window size 20.</p>
         </td></tr>
-        <tr><td>
-        * <strong>Russian Wikipedia</strong> (disabled as of now, because of poor quality)
-        <p style="color:#888;">Trained on all pages of <a href="https://ru.wikipedia.org">Russian Wikipedia segment</a>. Corpus size is <strong>172 626 002 tokens</strong>. The model knows <strong>1 016 238 different lemmas</strong>; lemmas occurring only once were ignored.</p>
-        <p style="color:#888;">Vector dimensionality was set to 300, window size 2.</p>
-        </td></tr>
         </table>
-        <i>Prior to training, all the corpora were tokenized, split into sentences, lemmatized and PoS-tagged. Stop words (conjunctions, pronouns, prepositions, particles, etc) were removed. For large corpora, models were intentionally trained on top-frequency words only, as otherwise model size would not be feasible for a web service.</i>
+        <i>Prior to training, all the corpora were tokenized, split into sentences, lemmatized and PoS-tagged using <a href="https://tech.yandex.ru/mystem/">Mystem</a>. Stop words (conjunctions, pronouns, prepositions, particles, etc) were removed. For large corpora, models were intentionally trained on top-frequency words only, as otherwise model size would not be feasible for a web service.</i>
 {% endblock %}

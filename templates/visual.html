@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{%- block title %}
+     <title>RusVectōrēs: {{strings['visual1']}}</title>
+ {%- endblock title %}
+
+
+
 {% block content %}
 
         <h1>{{strings['visual1']}}</h1>
@@ -29,13 +35,13 @@
             </form>
       {% if visual %}
 	<h3>{{strings['visual3']}}<sup>*</sup></h3>
-	{% for word in words%}
+	{% for word in words %}
 	<a href="{{request.script_root}}/{{lang}}/{{ visual.keys()[0] }}/{{word}}">{{ word.split('_')[0] }}</a>
 	{% endfor %}
         <div class="row">
         {% for model in visual %}
         <div class="col-md-4">
-        <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ model }}</a></strong></h3>
+        <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
         {% if not 'Too few words' in visual[model] %}
 	<a href="/dsm/static/tsneplots/{{ visual[model] }}" target="_blank"><img src = "/dsm/static/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}" width="400"></a>
 	{% else %}
@@ -53,12 +59,25 @@
 	
          {% endfor %}
          </div>
+    {% else %}
+    <h2>{{strings['visual20']}}<sup>*</sup></h2>
+    <div class="row">
+    <div class="col-md-5">
+    <h3>{{strings['visual18']}}</h3>
+    <a href="/dsm/static/ruscorpora_nouns_tsne.png" target = "_blank"><img src = "/dsm/static/ruscorpora_nouns_tsne_thumb.png" alt = "{{strings['visual19']}}" title = "{{strings['visual19']}}"></a>
+    </div>
+    <div class="col-md-5">
+    <h3>{{strings['visual21']}}</h3>
+    <a href="/dsm/static/news_nouns_tsne.png" target = "_blank"><img src = "/dsm/static/news_nouns_tsne_thumb.png" alt = "{{strings['visual19']}}" title = "{{strings['visual19']}}"></a>
+    </div>
+    </div>
+    {% endif %}
+
 
 	<hr/>
 	<p><small><i>* <a href="https://lvdmaaten.github.io/tsne/"><b>t-SNE</b></a> {{strings['visual5']}}</i></small></p>
 	<p><small><i>L.J.P. van der Maaten and G.E. Hinton. <a href="https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf">Visualizing High-Dimensional Data Using t-SNE</a>. Journal of Machine Learning Research 9(Nov):2579-2605, 2008</i></small></p>
 
-{% endif %}
 	{% if error %}
 	<p> <span style = "font-size:larger;"><strong>{{ error }}</strong></span><p>
 	{% endif %}

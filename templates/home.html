@@ -16,7 +16,7 @@
       <button type="submit" class="btn btn-primary" name="list_query" value = "Produce a list of quazy-synonyms">{{strings['home3']}}</button>
             </form>
       {% if list_value %}
-        <h3><strong>{{strings['home4']}} <i><a href="/{{request.script_root}}/{{lang}}/{{ model }}/{{ word }}/">{{ word.split("_")[0] }}</a></i> ({{strings['home5']}} <a href="/{{request.script_root}}/{{lang}}/models#{{model}}">{{ model}}</a>)</strong></h3>
+        <h3><strong>{{strings['home4']}} <i><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ word }}/">{{ word.split("_")[0] }}</a></i> ({{strings['home5']}} <a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ model}}</a>)</strong></h3>
         <big>
         <ol>
         {% for res in list_value if not "unknown to the model" in list_value and res[0] != "No results" and res != "Incorrect PoS!"  %}
@@ -36,13 +36,22 @@
         {% for res in list_value if res == "Incorrect PoS!"  %}
         <big><strong>{{ res }}</strong></big>
         {% endfor %}
-        
-        
-        {% endif %}
-        
-     {% if error %}
+    {% elif error %}
      <big><strong>
      <p>{{ error }}</p>
     </strong></big>
-     {% endif %}
+    {% else %}
+    <h3>{{strings['home6']}} <a href="/dsm/static/rss.xml"><img src="/static/rss.png" width="25" alt = "RSS" title = "RSS"></a></h3>
+    <ul>
+    <li>{{strings['home11']}}</li>
+    <li>{{strings['home10']}}</li>
+    <li>{{strings['home7']}}</li>
+    <li>{{strings['home8']}}</li>
+    <li>{{strings['home9']}}</li>
+    </ul>
+
+    
+    {% endif %}
+        
+     
 {% endblock %}

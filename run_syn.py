@@ -1,3 +1,5 @@
+#!/usr/bin/python2
+# coding: utf-8
 from flask import Flask, request, url_for
 from synonyms_main import *
 from lang_converter import LangConverter

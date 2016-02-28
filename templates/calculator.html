@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+
+{%- block title %}
+     <title>RusVectōrēs: {{strings['calc1']}}</title>
+ {%- endblock title %}
+
+
 {% block content %}
 
  <script>
@@ -16,30 +22,32 @@
         </script>
 
         <h1>{{strings['calc1']}}</h1>
+            <div class="row">
+                <div class="col-md-6">
               <form method=post>
               <div class="form-group">
                 <p>{{strings['calc4']}}
 		<div class = "row">
 		<div class = "col-md-5">
-		<input type="text" class="form-control" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="мать"{% endif %} maxlength=100><center><img src = "/static/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}"></center><input type="text" class="form-control" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="дочь"{% endif %} maxlength=100>
+		<input type="text" class="form-control" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="самолет"{% endif %} maxlength=100><img style="margin:0px auto;display:block" src = "/static/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}"><input type="text" class="form-control" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="крыло"{% endif %} maxlength=100>
 		</div>
 		<div class = "col-md-5">
 
-		<input type="text" class="form-control" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} placeholder="отец"{% endif %} maxlength=100><center><img src = "/static/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}"></center>
+		<input type="text" class="form-control" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} placeholder="машина"{% endif %} maxlength=100><img style="margin:0px auto;display:block" src = "/static/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
 		<p style = "text-align:center;"><strong>???</strong></p>
 		</div>
 		</div>
               </div>
-        {% if calc_value %}
+        {% if analogy_value %}
         <div class = "row">
 
-	{% for model in calc_value %}
-	    <div class = "col-md-4">
+	{% for model in analogy_value %}
+	    <div class = "col-md-5">
     	    <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect PoS!" and not 'does not know' in res %}
+    	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect PoS!" and not 'does not know' in res %}
     		<li>
     		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
     		</li>
@@ -47,7 +55,7 @@
         
     	    </ol></span>
         
-    	    {% for res in calc_value[model] if res == "No similar words of this part of speech." or res  == "Incorrect PoS!" or 'does not know' in res %}
+    	    {% for res in analogy_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect PoS!" or 'does not know' in res or 'No results' in res %}
     		<strong>{{ res.decode('utf-8') }}</strong>
     	    {% endfor %}
         </div>
@@ -94,4 +102,81 @@
 
               <button type="submit" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
             </form>
+                    </div>
+                <div class="col-md-6">
+                    <form method=post>
+                        <div class="form-group">
+                            <p>{{strings['calc32']}}</p>
+                            <p>{{strings['calc3']}}</p>
+                            {% if plist2 %}
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" value="{{ ' '.join(plist2) }}" maxlength=300>
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" value="{{ ' '.join(nlist2) }}" maxlength=300>
+                            {% else %}
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="компьютер маленький" maxlength=300>
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" maxlength=300>
+                            {% endif %}
+                        </div>
+        {% if calc_value %}
+        <div class = "row">
+	{% for model in calc_value %}
+	    <div class = "col-md-5">
+    	    <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
+    	    <span style = "font-size:larger;">
+    	    <ol>
+        
+    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect PoS!" and not 'does not know' in res %}
+    		<li>
+    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
+    		</li>
+    	    {% endfor %}
+        
+    	    </ol></span>
+        
+    	    {% for res in calc_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect PoS!" or 'does not know' in res or 'No results' in res %}
+    		<strong>{{ res.decode('utf-8') }}</strong>
+    	    {% endfor %}
+        </div>
+	{% endfor %}
+	</div>
+    {% endif %}
+    
+                        {% if calc_error %}
+                        <p> <span style = "font-size:larger;"><strong>{{ calc_error }}</strong></span><p>
+                        {% endif %}
+                        <div class="checkbox">
+                  <p><small><em>{{strings['calc6']}}</em></small></p>
+                  <fieldset>
+                      <small>
+                        {% for m in models %}
+                      <label>
+                          <input type="checkbox" name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
+                      </label>
+                      {% endfor %}
+                      </small>
+                  </fieldset>
+              </div>
+                        <p><small><em>{{strings['calc12']}}</em></small></p>
+                        <div class="radio">
+                            <small>
+                                <label>
+                                    <input type="radio" name="calcpos" value="S"> {{strings['calc13']}}
+                                </label>
+                                <label>
+                                    <input type="radio" name="calcpos" value="V"> {{strings['calc14']}}
+                                </label>
+                                <label>
+                                    <input type="radio" name="calcpos" value="ADV"> {{strings['calc15']}}
+                                </label>
+                                <label>
+                                    <input type="radio" name="calcpos" value="A"> {{strings['calc16']}}
+                                </label>
+                                <label>
+                                    <input type="radio" name="calcpos" value="ALL" checked> {{strings['calc17']}}
+                                </label>
+                            </small>
+                        </div>
+                        <button type="submit" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
+                    </form>
+                </div>
+            </div>
 {% endblock %}

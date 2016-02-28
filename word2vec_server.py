@@ -1,16 +1,18 @@
-#!/usr/local/python/bin/python2.7
+#!/usr/bin/python2
 # coding: utf-8
 
+# This script launches a service which loads word2vec models and responds to socket queries (port defined below).
 
 import socket
 import sys, datetime
 from thread import *
 import sys, gensim, logging
 
+root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectores resides
+HOST = 'localhost'  # Symbolic name meaning all available interfaces
+PORT = 12666  # Arbitrary non-privileged port
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
-root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
-
 
 # Loading models
 
@@ -39,11 +41,11 @@ def find_synonyms(query):
     results = []
     qf = q
     model = models_dic[usermodel]
-    if not q in model:
+    if not qf in model:
         candidates_set = set()
         candidates_set.add(q.split('_')[0] + '_UNKN')
         candidates_set.add(q.upper())
-        candidates_set.add(q.lower())
+        candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
         candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         noresults = True
         for candidate in candidates_set:
@@ -56,10 +58,7 @@ def find_synonyms(query):
             return results
     if pos == 'ALL':
         for i in model.most_similar(positive=qf, topn=10):
-            # if i[0].replace('_','').replace('-','').isalpha():
             results.append(i[0] + "#" + str(i[1]))
-            #if len(results) == 10:
-        # break
     else:
         counter = 0
         for i in model.most_similar(positive=qf, topn=20):
@@ -98,8 +97,6 @@ def find_similarity(query):
                     break
             if noresults == True:
                 return ["The model does not know the word %s" % q1]
-                # results.append(q1+" is unknown to the model")
-                #return results
         if not q2 in model:
             candidates_set = set()
             candidates_set.add(q2.split('_')[0] + '_UNKN')
@@ -114,8 +111,6 @@ def find_similarity(query):
                     break
             if noresults == True:
                 return ["The model does not know the word %s" % q2]
-                # results.append(q2+" is unknown to the model")
-                #return results
         pair2 = (qf1, qf2)
         result = model.similarity(qf1, qf2)
         results.append('#'.join(pair2) + "#" + str(result))
@@ -176,11 +171,13 @@ def scalculator(query):
         for w in model.most_similar(positive=plist, negative=nlist, topn=5):
             results.append(w[0] + "#" + str(w[1]))
     else:
-        for w in model.most_similar(positive=plist, negative=nlist, topn=20):
+        for w in model.most_similar(positive=plist, negative=nlist, topn=30):
             if w[0].split('_')[-1] == pos:
                 results.append(w[0] + "#" + str(w[1]))
             if len(results) == 5:
                 break
+	if len(results) == 0:
+	    results.append("No results")
     return results
 
 
@@ -209,9 +206,6 @@ def vector(query):
 
 
 operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': vector}
-
-HOST = 'localhost'  # Symbolic name meaning all available interfaces
-PORT = 12666  # Arbitrary non-privileged port
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print 'Socket created'

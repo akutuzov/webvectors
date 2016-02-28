@@ -1,11 +1,12 @@
 #!/usr/bin/python2
 # coding: utf-8
 
+# Module to download images for words from DBPedia.
+
 from SPARQLWrapper import SPARQLWrapper, JSON
 import codecs
 
-root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
-
+root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectores resides
 
 def getdbpediaimage(query):
     query = query.decode('utf-8')

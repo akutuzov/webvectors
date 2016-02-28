@@ -1,19 +1,21 @@
-#!/bin/python
+#!/usr/bin/python2
 # coding: utf-8
+
+# Module to draw visualizations.
+
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use('Agg')
 import pylab as Plot
 import numpy as np
-import matplotlib.font_manager as font_manager
+from matplotlib import font_manager
 
-path = '/home/sites/ling.go.mail.ru/static/fonts/google-droid/DroidSans-Bold.ttf'
+path = 'PATH TO YOUR FAVOURITE TTF FONT' # If you do not want to use the default font, define your own here.
 font = font_manager.FontProperties(fname=path)
 from tsne import tsne
 import hashlib
 
-root = '/home/sites/ling.go.mail.ru/quazy-synonyms/'
-
+root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectores resides
 
 def singularplot(word, modelname, vector):
     xlocations = np.array(range(len(vector)))
