@@ -8,7 +8,7 @@ import sys, datetime
 from thread import *
 import sys, gensim, logging
 
-root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectores resides
+root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectors resides
 HOST = 'localhost'  # Symbolic name meaning all available interfaces
 PORT = 12666  # Arbitrary non-privileged port
 
