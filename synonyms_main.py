@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # This is the main WebVectors code.
-# This script defines the behavior of all web pages and queries word2vec service (word2vec_service.py).
+# This script defines the behavior of all web pages and queries word2vec service (word2vec_server.py).
 
 import codecs, logging, urllib, hashlib, os, sys
 
