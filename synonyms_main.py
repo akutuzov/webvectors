@@ -552,29 +552,34 @@ def api(model, word):
     model = model.strip()
 
     def generate(word, model):
-        if word.strip().replace('_', '').replace('-', '').isalnum():
+        if not word.strip().replace('_', '').replace('-', '').isalnum():
+            yield query.strip() + '\t' + model.strip() + '\t' + 'Word error!'
+        else:
             query = process_query(word.strip())
         if len(query.split('_')) < 2 or not model.strip() in our_models:
             yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
         else:
-            #pos_tag = query.split('_')[-1]
-            message = "1;" + query + ";" + 'ALL' + ";" + model
-            result = serverquery(message)
-            associates_list = []
-            if "unknown to the" in result or "No results" in result:
-                yield query + '\t' + result.decode('utf-8')
+            if not model.strip() in our_models:
+                yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
             else:
-                output = result.split('&')
-                associates = output[0]
-                if len(associates) > 1:
-                    vector = ','.join(output[1:])
-                for word in associates.split():
-                    w = word.split("#")
-                    associates_list.append((w[0].decode('utf-8'), float(w[1])))
-                yield model + '\n'
-                yield query + '\n'
-                for associate in associates_list:
-                    yield associate[0] + '\t' + str(associate[1]) + '\n'
+                #pos_tag = query.split('_')[-1]
+                message = "1;" + query + ";" + 'ALL' + ";" + model
+                result = serverquery(message)
+                associates_list = []
+                if "unknown to the" in result or "No results" in result:
+                    yield query + '\t' + result.decode('utf-8')
+                else:
+                    output = result.split('&')
+                    associates = output[0]
+                    if len(associates) > 1:
+                        vector = ','.join(output[1:])
+                    for word in associates.split():
+                        w = word.split("#")
+                        associates_list.append((w[0].decode('utf-8'), float(w[1])))
+                    yield model + '\n'
+                    yield query + '\n'
+                    for associate in associates_list:
+                        yield associate[0] + '\t' + str(associate[1]) + '\n'
 
     return Response(generate(word, model), mimetype='text/csv',
                     headers={"Content-Disposition": "attachment;filename=%s.csv" % word.encode('utf-8')})
