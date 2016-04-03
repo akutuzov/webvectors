@@ -4,7 +4,7 @@
 # This is the main WebVectors code.
 # This script defines the behavior of all web pages and queries word2vec service (word2vec_server.py).
 
-import codecs, logging, urllib, hashlib, os, sys
+import codecs, logging, urllib, hashlib, os, sys, json
 
 from flask import render_template, Blueprint, redirect, Response
 from flask import request, url_for
@@ -14,6 +14,7 @@ import numpy as np
 from lemmatizer import freeling_lemmatizer
 from flask import g
 import hashlib
+from collections import OrderedDict
 
 from plot import singularplot
 from plot import embed
@@ -547,17 +548,23 @@ def raw_finder(lang, model, userquery):
     return render_template("synonyms_raw.html")
 
 
-@synonyms.route('/<model>/<word>/api', methods=['GET'])
-def api(model, word):
+@synonyms.route('/<model>/<word>/api/<format>', methods=['GET'])
+def api_csv(model, word, format):
     model = model.strip()
+    if format == 'csv':
+        mime = 'text/csv'
+    else:
+        mime = 'application/json'
 
-    def generate(word, model):
+    def generate(word, model, format):
         if not word.strip().replace('_', '').replace('-', '').isalnum():
             yield query.strip() + '\t' + model.strip() + '\t' + 'Word error!'
         else:
             query = process_query(word.strip())
         if len(query.split('_')) < 2 or not model.strip() in our_models:
             yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
+        elif format != 'csv' and format != 'json':
+            yield format + '\t' + 'Output format error!'
         else:
             if not model.strip() in our_models:
                 yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
@@ -576,12 +583,19 @@ def api(model, word):
                     for word in associates.split():
                         w = word.split("#")
                         associates_list.append((w[0].decode('utf-8'), float(w[1])))
-                    yield model + '\n'
-                    yield query + '\n'
-                    for associate in associates_list:
-                        yield associate[0] + '\t' + str(associate[1]) + '\n'
+                    if format == 'csv':
+                        yield model + '\n'
+                        yield query + '\n'
+                        for associate in associates_list:
+                            yield associate[0] + '\t' + str(associate[1]) + '\n'
+                    elif format == 'json':
+                        associates = OrderedDict()
+                        for associate in associates_list:
+                            associates[associate[0]] = associate[1]
+                        result = {model: {query: associates}}
+                        yield json.dumps(result, ensure_ascii=False)
 
-    return Response(generate(word, model), mimetype='text/csv',
+    return Response(generate(word, model), mimetype=mime,
                     headers={"Content-Disposition": "attachment;filename=%s.csv" % word.encode('utf-8')})
 
 
