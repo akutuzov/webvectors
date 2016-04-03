@@ -549,7 +549,7 @@ def raw_finder(lang, model, userquery):
 
 
 @synonyms.route('/<model>/<word>/api/<format>', methods=['GET'])
-def api_csv(model, word, format):
+def api(model, word, format):
     model = model.strip()
     if format == 'csv':
         mime = 'text/csv'
