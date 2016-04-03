@@ -108,15 +108,15 @@ def process_query(userquery):
     return query
 
 
-def download_corpus(url, urlhash, algo, vectorsize, windowsize):
-    print url
-    if url.endswith('/'):
-        url = url[:-1]
-    fname = urlhash + '__' + algo + '__' + str(vectorsize) + '__' + str(windowsize) + '.gz'
-    a = urllib.urlretrieve(url.strip(), root+'/tmp/' + fname)
-    x = root+'/tmp/' + fname.split('__')[0]
-    open(x, 'a').close()
-    return a
+#def download_corpus(url, urlhash, algo, vectorsize, windowsize):
+#    print url
+#    if url.endswith('/'):
+#        url = url[:-1]
+#    fname = urlhash + '__' + algo + '__' + str(vectorsize) + '__' + str(windowsize) + '.gz'
+#    a = urllib.urlretrieve(url.strip(), root+'/tmp/' + fname)
+#    x = root+'/tmp/' + fname.split('__')[0]
+#    open(x, 'a').close()
+#    return a
 
 
 # Start defining functions for particular pages...
@@ -167,48 +167,48 @@ def home(lang):
     return render_template('home.html')
 
 
-@synonyms.route('/<lang:lang>/upload', methods=['GET', 'POST'])
-def upload_page(lang):
-    g.lang = lang
-    g.strings = language_dicts[lang]
+#@synonyms.route('/<lang:lang>/upload', methods=['GET', 'POST'])
+#def upload_page(lang):
+#    g.lang = lang
+#    g.strings = language_dicts[lang]
+#
+#    if request.method == 'POST':
+#        corpus_url = "dummy"
+#        try:
+#            corpus_url = request.form['training_corpus_url']
+#            vectorsize = request.form['vectorsize']
+#            algo = request.form['algo']
+#            windowsize = request.form['windowsize']
+#        except:
+#            pass
+#        if corpus_url != "dummy" and corpus_url.endswith('gz'):
+#            m = hashlib.md5()
+#            m.update(corpus_url)
+#            urlhash = m.hexdigest()
+#
+#            @after_this_request
+#            def train(response):
+#                download_corpus(corpus_url, urlhash, algo, vectorsize, windowsize)
+#                return response
+#
+#            return render_template('upload.html', url=corpus_url, hash=urlhash)
+#
+#    return render_template('upload.html')
 
-    if request.method == 'POST':
-        corpus_url = "dummy"
-        try:
-            corpus_url = request.form['training_corpus_url']
-            vectorsize = request.form['vectorsize']
-            algo = request.form['algo']
-            windowsize = request.form['windowsize']
-        except:
-            pass
-        if corpus_url != "dummy" and corpus_url.endswith('gz'):
-            m = hashlib.md5()
-            m.update(corpus_url)
-            urlhash = m.hexdigest()
 
-            @after_this_request
-            def train(response):
-                download_corpus(corpus_url, urlhash, algo, vectorsize, windowsize)
-                return response
-
-            return render_template('upload.html', url=corpus_url, hash=urlhash)
-
-    return render_template('upload.html')
-
-
-@synonyms.route('/<lang:lang>/usermodel/<hash>')
-def usermodel_page(lang, hash):
-    g.lang = lang
-    g.strings = language_dicts[lang]
-
-    modelfilename = hash.strip() + '.model'
-    if os.path.isfile(root+'/static/models/' + modelfilename):
-        return render_template('usermodel.html', model=modelfilename)
-    elif os.path.isfile(root+'/training/' + hash + '.gz.training') or os.path.isfile(
-                    root+'/tmp/' + hash):
-        return render_template('usermodel.html', queue=hash)
-
-    return render_template('usermodel.html')
+#@synonyms.route('/<lang:lang>/usermodel/<hash>')
+#def usermodel_page(lang, hash):
+#    g.lang = lang
+#    g.strings = language_dicts[lang]
+#
+#    modelfilename = hash.strip() + '.model'
+#    if os.path.isfile(root+'/static/models/' + modelfilename):
+#        return render_template('usermodel.html', model=modelfilename)
+#    elif os.path.isfile(root+'/training/' + hash + '.gz.training') or os.path.isfile(
+#                    root+'/tmp/' + hash):
+#        return render_template('usermodel.html', queue=hash)
+#
+#    return render_template('usermodel.html')
 
 
 @synonyms.route('/<lang:lang>/similar', methods=['GET', 'POST'])
@@ -644,6 +644,6 @@ def about_page(lang):
 def redirect_main():
     return redirect(request.script_root + '/en' + request.path)
 
-@synonyms.route('/usermodel/<hash>', methods=['GET', 'POST'])
-def redirect_usermodel(hash):
-    return redirect(request.script_root + '/en' + request.path)
+#@synonyms.route('/usermodel/<hash>', methods=['GET', 'POST'])
+#def redirect_usermodel(hash):
+#    return redirect(request.script_root + '/en' + request.path)
