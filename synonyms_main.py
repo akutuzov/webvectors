@@ -595,8 +595,9 @@ def api_csv(model, word, format):
                         result = {model: {query: associates}}
                         yield json.dumps(result, ensure_ascii=False)
 
-    return Response(generate(word, model), mimetype=mime,
-                    headers={"Content-Disposition": "attachment;filename=%s.csv" % word.encode('utf-8')})
+    return Response(generate(word, model, format), mimetype=mime,
+                    headers={"Content-Disposition": "attachment;filename=%s.%s" % (word.encode('utf-8'),
+                                                                                   format.encode('utf-8'))})
 
 
 @synonyms.route('/<lang:lang>/publications')
