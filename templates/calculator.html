@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {%- block title %}
-     <title>WebVectors: {{strings['calc1']}}</title>
+     <title>RusVectōrēs: {{strings['calc1']}}</title>
  {%- endblock title %}
 
 
@@ -47,7 +47,7 @@
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect PoS!" and not 'does not know' in res %}
+    	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
     		<li>
     		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
     		</li>
@@ -55,7 +55,7 @@
         
     	    </ol></span>
         
-    	    {% for res in analogy_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect PoS!" or 'does not know' in res or 'No results' in res %}
+    	    {% for res in analogy_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect tag!" or 'does not know' in res or 'No results' in res %}
     		<strong>{{ res.decode('utf-8') }}</strong>
     	    {% endfor %}
         </div>
@@ -124,7 +124,7 @@
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect PoS!" and not 'does not know' in res %}
+    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
     		<li>
     		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
     		</li>
@@ -132,7 +132,7 @@
         
     	    </ol></span>
         
-    	    {% for res in calc_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect PoS!" or 'does not know' in res or 'No results' in res %}
+    	    {% for res in calc_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect tag!" or 'does not know' in res or 'No results' in res %}
     		<strong>{{ res.decode('utf-8') }}</strong>
     	    {% endfor %}
         </div>

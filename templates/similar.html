@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {%- block title %}
-     <title>WebVectors: {{strings['similar1']}}</title>
+     <title>RusVectōrēs: {{strings['similar1']}}</title>
 {%- endblock title %}
          
 
@@ -68,7 +68,7 @@
         {{ strings['similar18'] }} "{{ word.split('_')[0] }}"</big>
 	{% else %}
         <ol>
-        {% for res in list_value[model] if not "No results" in res and res != "Incorrect PoS!" %}
+        {% for res in list_value[model] if not "No results" in res and res != "Incorrect tag!" %}
         <li>
         <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
         </li>
@@ -83,7 +83,7 @@
         {% endif %}
         {% endfor %}
 
-        {% for res in list_value[model] if res == "Incorrect PoS!"  %}
+        {% for res in list_value[model] if res == "Incorrect tag!"  %}
         <big><strong>{{ res }}</strong></big>
         {% endfor %}
 
@@ -110,7 +110,7 @@
                 {% if query %}
                 <input type="text" class="form-control" name="query" value="{% for res in value if not "unknown to the model" in res  %}{{' '.join(res[:-1])+','}}{% endfor %}" maxlength=300>
                 {% else %}
-                <input type="text" class="form-control" name="query" placeholder="movie film,city town" maxlength=300>
+                <input type="text" class="form-control" name="query" placeholder="цветок роза, цветок камень" maxlength=300>
                 {% endif %}
               </div>
               <div class="radio">
@@ -131,10 +131,10 @@
             <span style = "font-size:larger;">
             <table class="table"><tr>
             <td><strong>{{strings['calc29']}}</strong></td><td><strong>{{strings['calc30']}}</strong><br/>(<a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
-            {% for res in value if not "unknown to the model" in res and not "Incorrect PoS!" in res  %}
+            {% for res in value if not "unknown to the model" in res and not "Incorrect tag!" in res  %}
             <tr><td style="vertical-align:top"><em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0]}}</a></em> <em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.5f} ".format(res[2]) }}</td></tr>
             {% endfor %}
-            {% for res in value if "unknown to the model" in res or "Incorrect PoS!" in res  %}
+            {% for res in value if "unknown to the model" in res or "Incorrect tag!" in res  %}
             <tr><td style="vertical-align:top"><em>{{res}}</em></td> <td></td></tr>
             {% endfor %}
             </table>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {%- block title %}
-     <title>WebVectors: About</title>
+     <title>RusVectōrēs: About</title>
  {%- endblock title %}
 
 
@@ -8,14 +8,14 @@
 {% block content %}
         <h1>About</h1>
 <p>This service computes semantic relations between words in Russian. It is named after <a href="http://ruscorpora.ru/en">RusCorpora</a>, the site for Russian National Corpus. They provide access to corpora, we provide access to semantic vectors (<i>vectōrēs</i> in Latin). These vectors reflect meaning based on word co-occurrence <strong>distribution</strong> in the training corpus (huge amounts of raw linguistic data).</p>
-<blockquote><p>In <a href="https://en.wikipedia.org/wiki/Distributional_semantics">distributional semantics</a>, words are usually represented as vectors in a multi-dimensional space of their contexts. Semantic similarity between two words is then trivially calculated as a <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a> between their corresponding vectors; it takes values between 0 and 1. <strong>0</strong> value means the words lack similar contexts, and thus their meanings are unrelated to each other. <strong>1</strong> value means that the words' contexts are absolutely identical, and thus their meaning is very similar.</p></blockquote>
+<blockquote><p>In <a href="https://en.wikipedia.org/wiki/Distributional_semantics">distributional semantics</a>, words are usually represented as vectors in a multi-dimensional space of their contexts. Semantic similarity between two words is then trivially calculated as a <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a> between their corresponding vectors; it takes values between -1 and 1 (usually only values above 0 are used in practical tasks). <strong>0</strong> value roughly means the words lack similar contexts, and thus their meanings are unrelated to each other. <strong>1</strong> value means that the words' contexts are absolutely identical, and thus their meaning is very similar.</p></blockquote>
 <p>Recently, distributional semantics received a substantially growing attention. The main reason for this is a very promising approach of employing artificial neural networks to learn hiqh-quality dense vectors (<strong>embeddings</strong>), using the so-called <strong>predictive models</strong>. The most well-known tool in this field now is possibly <i><a href="https://code.google.com/p/word2vec/">word2vec</a></i>, which allows very fast training, compared to previous approaches.</p>
 
 <p><i>Word2vec</i>'s Skipgram and CBOW algorithms (and other similar methods) are being extensively studied and tested in application to English language. However, for Russian the surface is barely scratched. Thus, it is important to provide access to relevant tools and models for Russian linguistic community.</p>
-<p>Unfortunately, training and querying neural embedding models for large corpora can be computationally expensive. Thus, we provide ready-made models trained on several Russian corpora, and a convenient web interface to query them. You can also download the models to process them on your own. Moreover, our web service features a bunch of (hopefully) useful visualizations for semantic relations between words. In general, the reason behind <i>WebVectors</i> is to lower the entry threshold for those who want to work in this new and exciting field.</p>
+<p>Unfortunately, training and querying neural embedding models for large corpora can be computationally expensive. Thus, we provide ready-made models trained on several Russian corpora, and a convenient web interface to query them. You can also download the models to process them on your own. Moreover, our web service features a bunch of (hopefully) useful visualizations for semantic relations between words. In general, the reason behind <i>RusVectōrēs</i> is to lower the entry threshold for those who want to work in this new and exciting field.</p>
 
-<h2>What <i>WebVectors</i> can do?</h2>
-<p><i>WebVectors</i> is basically a tool to explore relations between words in distributional models. You can think about it as a kind of <strong>`semantic calculator'</strong>. A user can choose one or several models to work with: currently we provide <a href="#models">four models</a> trained on different corpora (some of them have won top-ranking positions in the <a href="http://russe.nlpub.ru/">RUSSE evaluation track</a>). The models contain from 150K to 600K lemmas each.</p>
+<h2>What <i>RusVectōrēs</i> can do?</h2>
+<p><i>RusVectōrēs</i> is basically a tool to explore relations between words in distributional models. You can think about it as a kind of <strong>`semantic calculator'</strong>. A user can choose one or several models to work with: currently we provide <a href="#models">four models</a> trained on different corpora (some of them have won top-ranking positions in the <a href="http://russe.nlpub.ru/">RUSSE evaluation track</a>). The models contain from 150K to 600K lemmas each.</p>
 <p>After choosing a model, it is possible to:</p>
 <ol>
 <li><a href="/dsm/{{lang}}/similar">calculate semantic similarity</a> between pairs of words;</li>
@@ -26,12 +26,12 @@
 <li><a href="/dsm/{{lang}}/similar">get the raw vectors (arrays of real values) and their visualizations for words in the chosen model</a>: just click on any word anywhere, or use a direct URI to the word of interest, as described below.</li>
 </ol>
 <blockquote><p>In the spirit of Semantic Web, each word in each model has its own unique URI explicitly stating lemma, model and part of speech (for example, <a href="/dsm/{{lang}}/news/кризисный_A">http://ling.go.mail.ru/dsm/en/news/кризисный_A</a>). Web pages at these URIs contain lists of the nearest semantic associates for the corresponding word, belonging to the same PoS as the word itself. Other information about the word is also shown.</p>
-<p>We also provide a simple API to get the list of semantic associate for a given word in a given model. Perform GET requests to URLs following the pattern <i>http://ling.go.mail.ru/dsm/MODEL/WORD/api</i> where MODEL is the <a href="#models">identifier</a> for the chosen model and WORD is the query word. We will return a tab-separated text file with the first 10 associates.</p>
+<p>We also provide a simple API to get the list of semantic associate for a given word in a given model. There are two possible formats: json and csv. Perform GET requests to URLs following the pattern <i>http://ling.go.mail.ru/dsm/MODEL/WORD/api/FORMAT</i> where MODEL is the <a href="#models">identifier</a> for the chosen model, WORD is the query word and FORMAT is "csv" or "json", depending on the output format you need. We will return a json file or a tab-separated text file with the first 10 associates.</p>
 </blockquote>
 <p>We recommend to experiment with algebraic operations on vectors, as they return interesting results. For example, the model trained on Russian Wikipedia and Russian National Corpus returns <span style="color:green;"><i>быт</i></span> if we subtract <span style="color:green;"><i>смысл</i></span> from <span style="color:green;"><i>жизнь</i></span>. This may sound like something not very practical, but the existing research in English models has already proved that such relationships can be useful for many applications including machine translation.</p>
 <p>Naturally, one can compare results from different models on one screen. In order not to limit the users with the models of our choice, there is the possibility to <a href="/dsm/{{lang}}/upload">use one's own corpus</a>. The server will train a neural embedding model on it with user-defined settings.</p>
 
-<p>We would like <i>WebVectors</i> to become a hub of scholarly knowledge about neural semantic models for Russian, that's why there is a <a href="#publications">section with published academic papers and links to other relevant resources</a>. At the same time, we hope that <i>WebVectors</i> will also popularize distributional semantics and computational linguistics, making it more understandable and attractive to the Russian-speaking public.</p>
+<p>We would like <i>RusVectōrēs</i> to become a hub of scholarly knowledge about neural semantic models for Russian, that's why there is a <a href="#publications">section with published academic papers and links to other relevant resources</a>. At the same time, we hope that <i>RusVectōrēs</i> will also popularize distributional semantics and computational linguistics, making it more understandable and attractive to the Russian-speaking public.</p>
 
         <h1><a name="publications"></a>Publications</h1>
         <p class="lead">If you are interested in distributional semantic models, you should really check these publications (in the chronological order):</p>
@@ -59,5 +59,33 @@
 
         <h1><a name="models"></a>Models</h1>
         <p>As of now, you can choose from the following models:</p>
+    <table class="table">
+        <tr><td>
+        * <strong><a name="ruscorpora">Russian national corpus</a></strong> (<i><a href="/static/models/ruscorpora.model.bin.gz">download model</a>, 302 Mb</i>) <strong>ruscorpora</strong>
+        <p>Trained on full <a href="http://ruscorpora.ru/en">Russian national corpus</a>. Corpus size is <strong>107 561 399 tokens</strong>. The model knows <strong>281 776 different lemmas</strong>; lemmas occurring less than 3 times were ignored.</p>
+        <p>Trained using Continuous Bag-of-Words algorithm.</p>
+        <p>Vector dimensionality was set to 300, window size 2.</p>
+        </td></tr>
+        <tr><td>
+        * <strong><a name="ruwikiruscorpora">Russian national corpus and Russian Wikipedia together</a></strong> (<i><a href="/static/models/ruwikiruscorpora.model.bin.gz">download model</a>, 1.1 Gb</i>) <strong>ruwikiruscorpora</strong>
+        <p>Two corpora above were simply concatenated and the model trained on the resulting corpus. Corpus size is <strong>280 187 401 tokens</strong>. The model knows <strong>604 043 different lemmas</strong>; lemmas occurring less than 5 times were ignored.</p>
+        <p>Trained using Continuous Bag-of-Words algorithm.</p>
+        <p>Vector dimensionality was set to 500, window size 2.</p>
+        </td></tr>
+        <tr><td>
+        * <strong><a name="web">Web corpus</a></strong> (<i><a href="/static/models/web.model.bin.gz">download model</a>, 630 MBytes</i>) <strong>web</strong>
+        <p>Trained on a collection of random Russian web pages crawled in December 2014, 9 million documents in total. Corpus size is <strong>660 628 738 tokens</strong>. The model knows <strong>353 608 different lemmas</strong>; lemmas occurring less than 30 times were ignored.</p>
+        <p>Trained using Continuous Skip-Gram algorithm.</p>
+        <p>Vector dimensionality was set to 500, window size 2.</p>
+        </td></tr>
+        <tr><td>
+        * <strong><a name="news">News corpus</a></strong> (<i><a href="/static/models/news.model.bin.gz">download model</a>, 524 MBytes</i>) <strong>news</strong>
+        <p>Trained on news stream from 1500 primarily Russian-language news sites (15 million documents in total, dated from September 2013 to October 2015). Corpus size is <strong>2 439 237 751 tokens</strong>. The model knows <strong>147 358 different lemmas</strong>; lemmas occurring less than 200 times were ignored.</p>
+        <p>Trained using Continuous Skip-Gram algorithm. Largest corpora, but with the highest frequency threshold!</p>
+        <p>Vector dimensionality was set to 1000, window size 20.</p>
+        </td></tr>
+        </table>
         <i>Prior to training, all the corpora were tokenized, split into sentences, lemmatized and PoS-tagged using <a href="https://tech.yandex.ru/mystem/">Mystem</a>. Stop words (conjunctions, pronouns, prepositions, particles, etc) were removed. For large corpora, models were intentionally trained on top-frequency words only, as otherwise model size would not be feasible for a web service.</i>
+    <h1>Links</h1>
+    You can also check <a href="http://ltr.uio.no/semvec">SemanticVectors</a>, a similar service for English and Norwegian.
 {% endblock %}

@@ -1,23 +1,27 @@
-#!/usr/bin/python2
+#!/usr/local/python/bin/python2.7
 # coding: utf-8
-
-# This script launches a service which loads word2vec models and responds to socket queries (port defined below).
 
 import socket
 import sys, datetime
 from thread import *
 import sys, gensim, logging
 
-root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectors resides
-HOST = 'localhost'  # Symbolic name meaning all available interfaces
-PORT = 12666  # Arbitrary non-privileged port
+import ConfigParser
+config = ConfigParser.RawConfigParser()
+config.read('webvectors.cfg')
+
+root = config.get('Files and directories', 'root')
+HOST = config.get('Sockets', 'host')  # Symbolic name meaning all available interfaces
+PORT = config.getint('Sockets', 'port')  # Arbitrary non-privileged port
+tags = config.getboolean('Tags', 'use_tags')
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+
 
 # Loading models
 
 our_models = {}
-for line in open(root + 'models.csv', 'r').readlines():
+for line in open(root + config.get('Files and directories', 'models'), 'r').readlines():
     if line.startswith("#"):
         continue
     res = line.strip().split('\t')
@@ -32,7 +36,7 @@ for m in our_models:
     else:
         models_dic[m] = gensim.models.Word2Vec.load(our_models[m])
     models_dic[m].init_sims(replace=True)
-    print "Model", m, "from file", our_models[m], "loaded successfully."
+    print >> sys.stderr, "Model", m, "from file", our_models[m], "loaded successfully."
 
 # Vector functions
 
@@ -43,10 +47,14 @@ def find_synonyms(query):
     model = models_dic[usermodel]
     if not qf in model:
         candidates_set = set()
-        candidates_set.add(q.split('_')[0] + '_UNKN')
         candidates_set.add(q.upper())
-        candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
-        candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
+        if tags:
+	    candidates_set.add(q.split('_')[0] + '_UNKN')
+	    candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
+    	    candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
+        else:
+	    candidates_set.add(q.lower())
+    	    candidates_set.add(q.capitalize())
         noresults = True
         for candidate in candidates_set:
             if candidate in model:
@@ -85,10 +93,14 @@ def find_similarity(query):
         qf2 = q2
         if not q1 in model:
             candidates_set = set()
-            candidates_set.add(q1.split('_')[0] + '_UNKN')
             candidates_set.add(q1.upper())
-            candidates_set.add(q1.lower())
-            candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
+            if tags:
+        	candidates_set.add(q1.split('_')[0] + '_UNKN')
+        	candidates_set.add(q1.split('_')[0].lower() + '_' + q1.split('_')[1])
+        	candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
+            else:
+        	candidates_set.add(q1.lower())
+        	candidates_set.add(q1.capitalize())
             noresults = True
             for candidate in candidates_set:
                 if candidate in model:
@@ -99,10 +111,14 @@ def find_similarity(query):
                 return ["The model does not know the word %s" % q1]
         if not q2 in model:
             candidates_set = set()
-            candidates_set.add(q2.split('_')[0] + '_UNKN')
-            candidates_set.add(q2.upper())
-            candidates_set.add(q2.lower())
-            candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
+	    candidates_set.add(q2.upper())
+            if tags:
+        	candidates_set.add(q2.split('_')[0] + '_UNKN')
+        	candidates_set.add(q2.split('_')[0].lower() + '_' + q2.split('_')[1])
+        	candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
+            else:
+        	candidates_set.add(q2.lower())
+        	candidates_set.add(q2.capitalize())
             noresults = True
             for candidate in candidates_set:
                 if candidate in model:
@@ -131,10 +147,14 @@ def scalculator(query):
             continue
         elif not word in model:
             candidates_set = set()
-            candidates_set.add(word.split('_')[0] + '_UNKN')
             candidates_set.add(word.upper())
-            candidates_set.add(word.lower())
-            candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
+            if tags:
+        	candidates_set.add(word.split('_')[0] + '_UNKN')
+        	candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
+        	candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
+            else:
+        	candidates_set.add(word.lower())
+        	candidates_set.add(word.capitalize())
             noresults = True
             for candidate in candidates_set:
                 if candidate in model:
@@ -153,10 +173,14 @@ def scalculator(query):
             continue
         elif not word in model:
             candidates_set = set()
-            candidates_set.add(word.split('_')[0] + '_UNKN')
             candidates_set.add(word.upper())
-            candidates_set.add(word.lower())
-            candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
+            if tags:
+        	candidates_set.add(word.split('_')[0] + '_UNKN')
+        	candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
+        	candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
+            else:
+        	candidates_set.add(word.lower())
+        	candidates_set.add(word.capitalize())
             noresults = True
             for candidate in candidates_set:
                 if candidate in model:
@@ -187,10 +211,14 @@ def vector(query):
     model = models_dic[usermodel]
     if not q in model:
         candidates_set = set()
-        candidates_set.add(q.split('_')[0] + '_UNKN')
         candidates_set.add(q.upper())
-        candidates_set.add(q.lower())
-        candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
+        if tags:
+        	candidates_set.add(q.split('_')[0] + '_UNKN')
+        	candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
+        	candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
+        else:
+        	candidates_set.add(q.lower())
+        	candidates_set.add(q.capitalize())
         noresults = True
         for candidate in candidates_set:
             if candidate in model:
@@ -207,21 +235,22 @@ def vector(query):
 
 operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': vector}
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print 'Socket created'
-
 # Bind socket to local host and port
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print >> sys.stderr, 'Socket created'
+
 try:
     s.bind((HOST, PORT))
 except socket.error, msg:
-    print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+    print >> sys.stderr, 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
     sys.exit()
 
-print 'Socket bind complete'
+print >> sys.stderr, 'Socket bind complete'
 
 #Start listening on socket
 s.listen(100)
-print 'Socket now listening on port', PORT
+print >> sys.stderr, 'Socket now listening on port', PORT
 
 #Function for handling connections. This will be used to create threads
 def clientthread(conn, addr):
@@ -238,7 +267,7 @@ def clientthread(conn, addr):
         if not data:
             break
         now = datetime.datetime.now()
-        print now.strftime("%Y-%m-%d %H:%M"), '\t', addr[0] + ':' + str(addr[1]), '\t', data
+        print >> sys.stderr, now.strftime("%Y-%m-%d %H:%M"), '\t', addr[0] + ':' + str(addr[1]), '\t', data
         if query[0] == "1" and not 'unknown to the' in output[0] and not "No results" in output[0]:
             reply = ' '.join(output[:-1])
             vector = output[-1].tolist()
@@ -250,7 +279,6 @@ def clientthread(conn, addr):
         else:
             reply = ' '.join(output)
             conn.sendall(reply.encode('utf-8'))
-
         break
 
     #came out of loop

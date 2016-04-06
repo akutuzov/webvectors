@@ -1,4 +1,2 @@
-ruscorpora	Russian National Corpus	ROOT/models/ruscorpora_mean_hs.model.bin.gz	similar4
-ruwikiruscorpora	Russian National Corpus and Russian Wikipedia	ROOT/models/ruwikiruscorpora.model	similar6
-web	Web corpus	ROOT/models/web.model	similar7
-news	News corpus	ROOT/models/news20.model.bin.gz	similar8
+ruscorpora	Russian National Corpus	models/ruscorpora_mean_hs.model.bin.gz	similar4	False
+news	News corpus	models/news.model.bin.gz	similar8	True

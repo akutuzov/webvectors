@@ -28,14 +28,14 @@
         </li>
         {% endfor %}
         </ol>
-        {% for res in list_value if "unknown to the model" in res or res[0] == "No results" or res == "Incorrect PoS!" %}
+        {% for res in list_value if "unknown to the model" in res or res[0] == "No results" or res == "Incorrect tag!" %}
         {% if res[0] == "No results" %}
         <span style = "font-size:larger;"><strong>{{ res[0] }}</strong></span>
         {% else %}
         <span style = "font-size:larger;"><strong>{{ res }}</strong></span>
         {% endif %}
         {% endfor %}
-        {% for res in list_value if res == "Incorrect PoS!"  %}
+        {% for res in list_value if res == "Incorrect tag!"  %}
         <span style = "font-size:larger;"><strong>{{ res }}</strong></span>
         {% endfor %}
 	<span style = "font-size:larger;">

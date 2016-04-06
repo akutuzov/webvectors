@@ -1,14 +1,12 @@
-#!/usr/bin/python2
-# coding: utf-8
 from flask import Flask, request, url_for
-from synonyms_main import *
+from webvectors import *
 from lang_converter import LangConverter
 from flask import g
 
 app_syn = Flask(__name__)
 
 app_syn.url_map.converters['lang'] = LangConverter
-app_syn.register_blueprint(synonyms)
+app_syn.register_blueprint(wvectors)
 
 
 @app_syn.context_processor

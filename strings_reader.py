@@ -1,4 +1,3 @@
-#!/usr/bin/python2
 # coding:utf8
 
 """
@@ -9,13 +8,19 @@ the strings, and lets the main app use it
 import codecs, csv
 from flask import Markup
 
-root = 'YOUR ROOT DIRECTORY HERE' # Directory where WebVectores resides
+import ConfigParser
+config = ConfigParser.RawConfigParser()
+config.read('webvectors.cfg')
+
+root = config.get('Files and directories', 'root')
+l10nfile = config.get('Files and directories', 'l10n')
+
 
 # the encoding to use
 encoding = 'utf8'
 
 # open the strings database:
-csvfile = open(root + 'strings.csv', 'rU')
+csvfile = open(root + l10nfile, 'rU')
 acrobat = csv.reader(csvfile, dialect='excel', delimiter=',')
 
 # initialize a dictionary for each language:

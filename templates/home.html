@@ -19,7 +19,7 @@
         <h3><strong>{{strings['home4']}} <i><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ word }}/">{{ word.split("_")[0] }}</a></i> ({{strings['home5']}} <a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ model}}</a>)</strong></h3>
         <big>
         <ol>
-        {% for res in list_value if not "unknown to the model" in list_value and res[0] != "No results" and res != "Incorrect PoS!"  %}
+        {% for res in list_value if not "unknown to the model" in list_value and res[0] != "No results" and res != "Incorrect tag!"  %}
         <li>
         <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
         </li>
@@ -33,7 +33,7 @@
         <big><strong>{{ res }}</strong></big>
         {% endif %}
         {% endfor %}
-        {% for res in list_value if res == "Incorrect PoS!"  %}
+        {% for res in list_value if res == "Incorrect tag!"  %}
         <big><strong>{{ res }}</strong></big>
         {% endfor %}
     {% elif error %}
@@ -41,6 +41,18 @@
      <p>{{ error }}</p>
     </strong></big>
     {% else %}
+    <h3>{{strings['home6']}} <a href="/dsm/static/rss.xml"><img src="/static/rss.png" width="25" alt = "RSS" title = "RSS"></a></h3>
+    <ul>
+    <li>{{strings['home13']}}</li>
+    <li>{{strings['home12']}}</li>
+    <li>{{strings['home11']}}</li>
+    <li>{{strings['home10']}}</li>
+    <li>{{strings['home7']}}</li>
+    <li>{{strings['home8']}}</li>
+    <li>{{strings['home9']}}</li>
+    </ul>
+
+    
     {% endif %}
         
      
