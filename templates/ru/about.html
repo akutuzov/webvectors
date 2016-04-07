@@ -1,93 +1,10 @@
 {% extends "base.html" %}
 
 {%- block title %}
-     <title>RusVectōrēs: О проекте</title>
+     <title>WebVectors: О проекте</title>
  {%- endblock title %}
 
 
 {% block content %}
         <h1>О проекте</h1>
-<p>Этот сервис вычисляет семантические отношения между словами русского языка. Он назван по аналогии с <a href="http://ruscorpora.ru/ru">RusCorpora</a>, веб-сайтом Национального Корпуса Русского Языка (НКРЯ). На <i>RusCorpora</i> можно работать с корпусами (лат. <i>corpora</i>), а на нашем ресурсе - с лексическими векторами (лат. <i>vectōrēs</i>). Эти вектора отражают значение слова, выявленное на основе совместной встречаемости слов в корпусах (больших коллекциях текстовых данных).</p>
-<blockquote><p>В <a href="https://ru.wikipedia.org/wiki/%D0%94%D0%B8%D1%81%D1%82%D1%80%D0%B8%D0%B1%D1%83%D1%82%D0%B8%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D0%B5%D0%BC%D0%B0%D0%BD%D1%82%D0%B8%D0%BA%D0%B0">дистрибутивной семантике</a> слова обычно представляются в виде векторов в многомерном пространстве их контекстов. Семантическое сходство вычисляется как <a href="https://en.wikipedia.org/wiki/Cosine_similarity">косинусная близость</a> между векторами двух слов и может принимать значения в промежутке [-1...1] (на практике часто используются только значения выше 0). Значение <strong>0</strong> приблизительно означает, что у этих слов нет похожих контекстов и их значения не связаны друг с другом. Значение <strong>1</strong>, напротив, свидетельствует о полной идентичности их контекстов и, следовательно, о близком значении.</p></blockquote>
-<p>В последнее время интерес к дистрибутивной семантике существенно возрос. В основном это обусловлено перспективностью подхода, использующего языковые модели на основе нейронных сетей, обученные на больших корпусах. При обучении с помощью так называемых предсказательных моделей мы получаем сжатые вектора для слов, которые можно использовать для самых разных компьютерно-лингвистических задач. Вероятно, самый известный на сегодня инструмент в этой области - <i><a href="https://code.google.com/p/word2vec/">word2vec</a></i>, который позволяет быстрее, чем с помощью других методов, получать вектора на огромных объёмах языкового материала.</p>
-
-<p><i>Word2vec</i> и используемые им алгоритмы CBOW и Skipgram (а также подобные подходы) подробно изучаются и тестируются в применении к английскому языку, в то время как для русского языка такая работа едва начата. Таким образом, важно предоставить русскоязычному лингвистическому сообществу доступ к соответствующим инструментам и моделям.</p>
-<p>К сожалению, обучение и использование нейронных векторных моделей на основе больших корпусов может требовать большиъ вычислительных мощностей. Поэтому наш сервис предоставляет пользователям уже натренированные модели, а также удобный интерфейс запросов к ним. Все используемые модели возможно скачать, чтобы продолжить эксперименты на своём компьютере. Также имеется возможность визуализировать семантические отношения между словами, что, как мы надеемся, будет полезным для исследователей. В целом, задача нашего сервиса - снизить порог входа для тех, кто хочет работать в этом новом и интересном направлении.</p>
-
-<h2>Каковы возможности <i>RusVectōrēs</i>?</h2>
-<p><i>RusVectōrēs</i> - это инструмент, который позволяет исследовать отношения между словами в дистрибутивных моделях. Можно образно назвать наш сервис "семантическим калькулятором". Пользователь может выбрать одну или несколько моделей для работы - в настоящий момент доступны <a href="#models">4 модели</a>, обученные на разных корпусах (некоторые из них заняли ведущие места в <a href="http://russe.nlpub.ru/">соревновании RUSSE</a>). Каждая модель содержит от 150 до 600 тысяч лемм.</p>
-<p>Выбрав модель, вы можете:</p>
-<ol>
-<li><a href="/dsm/{{lang}}/calculator">вычислять семантическое сходство</a> между парами слов;</li>
-<li><a href="/dsm/{{lang}}/similar">находить слова, ближайшие к данному</a> (с возможностью фильтрации по части речи);</li>
-<li><a href="/dsm/{{lang}}/calculator">решать пропорцию</a> вида "найти слово <strong>X</strong>, которое так относится к слову <strong>Y</strong>, как слово <strong>A</strong> относитс к слову <strong>B</strong>";</li>
-<li><a href="/dsm/{{lang}}/calculator">выполнять над векторами слов алгебраические операции </a> (сложение, вычитание, поиск центра лексического кластера и расстояний до этого центра).</li>
-<li><a href="/dsm/{{lang}}/visual">рисовать семантические карты</a> отношений между словами (это позволяет выявлять семантические кластеры);</li>
-    <li><a href="/dsm/{{lang}}/similar">получать вектор (в виде массива чисел) и его визуализацию для данного слова в выбранной модели</a>: для этого нужно всего лишь кликнуть по любому слову или использовать уникальный адрес этого слова, как будет описано ниже;</li>
-</ol>
-<blockquote><p>В духе парадигмы Semantic Web, каждое слово каждой модели обладает своим уникальным идентификатором URI, явно указывающим лемму, модель и часть речи (например, <a href="/dsm/{{lang}}/news/кризисный_A">http://ling.go.mail.ru/dsm/news/кризисный_A</a>). По запросу на этот адрес генерируется список десяти слов, ближайших к данной лемме в данной модели и принадлежащих к той же части речи, что и сама лемма, а также генерируется другая информация о слове, например, его вектор в виде массива чисел.</p>
-<p>Также у сервиса есть API, с помощью которого можно для любого слова получить список слов, семантически близких к данному в выбранной модели. Данные можно получить в двух форматах: json и csv. Для этого необходимо выполнить GET-запрос по адресу следующего вида: <i>http://ling.go.mail.ru/dsm/MODEL/WORD/api/FORMAT</i>, где MODEL - <a href="#models">идентификатор</a> для выбранной модели, WORD - слово запроса, FORMAT - "csv" или "json" по вашему выбору. По запросу отдаётся файл в формате json или текстовый файл в формате tab-separated values, в котором перечислены ближайшие десять соседей слова.</p>
-</blockquote>
-
-<p>Алгебраические операции над векторами дают интересные результаты и предоставляют простор для экспериментов. Например, модель, обученная на русскоязычной Википедии и НКРЯ, возвращает слово <span style="color:green;"><i>быт</i></span> в результате вычитания слова <span style="color:green;"><i>смысл</i></span> из слова <span style="color:green;"><i>жизнь</i></span>. Это может показаться чем-то не слишком практичным, но исследования, уже проведенные для английского языка, доказали применимость таких отношений во многих областях, включая машинный перевод.</p>
-
-<p>Естественно, можно сравнивать результаты разных моделей. Чтобы не ограничивать пользователей выбранными нами моделями, мы добавили возможность <a href="/dsm/{{lang}}/upload">использовать свой корпус</a>. Сервер обучит на нем нейронную модель с настройками, заданными пользователем.</p>
-<p>Нам бы хотелось, чтобы <i>RusVectōrēs</i> стал одним из узлов академической информации о нейронных языковых моделях для русского языка, поэтому на сайте имеется раздел <a href="#publications">"Публикации"</a>, содержащий опубликованные научные работы и ссылки на другие полезные ресурсы. В то же время, мы надеемся, что <i>RusVectōrēs</i> популяризует дистрибутивную семантику и компьютерную лингвистику и сделает их более доступными и привлекательными для русскоязычной публики.</p>
-
-<h1><a name="publications"></a>Публикации</h1>
-        <p class="lead">Если вам интересны дистрибутивные семантические модели, просмотрите следующие публикации (перечислены в хронологическом порядке):</p>
-            <ol>
-                <li>Bybee, J. <a href="http://www.citeulike.org/group/220/article/989323">Frequency of use and the organization of language</a>. (2006)</li>
-                <li>Miller, George A., and Walter G. Charles. <a href="http://www.tandfonline.com/doi/abs/10.1080/01690969108406936">Contextual correlates of semantic similarity</a>. // in Language and cognitive processes 6.1 (1991): 1-28.</li>
-                <li>Baroni, Marco, and Sabrina Bisi. <a href="http://clic.cimec.unitn.it/marco/publications/lrec2004/syn_lrec_2004.pdf">Using Cooccurrence Statistics and the Web to Discover Synonyms in a Technical Language</a>. // in LREC Proceedings. (2004)</li>
-                <li>Turney, P. D., P. Pantel (2010). “<a href="http://www.aaai.org/Papers/JAIR/Vol37/JAIR-3705.pdf">From frequency to meaning: Vector space models of semantics</a>”. Journal of artificial intelligence research, 37(1), 141-188.</li>
-                <li>Řehůřek, Radim, and Petr Sojka. <a href="http://radimrehurek.com/gensim/lrec2010_final.pdf">Software framework for topic modelling with large corpora</a>. // in Proceedings of the LREC 2010 Workshop on New Challenges for NLP Frameworks (2010).</li>
-                <li>Panchenko A., et al.. "<a href="http://dial.academielouvain.be/vital/access/services/Download/boreal:120392/PDF_01">Serelex: Search and Visualization of Semantically Related Words</a>”. In Proceedings of the 35th European Conference on Information Retrieval (ECIR 2013). Springer's Lecture Notes on Computer Science, 2013, Moscow (Russia).</li>
-                <li>Mikolov, T., et al. <a href="http://arxiv.org/abs/1301.3781">Efficient estimation of word representations in vector space</a>. arXiv preprint arXiv:1301.3781 (2013).</li>
-                <li>Mikolov, Tomas, et al. “<a href="http://arxiv.org/abs/1309.4168">Exploiting similarities among languages for machine translation.</a>” arXiv preprint arXiv:1309.4168 (2013).</li>
-                <li>Baroni, Marco, et al. "<a href="http://anthology.aclweb.org/P/P14/P14-1023.pdf">Don’t count, predict! A systematic comparison of context-counting vs. context-predicting semantic vectors.</a>” Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics. Vol. 1. (2014)</li>
-                <li>Kutuzov, Andrey and Kuzmenko, Elizaveta. “<a href="https://www.academia.edu/11754162/Comparing_neural_lexical_models_of_a_classic_national_corpus_and_a_web_corpus_the_case_for_Russian">Comparing Neural Lexical Models of a Classic National Corpus and a Web Corpus: The Case for Russian</a>”.  A. Gelbukh (Ed.): CICLing 2015, Part I, Springer LNCS 9041, pp. 47–58, 2015. DOI: 10.1007/978-3-319-18111-0_4</li>
-                <li>Bartunov Sergey et al. “<a href="http://arxiv.org/abs/1502.07257">Breaking Sticks and Ambiguities with Adaptive Skip-gram</a>”. Eprint arXiv:1502.07257, 02/2015</li>
-                <li>O. Levy, Y. Goldberg, and I. Dagan “<a href="https://levyomer.files.wordpress.com/2015/03/improving-distributional-similarity-tacl-2015.pdf">Improving Distributional Similarity with Lessons Learned from Word Embeddings</a>”. TACL 2015</li>
-                <li>Xin Rong “<a href="http://arxiv.org/abs/1411.2738">word2vec Parameter Learning Explained</a>”. arXiv preprint arXiv:1411.2738 (2015)</li>
-                <li>Kutuzov, Andrey and Andreev, Igor. “<a href="http://www.dialog-21.ru/digests/dialog2015/materials/pdf/KutuzovAAndreevI.pdf">Texts in, meaning out: neural language models in semantic similarity task for Russian.</a>” Proceedings of the Dialog 2015 Conference, Moscow, Russia (2015)</li>
-                <li>Panchenko A., et al. "<a href="http://www.dialog-21.ru/digests/dialog2015/materials/pdf/PanchenkoAetal.pdf">RUSSE: The First Workshop on Russian Semantic Similarity</a>". Proceedings of the Dialogue 2015 conference, Moscow, Russia (2015)</li>
-                <li>Arefyev N.V., et al. "<a href="http://www.dialog-21.ru/digests/dialog2015/materials/pdf/ArefyevNVetal.pdf">Evaluating three corpus-based semantic similarity systems for Russian</a>". Proceedings of the Dialogue 2015 conference, Moscow, Russia (2015)</li>
-                <li>Lopukhin K.A., et al. "<a href="http://www.dialog-21.ru/digests/dialog2015/materials/pdf/LopukhinKAetal.pdf">The impact of different vector space models and supplementary techniques in Russian semantic similarity task</a>". Proceedings of the Dialogue 2015 conference, Moscow, Russia (2015)</li>
-                <li><a href="https://www.youtube.com/watch?v=9JJsMWKcU7s" target="_blank">"Нейронные языковые модели и задача определения семантической близости слов"</a>, видеозапись лекции Андрея Кутузова на Moscow Data Science meetup 4 сентября 2015 (in Russian)
-                </li>
-                </ol>
-
-        <h1><a name="models"></a>Модели</h1>
-        <p>В настоящий момент доступны следующие модели:</p>
-    <table class="table">
-        <tr><td>
-        * <strong><a name="ruscorpora">Национальный Корпус Русского языка</a></strong> (<i><a href="/static/models/ruscorpora.model.bin.gz">скачать модель</a>, 302 Мб</i>) <strong>ruscorpora</strong>
-        <p>Обучена на полном <a href="http://ruscorpora.ru">НКРЯ</a>. Размер корпуса - <strong>107 561 399 токенов</strong>. Модель знает <strong>281 776 лемм</strong>; леммы, встретившиеся в корпусе менее трёх раз, при обучении игнорировались.</p>
-        <p>Использован алгоритм Continuous Bag-of-Words.</p>
-        <p>Размерность векторов 300, размер окна 2.</p>
-        </td></tr>
-        <tr><td>
-        * <strong><a name="ruwikiruscorpora">НКРЯ и русскоязычная Wikipedia</a></strong> (<i><a href="/static/models/ruwikiruscorpora.model.bin.gz">скачать модель</a>, 1.1 Гб</i>) <strong>ruwikiruscorpora</strong>
-        <p>Модель обучена на двух корпусах, слитых вместе. Размер корпуса - <strong>280 187 401 токенов</strong>. Модель знает <strong>604 043 леммы</strong>; леммы, встретившиеся в корпусе менее пяти раз, при обучении игнорировались.</p>
-        <p>Использован алгоритм Continuous Bag-of-Words.</p>
-        <p>Размерность векторов 500, размер окна 2.</p>
-        </td></tr>
-        <tr><td>
-        * <strong><a name="web">Веб-корпус</a></strong> (<i><a href="/static/models/web.model.bin.gz">скачать модель</a>, 630 Мб</i>) <strong>web</strong>
-        <p>Модель обучена на случайном сэмпле из 9 миллионов русскоязычных веб-страниц, обкачанных в декабре 2014 года. Размер корпуса - <strong>660 628 738 токенов</strong>. Модель знает <strong>353 608 лемм</strong>; леммы, встретившиеся в корпусе менее 30 раз, при обучении игнорировались.</p>
-        <p>Использован алгоритм Continuous Skip-Gram.</p>
-        <p>Размерность векторов 500, размер окна 2.</p>
-        </td></tr>
-        <tr><td>
-        * <strong><a name="news">Новостной корпус</a></strong> (<i><a href="/static/models/news.model.bin.gz">скачать модель</a>, 524 Мб</i>) <strong>news</strong>
-        <p>Модель обучена на потоке новостей с 1500 преимущественно русскоязычных новостных сайтов (всего около 15 миллионов документов, с сентября 2013 до октября 2015). Размер корпуса - <strong>2 439 237 751 токенов</strong>. Модель знает <strong>147 358 лемм</strong>; леммы, встретившиеся в корпусе менее 200 раз, при обучении игнорировались.</p>
-        <p>Использован алгоритм Continuous Skip-Gram. Самый объёмный корпус, но и с наивысшим порогом частоты!</p>
-        <p>Размерность векторов 1000, размер окна 20.</p>
-        </td></tr>
-        </table>
-        <i>Перед обучением все корпуса были токенизированы, разбиты на предложения, лемматизированы и размечены по частям речи при помощи <a href="https://tech.yandex.ru/mystem/">Mystem</a>. Стоп-слова (союзы, местоимения, предлоги, частицы и т.п.) были удалены. Модели, работающие с большими корпусами, намеренно обучались лишь на самых частотных словах, так как иначе модели были бы слишком тяжёлыми для веб-сервиса.</i>
-
-        <h1>Ссылки</h1>
-        Возможно, вас также заинтересует <a href="http://ltr.uio.no/semvec">SemanticVectors</a> - аналогичный сервис для английского и норвежского языков.
 {% endblock %}
