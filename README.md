@@ -67,6 +67,11 @@ Templates
 Actual web pages shown to user are defined in the files templates/*.html.
 Tune them as you want. Main menu is defined at base.html.
 
+Contacts
+
+In case of any problems, please feel free to contact us:
+andreku@ifi.uio.no (Andrey Kutuzov)
+lizaku77@gmail.com (Elizaveta Kuzmenko)
 
 References
 
