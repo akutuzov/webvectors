@@ -18,8 +18,7 @@ where **WEBNAME** is the alias for your service relative to the server root (web
 `config.read('webvectors.cfg')`
 with the absolute path to the `webvectors.cfg` file
 
-7. Set up your service using the configuration file webvectors.cfg
-
+7. Set up your service using the configuration file `webvectors.cfg`.
 Most important settings are:
 - `root` - absolute path to your _WebVectors_ directory
 - `temp` - absolute path to your temporary files directory
@@ -27,19 +26,16 @@ Most important settings are:
 - `lemmatize` - whether to use automatic PoS-tagging and lemmatization
 - `default_search` - URL of search engine to use on individual word pages (for example, http://go.mail.ru/search?q=%D1%8E%D1%82%D0%B5%D1%80%D0%BD%D1%8B%D0%B9)
 
-8. **Tags**
-
+8. **Tags.**
 Models can use arbitrary tags assigned to words (for example, part-of-speech tags, as in _boot_N_). If your models are trained on words with tags, you should switch this on in `webvectors.cfg` (`use_tags` variable).
 Then, _WebVectors_ will allow users to limit their queries by tags. You also should specify the list of allowed tags (`tags_list` variable in `webvectors.cfg`) and the default tag (`default_tag`).
 
-9. **Model daemon**
-
+9. **Model daemon.**
 _WebVectors_ uses a daemon, which runs in the background and actually processes all vector tasks. It can also run on a different machine.
 Thus, in `webvectors.cfg` you should specify host and port that this daemon will listen at.
 After that, start `word2vec_server.py`. It will load the models and open a listening socket. This script must run permanently, so you may want to run in using screen, or something like this.
 
-10. **Models**
-
+10. **Models.**
 The list of models you want to use is defined in the file `models.csv`. It consists of tab-separated fields:
 - model identifier
 - model description
@@ -53,8 +49,7 @@ Models can be of two formats:
 
 _Webvectors_ will automatically detect models format and load all of them into memory. The users will be able to choose among loaded models.
 
-11. **Localization**
-
+11. **Localization.**
 _WebVectors_ uses `strings.csv` file as the source of localized strings. It is a comma-separated file with 3 fields:
 - identifier
 - string in language 1
@@ -62,8 +57,7 @@ _WebVectors_ uses `strings.csv` file as the source of localized strings. It is a
 
 By default, language 1 is Russian and language 2 is English. This can be changed is `webvectors.cfg`.
 
-12. **Templates**
-
+12. **Templates.**
 Actual web pages shown to user are defined in the files `templates/*.html`.
 Tune them as you wish. The main menu is defined at `base.html`.
 
