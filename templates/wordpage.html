@@ -1,5 +1,9 @@
 {% extends "base.html" %}
-{% block title %}{{strings['synraw1']}} "{{word}}"{% endblock %}
+
+{%- block title %}
+     <title>{{strings['synraw1']}} "{{word}}"</title>
+ {%- endblock title %}
+
 
 {% block content %}
         {% if list_value %}
