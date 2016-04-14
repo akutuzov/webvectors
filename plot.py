@@ -1,8 +1,8 @@
 #!/bin/python
 # coding: utf-8
 import matplotlib, sys
-import matplotlib.pyplot as plt
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import pylab as Plot
 import numpy as np
 from matplotlib import font_manager

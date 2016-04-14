@@ -234,36 +234,38 @@ def similar_page(lang):
 		    pos = pos_value[0]
 
 	    model_value = request.form.getlist('model')
+
             if len(model_value) < 1:
                 model_value = [defaultmodel]
-            else:
-                models_row = {}
-                for model in model_value:
-                    if not model.strip() in our_models:
-                        return render_template('home.html')
-                    if tags:
-                	message = "1;" + query + ";" + pos + ";" + model
-                    else:
-                	message = "1;" + query + ";" + 'ALL' + ";" + model
-                    result = serverquery(message)
-                    associates_list = []
-                    if "unknown to the" in result:
-                        models_row[model] = "Unknown!"
-                        continue
-                    elif "No results" in result:
-                        associates_list.append(result)
-                        models_row[model] = associates_list
-                        continue
-                    else:
-                        output = result.split('&')
-                        associates = output[0]
-                        if len(associates) > 1:
-                            vector = output[1:]
-                        for word in associates.split():
-                            w = word.split("#")
-                            associates_list.append((w[0].decode('utf-8'), float(w[1])))
-                        models_row[model] = associates_list
-                return render_template('similar.html', list_value=models_row, word=query, pos=pos,
+
+            models_row = {}
+            for model in model_value:
+        	if not model.strip() in our_models:
+                    return render_template('home.html')
+                if tags:
+            	    message = "1;" + query + ";" + pos + ";" + model
+                else:
+            	    message = "1;" + query + ";" + 'ALL' + ";" + model
+                result = serverquery(message)
+                associates_list = []
+                if "unknown to the" in result:
+                    models_row[model] = "Unknown!"
+                    continue
+                elif "No results" in result:
+                    associates_list.append(result)
+                    models_row[model] = associates_list
+                    continue
+                else:
+                    output = result.split('&')
+                    associates = output[0]
+                    if len(associates) > 1:
+                        vector = output[1:]
+                    for word in associates.split():
+                        w = word.split("#")
+                        associates_list.append((w[0].decode('utf-8'), float(w[1])))
+                    models_row[model] = associates_list
+
+            return render_template('similar.html', list_value=models_row, word=query, pos=pos,
                                        number=len(model_value), model=model, models=our_models, tags = tags)
         else:
             error_value = "Incorrect query!"
