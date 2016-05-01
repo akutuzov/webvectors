@@ -12,9 +12,7 @@ def freeling_lemmatizer(word):
                                 stdout=subprocess.PIPE)
     tagged = freeling.communicate(word.encode('utf-8').strip())
     tagged = tagged[0].split('\n')[0]
-    # print tagged
     freeling_pos = tagged.split()[2][0]
-    #print freeling_pos
     if freeling_pos == 'A':
         mystem_pos = 'A'
     elif freeling_pos == 'N':
@@ -26,13 +24,13 @@ def freeling_lemmatizer(word):
     elif freeling_pos == 'D':
         mystem_pos = 'ADV'
     elif freeling_pos == 'E':
-        mystem_pos = 'S-PRO'
+        mystem_pos = 'SPRO'
     elif freeling_pos == 'P':
-        mystem_pos = 'ADV-PRO'
+        mystem_pos = 'ADVPRO'
     elif freeling_pos == 'Y':
-        mystem_pos = 'A-NUM'
+        mystem_pos = 'ANUM'
     elif freeling_pos == 'R':
-        mystem_pos = 'A-PRO'
+        mystem_pos = 'APRO'
     elif freeling_pos == 'C':
         mystem_pos = 'CONJ'
     elif freeling_pos == 'J':
