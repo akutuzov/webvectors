@@ -25,7 +25,7 @@ for line in open(root + config.get('Files and directories', 'models'), 'r').read
     if line.startswith("#"):
         continue
     res = line.strip().split('\t')
-    (identifier, description, path, string) = res
+    (identifier, description, path, string, default) = res
     our_models[identifier] = path
 
 models_dic = {}
