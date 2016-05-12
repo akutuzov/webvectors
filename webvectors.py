@@ -23,6 +23,7 @@ import socket  # for sockets
 from strings_reader import language_dicts
 
 import ConfigParser
+
 config = ConfigParser.RawConfigParser()
 config.read('webvectors.cfg')
 
@@ -55,23 +56,24 @@ def serverquery(message):
         print >> sys.stderr, 'Failed to create socket'
         return None
 
-    #Connect to remote server
+    # Connect to remote server
     s.connect((remote_ip, port))
-    #Now receive data
+    # Now receive data
     reply = s.recv(1024)
 
-    #Send some data to remote server
+    # Send some data to remote server
     try:
         s.sendall(message.encode('utf-8'))
     except socket.error:
-        #Send failed
+        # Send failed
         print >> sys.stderr, 'Send failed'
         s.close()
         return None
-    #Now receive data
+    # Now receive data
     reply = s.recv(32768)
     s.close()
     return reply
+
 
 taglist = set(config.get('Tags', 'tags_list').split())
 defaulttag = config.get('Tags', 'default_tag')
@@ -83,12 +85,13 @@ for line in open(root + modelsfile, 'r').readlines():
     res = line.strip().split('\t')
     (identifier, description, path, string, default) = res
     if default == 'True':
-	defaultmodel = identifier
+        defaultmodel = identifier
     our_models[identifier] = string
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 wvectors = Blueprint('wvectors', __name__, template_folder='templates')
+
 
 def after_this_request(func):
     if not hasattr(g, 'call_after_request'):
@@ -96,29 +99,31 @@ def after_this_request(func):
     g.call_after_request.append(func)
     return func
 
+
 @wvectors.after_request
 def per_request_callbacks(response):
     for func in getattr(g, 'call_after_request', ()):
         response = func(response)
     return response
 
+
 def process_query(userquery):
     userquery = userquery.strip().replace(u'ё', u'е')
     if tags:
-	if '_' in userquery:
-	    query_split = userquery.split('_')
-	    if query_split[-1] in taglist:
-        	query = ''.join(query_split[:-1]).lower() + '_' + query_split[-1]
-	    else:
-        	return 'Incorrect tag!'
-	else:
-	    if lemmatize:
-		pos_tag = freeling_lemmatizer(userquery)
-		if pos_tag == 'A' and userquery.endswith(u'о'):
-		    pos_tag = 'ADV'
-		query = userquery.lower() + '_' + pos_tag
-	    else:
-		return 'Incorrect tag!'
+        if '_' in userquery:
+            query_split = userquery.split('_')
+            if query_split[-1] in taglist:
+                query = ''.join(query_split[:-1]).lower() + '_' + query_split[-1]
+            else:
+                return 'Incorrect tag!'
+        else:
+            if lemmatize:
+                pos_tag = freeling_lemmatizer(userquery)
+                if pos_tag == 'A' and userquery.endswith(u'о'):
+                    pos_tag = 'ADV'
+                query = userquery.lower() + '_' + pos_tag
+            else:
+                return 'Incorrect tag!'
     return query
 
 
@@ -156,11 +161,12 @@ def home(lang):
                     w = word.split("#")
                     associates_list.append((w[0].decode('utf-8'), float(w[1])))
 
-                return render_template('home.html', list_value=associates_list, word=query, model=model, tags = tags)
+                return render_template('home.html', list_value=associates_list, word=query, model=model, tags=tags)
         else:
             error_value = u"Incorrect query!"
-            return render_template("home.html", error=error_value, tags = tags)
-    return render_template('home.html', tags = tags)
+            return render_template("home.html", error=error_value, tags=tags)
+    return render_template('home.html', tags=tags)
+
 
 @wvectors.route('/<lang:lang>/similar', methods=['GET', 'POST'])
 def similar_page(lang):
@@ -216,36 +222,36 @@ def similar_page(lang):
                     w = word.split("#")
                     results.append((w[0].decode('utf-8'), w[1].decode('utf-8'), float(w[2])))
                 return render_template('similar.html', value=results, model=model, query=cleared_data,
-                                       models=our_models, tags = tags)
+                                       models=our_models, tags=tags)
             else:
                 error_value = "Incorrect query!"
-                return render_template("similar.html", error_sim=error_value, models=our_models, tags = tags)
+                return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags)
 
         if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').isalnum():
             list_data = list_data.split()[0].strip()
             query = process_query(list_data)
-	    if query == "Incorrect tag!":
+            if query == "Incorrect tag!":
                 return render_template('similar.html', error=query, word=list_data, models=our_models)
-	    if tags:
-        	pos_value = request.form.getlist('pos')
-        	if len(pos_value) < 1 or pos_value[0] == 'Q':
-		    pos = query.split('_')[-1]
-        	else:
-		    pos = pos_value[0]
+            if tags:
+                pos_value = request.form.getlist('pos')
+                if len(pos_value) < 1 or pos_value[0] == 'Q':
+                    pos = query.split('_')[-1]
+                else:
+                    pos = pos_value[0]
 
-	    model_value = request.form.getlist('model')
+            model_value = request.form.getlist('model')
 
             if len(model_value) < 1:
                 model_value = [defaultmodel]
 
             models_row = {}
             for model in model_value:
-        	if not model.strip() in our_models:
+                if not model.strip() in our_models:
                     return render_template('home.html')
                 if tags:
-            	    message = "1;" + query + ";" + pos + ";" + model
+                    message = "1;" + query + ";" + pos + ";" + model
                 else:
-            	    message = "1;" + query + ";" + 'ALL' + ";" + model
+                    message = "1;" + query + ";" + 'ALL' + ";" + model
                 result = serverquery(message)
                 associates_list = []
                 if "unknown to the" in result:
@@ -266,11 +272,11 @@ def similar_page(lang):
                     models_row[model] = associates_list
 
             return render_template('similar.html', list_value=models_row, word=query, pos=pos,
-                                       number=len(model_value), model=model, models=our_models, tags = tags)
+                                   number=len(model_value), model=model, models=our_models, tags=tags)
         else:
             error_value = "Incorrect query!"
-            return render_template("similar.html", error=error_value, models=our_models, tags = tags)
-    return render_template('similar.html', models=our_models, tags = tags)
+            return render_template("similar.html", error=error_value, models=our_models, tags=tags)
+    return render_template('similar.html', models=our_models, tags=tags)
 
 
 @wvectors.route('/<lang:lang>/visual', methods=['GET', 'POST'])
@@ -382,11 +388,11 @@ def finder(lang):
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 return render_template('calculator.html', calc_value=["Incorrect tag!"], models=our_models)
             if tags:
-        	calcpos_value = request.form.getlist('calcpos')
-        	if len(calcpos_value) < 1:
-		    pos = defaulttag
-        	else:
-		    pos = calcpos_value[0]
+                calcpos_value = request.form.getlist('calcpos')
+                if len(calcpos_value) < 1:
+                    pos = defaulttag
+                else:
+                    pos = calcpos_value[0]
             calcmodel_value = request.form.getlist('calcmodel')
             if len(calcmodel_value) < 1:
                 calcmodel_value = [defaultmodel]
@@ -396,9 +402,9 @@ def finder(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html')
                 if tags:
-		    message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
-		else:
-		    message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + 'ALL' + ";" + model
+                    message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
+                else:
+                    message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + 'ALL' + ";" + model
                 result = serverquery(message)
                 results = []
                 if len(result) == 0 or 'No results' in result:
@@ -415,24 +421,26 @@ def finder(lang):
                     results.append((w[0].decode('utf-8'), float(w[1])))
                 models_row[model] = results
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
-                                   nlist=negative_list, models=our_models, tags = tags)
+                                   nlist=negative_list, models=our_models, tags=tags)
 
         if positive1_data != '':
-            negative_list = [process_query(w) for w in negative1_data.split() if len(w) > 1 and w.replace('_','').replace('-', '').isalnum()][:10]
-            positive_list = [process_query(w) for w in positive1_data.split() if len(w) > 1 and w.replace('_','').replace('-', '').isalnum()][:10]
+            negative_list = [process_query(w) for w in negative1_data.split() if
+                             len(w) > 1 and w.replace('_', '').replace('-', '').isalnum()][:10]
+            positive_list = [process_query(w) for w in positive1_data.split() if
+                             len(w) > 1 and w.replace('_', '').replace('-', '').isalnum()][:10]
             if len(positive_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", error=error_value)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 return render_template('calculator.html', calc_value=["Incorrect tag!"])
             if tags:
-        	calcpos_value = request.form.getlist('calcpos')
-        	if len(calcpos_value) < 1:
-		    pos = defaulttag
-        	else:
-		    pos = calcpos_value[0]
+                calcpos_value = request.form.getlist('calcpos')
+                if len(calcpos_value) < 1:
+                    pos = defaulttag
+                else:
+                    pos = calcpos_value[0]
             else:
-        	pos = 'ALL'
+                pos = 'ALL'
             calcmodel_value = request.form.getlist('calcmodel')
             if len(calcmodel_value) < 1:
                 calcmodel_value = [defaultmodel]
@@ -440,7 +448,7 @@ def finder(lang):
             for model in calcmodel_value:
                 if not model.strip() in our_models:
                     return render_template('home.html')
-                message = "3;"+",".join(positive_list)+"&"+','.join(negative_list)+";"+pos+";"+model
+                message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
                 result = serverquery(message)
                 results = []
                 if len(result) == 0:
@@ -454,15 +462,15 @@ def finder(lang):
                     continue
                 for word in result.split():
                     w = word.split("#")
-                    results.append((w[0].decode('utf-8'),float(w[1])))
+                    results.append((w[0].decode('utf-8'), float(w[1])))
                 models_row[model] = results
-            return render_template('calculator.html', calc_value=models_row, pos=pos, plist2 = positive_list,
-                                   nlist2 = negative_list, models=our_models, tags = tags)
+            return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
+                                   nlist2=negative_list, models=our_models, tags=tags)
 
         else:
             error_value = "Incorrect query!"
-            return render_template("calculator.html", calc_error=error_value, models=our_models, tags = tags)
-    return render_template("calculator.html", models=our_models, tags = tags)
+            return render_template("calculator.html", calc_error=error_value, models=our_models, tags=tags)
+    return render_template("calculator.html", models=our_models, tags=tags)
 
 
 @wvectors.route('/<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
@@ -476,11 +484,11 @@ def raw_finder(lang, model, userquery):
     if userquery.strip().replace('_', '').replace('-', '').isalnum():
         query = process_query(userquery.strip())
         if tags:
-	    if len(query.split('_')) < 2:
-        	return render_template('wordpage.html', error=query)
-	    pos_tag = query.split('_')[-1]
+            if len(query.split('_')) < 2:
+                return render_template('wordpage.html', error=query)
+            pos_tag = query.split('_')[-1]
         else:
-	    pos_tag = 'ALL'
+            pos_tag = 'ALL'
         message = "1;" + query + ";" + pos_tag + ";" + model
         result = serverquery(message)
         associates_list = []
@@ -504,67 +512,107 @@ def raw_finder(lang, model, userquery):
                 vector2 = [float(a) for a in vector2]
                 singularplot(query, model, vector2)
             if dbpedia:
-        	if tags:
-        	    image = getdbpediaimage(query.split('_')[0].encode('utf-8'))
-        	else:
-        	    image = getdbpediaimage(query.encode('utf-8'))
-    	    else:
-    		image = None
+                if tags:
+                    image = getdbpediaimage(query.split('_')[0].encode('utf-8'))
+                else:
+                    image = getdbpediaimage(query.encode('utf-8'))
+            else:
+                image = None
             return render_template('wordpage.html', list_value=associates_list, word=query, model=model,
-                                   pos=pos_tag, vector=vector, image=image, vectorvis=fname, tags = tags)
+                                   pos=pos_tag, vector=vector, image=image, vectorvis=fname, tags=tags)
     else:
         error_value = u'Incorrect query: %s' % userquery
-        return render_template("wordpage.html", error=error_value, tags = tags)
+        return render_template("wordpage.html", error=error_value, tags=tags)
 
-    return render_template("wordpage.html", tags = tags)
+    return render_template("wordpage.html", tags=tags)
+
+
+def generate(word, model, format):
+    """
+    yields result of the query
+    :param model: name of a model to be queried
+    :param word: query word
+    :param format: format of the output - csv or json
+    """
+
+    formats = set(['csv', 'json'])
+
+    # check the sanity of the query word: no punctuation marks, not an empty string
+    if not word.strip().replace('_', '').replace('-', '').isalnum():
+        yield word.strip() + '\t' + model.strip() + '\t' + 'Word error!'
+    else:
+        query = process_query(word.strip())
+
+    # if tags are used, check whether the word is tagged
+    if tags:
+        if len(query.split('_')) < 2:
+            yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
+
+    # check whether the format is correct
+    elif format not in formats:
+        yield format + '\t' + 'Output format error!'
+
+    # check that the model exists
+    elif not model.strip() in our_models:
+        yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
+
+    # if all is OK...
+    else:
+        # form the query and get the result from the server
+        message = "1;" + query + ";" + 'ALL' + ";" + model
+        result = serverquery(message)
+        associates_list = []
+
+        # handle cases when the server returned that the word is unknown to the model,
+        # or for some other reason the associates list is empty
+        if "unknown to the" in result or "No results" in result:
+            yield query + '\t' + result.decode('utf-8')
+        else:
+            output = result.split('&')
+            associates = output[0]
+
+            # store embedding for the query word, in case we need it
+            if len(associates) > 1:
+                vector = ','.join(output[1:])
+
+            # take the associates and their similarity measures
+            for word in associates.split():
+                w = word.split("#")
+                associates_list.append((w[0].decode('utf-8'), float(w[1])))
+
+            # return result in csv
+            if format == 'csv':
+                yield model + '\n'
+                yield query + '\n'
+                for associate in associates_list:
+                    yield associate[0] + '\t' + str(associate[1]) + '\n'
+
+            # return result in json
+            elif format == 'json':
+                associates = OrderedDict()
+                for associate in associates_list:
+                    associates[associate[0]] = associate[1]
+                result = {model: {query: associates}}
+                yield json.dumps(result, ensure_ascii=False)
 
 
 @wvectors.route('/<model>/<word>/api/<format>', methods=['GET'])
 def api(model, word, format):
+    """
+    provides a list of neighbors for a given word in downloadable form: csv or json
+    :param model: a name of a model to be queried
+    :param word: a query word
+    :param format: a format of the output - csv or json
+    :return: generated file with neighbors in the requested format
+    all function arguments are strings
+    """
     model = model.strip()
+
+    # define mime type
     if format == 'csv':
         mime = 'text/csv'
     else:
         mime = 'application/json'
-
-    def generate(word, model, format):
-        if not word.strip().replace('_', '').replace('-', '').isalnum():
-            yield query.strip() + '\t' + model.strip() + '\t' + 'Word error!'
-        else:
-            query = process_query(word.strip())
-        if tags:
-	    if len(query.split('_')) < 2 or not model.strip() in our_models:
-        	yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
-        elif format != 'csv' and format != 'json':
-            yield format + '\t' + 'Output format error!'
-        else:
-            if not model.strip() in our_models:
-                yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
-            else:
-                message = "1;" + query + ";" + 'ALL' + ";" + model
-                result = serverquery(message)
-                associates_list = []
-                if "unknown to the" in result or "No results" in result:
-                    yield query + '\t' + result.decode('utf-8')
-                else:
-                    output = result.split('&')
-                    associates = output[0]
-                    if len(associates) > 1:
-                        vector = ','.join(output[1:])
-                    for word in associates.split():
-                        w = word.split("#")
-                        associates_list.append((w[0].decode('utf-8'), float(w[1])))
-                    if format == 'csv':
-                        yield model + '\n'
-                        yield query + '\n'
-                        for associate in associates_list:
-                            yield associate[0] + '\t' + str(associate[1]) + '\n'
-                    elif format == 'json':
-                        associates = OrderedDict()
-                        for associate in associates_list:
-                            associates[associate[0]] = associate[1]
-                        result = {model: {query: associates}}
-                        yield json.dumps(result, ensure_ascii=False)
 
     return Response(generate(word, model, format), mimetype=mime,
                     headers={"Content-Disposition": "attachment;filename=%s.%s" % (word.encode('utf-8'),
@@ -577,6 +625,7 @@ def about_page(lang):
     g.strings = language_dicts[lang]
 
     return render_template('%s/about.html' % lang)
+
 
 # redirecting requests with no lang:
 @wvectors.route('/about', methods=['GET', 'POST'])
