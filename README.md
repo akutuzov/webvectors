@@ -1,5 +1,5 @@
 # webvectors
-Toolkit to serve distributional semantic models (particularly, distributed word embeddings, as in _word2vec_) over the web. It uses _Flask_ and _Gensim_ under the hood.
+Webvectors is a toolkit to serve distributional semantic models (particularly, continuous word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It uses _Flask_ and _Gensim_ under the hood.
 
 Working demos:
 <ul>
