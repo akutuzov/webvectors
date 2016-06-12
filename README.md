@@ -1,7 +1,11 @@
 # webvectors
-Toolkit to serve distributional semantic models (particularly, distributed word embeddings, as in _word2vec_) over the web.
+Toolkit to serve distributional semantic models (particularly, distributed word embeddings, as in _word2vec_) over the web. It uses _Flask_ and _Gensim_ under the hood.
 
-It uses _Flask_ and _Gensim_ under the hood.
+Working demos:
+<ul>
+<li>http://ling.go.mail.ru/dsm</li>
+<li>http://ltr.uio.no/semvec/</li>
+</ul>
 
 ## Brief installation instructions
 
