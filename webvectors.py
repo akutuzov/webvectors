@@ -539,61 +539,63 @@ def generate(word, model, format):
 
     # check the sanity of the query word: no punctuation marks, not an empty string
     if not word.strip().replace('_', '').replace('-', '').isalnum():
+        word = ''.join([char for char in word if char.isalnum()])
         yield word.strip() + '\t' + model.strip() + '\t' + 'Word error!'
     else:
         query = process_query(word.strip())
 
-    # if tags are used, check whether the word is tagged
-    if tags:
-        if len(query.split('_')) < 2:
-            yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
+	# if tags are used, check whether the word is tagged
+	if tags:
+	    if len(query.split('_')) < 2:
+        	yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
 
-    # check whether the format is correct
-    elif format not in formats:
-        yield format + '\t' + 'Output format error!'
+	# check whether the format is correct
+	if format not in formats:
+	    yield format + '\t' + 'Output format error!'
 
-    # check that the model exists
-    elif not model.strip() in our_models:
-        yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
+	
 
-    # if all is OK...
-    else:
-        # form the query and get the result from the server
-        message = "1;" + query + ";" + 'ALL' + ";" + model
-        result = serverquery(message)
-        associates_list = []
+	# if all is OK...
+	# check that the model exists
+	if not model.strip() in our_models:
+	    yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
+	else:
+	    # form the query and get the result from the server
+	    message = "1;" + query + ";" + 'ALL' + ";" + model
+	    result = serverquery(message)
+	    associates_list = []
 
-        # handle cases when the server returned that the word is unknown to the model,
-        # or for some other reason the associates list is empty
-        if "unknown to the" in result or "No results" in result:
-            yield query + '\t' + result.decode('utf-8')
-        else:
-            output = result.split('&')
-            associates = output[0]
+	    # handle cases when the server returned that the word is unknown to the model,
+	    # or for some other reason the associates list is empty
+	    if "unknown to the" in result or "No results" in result:
+		yield query + '\t' + result.decode('utf-8')
+	    else:
+		output = result.split('&')
+		associates = output[0]
 
-            # store embedding for the query word, in case we need it
-            if len(associates) > 1:
-                vector = ','.join(output[1:])
+        	# store embedding for the query word, in case we need it
+        	if len(associates) > 1:
+		    vector = ','.join(output[1:])
 
-            # take the associates and their similarity measures
-            for word in associates.split():
-                w = word.split("#")
-                associates_list.append((w[0].decode('utf-8'), float(w[1])))
+        	# take the associates and their similarity measures
+        	for word in associates.split():
+		    w = word.split("#")
+		    associates_list.append((w[0].decode('utf-8'), float(w[1])))
 
-            # return result in csv
-            if format == 'csv':
-                yield model + '\n'
-                yield query + '\n'
-                for associate in associates_list:
-                    yield associate[0] + '\t' + str(associate[1]) + '\n'
+        	# return result in csv
+        	if format == 'csv':
+		    yield model + '\n'
+		    yield query + '\n'
+		    for associate in associates_list:
+			yield associate[0] + '\t' + str(associate[1]) + '\n'
 
-            # return result in json
-            elif format == 'json':
-                associates = OrderedDict()
-                for associate in associates_list:
-                    associates[associate[0]] = associate[1]
-                result = {model: {query: associates}}
-                yield json.dumps(result, ensure_ascii=False)
+        	# return result in json
+        	elif format == 'json':
+		    associates = OrderedDict()
+		    for associate in associates_list:
+			associates[associate[0]] = associate[1]
+		    result = {model: {query: associates}}
+		    yield json.dumps(result, ensure_ascii=False)
 
 
 @wvectors.route('/<model>/<word>/api/<format>', methods=['GET'])
@@ -614,8 +616,9 @@ def api(model, word, format):
     else:
         mime = 'application/json'
 
+    cleanword = ''.join([char for char in word if char.isalnum()])
     return Response(generate(word, model, format), mimetype=mime,
-                    headers={"Content-Disposition": "attachment;filename=%s.%s" % (word.encode('utf-8'),
+                    headers={"Content-Disposition": "attachment;filename=%s.%s" % (cleanword.encode('utf-8'),
                                                                                    format.encode('utf-8'))})
 
 
