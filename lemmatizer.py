@@ -1,7 +1,7 @@
-#!/usr/bin/python2.7
-# -!- coding: utf-8 -!-
+#!/usr/bin/python
+# coding: utf-8
+import subprocess
 
-import codecs, subprocess
 
 # Freeling lemmatization for Russian
 # Queries Freeling service at localhost port 50006

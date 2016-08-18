@@ -1,12 +1,15 @@
-#!/usr/local/python/bin/python2.7
+#!/usr/bin/python
 # coding: utf-8
 
 import socket
-import sys, datetime
+import datetime
 from thread import *
-import sys, gensim, logging
+import sys
+import gensim
+import logging
 
 import ConfigParser
+
 config = ConfigParser.RawConfigParser()
 config.read('webvectors.cfg')
 
@@ -16,7 +19,6 @@ PORT = config.getint('Sockets', 'port')  # Arbitrary non-privileged port
 tags = config.getboolean('Tags', 'use_tags')
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
 
 # Loading models
 
@@ -38,6 +40,7 @@ for m in our_models:
     models_dic[m].init_sims(replace=True)
     print >> sys.stderr, "Model", m, "from file", our_models[m], "loaded successfully."
 
+
 # Vector functions
 
 def find_synonyms(query):
@@ -45,23 +48,23 @@ def find_synonyms(query):
     results = []
     qf = q
     model = models_dic[usermodel]
-    if not qf in model:
+    if qf not in model:
         candidates_set = set()
         candidates_set.add(q.upper())
         if tags:
-	    candidates_set.add(q.split('_')[0] + '_UNKN')
-	    candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
-    	    candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
+            candidates_set.add(q.split('_')[0] + '_UNKN')
+            candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
+            candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         else:
-	    candidates_set.add(q.lower())
-    	    candidates_set.add(q.capitalize())
+            candidates_set.add(q.lower())
+            candidates_set.add(q.capitalize())
         noresults = True
         for candidate in candidates_set:
             if candidate in model:
                 qf = candidate
                 noresults = False
                 break
-        if noresults == True:
+        if noresults:
             results.append(q + " is unknown to the model")
             return results
     if pos == 'ALL':
@@ -78,8 +81,8 @@ def find_synonyms(query):
     if len(results) == 0:
         results.append('No results')
         return results
-    vector = model[qf]
-    results.append(vector)
+    raw_vector = model[qf]
+    results.append(raw_vector)
     return results
 
 
@@ -91,45 +94,45 @@ def find_similarity(query):
         (q1, q2) = pair.split()
         qf1 = q1
         qf2 = q2
-        if not q1 in model:
+        if q1 not in model:
             candidates_set = set()
             candidates_set.add(q1.upper())
             if tags:
-        	candidates_set.add(q1.split('_')[0] + '_UNKN')
-        	candidates_set.add(q1.split('_')[0].lower() + '_' + q1.split('_')[1])
-        	candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
+                candidates_set.add(q1.split('_')[0] + '_UNKN')
+                candidates_set.add(q1.split('_')[0].lower() + '_' + q1.split('_')[1])
+                candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
             else:
-        	candidates_set.add(q1.lower())
-        	candidates_set.add(q1.capitalize())
+                candidates_set.add(q1.lower())
+                candidates_set.add(q1.capitalize())
             noresults = True
             for candidate in candidates_set:
                 if candidate in model:
                     qf1 = candidate
                     noresults = False
                     break
-            if noresults == True:
+            if noresults:
                 return ["The model does not know the word %s" % q1]
-        if not q2 in model:
+        if q2 not in model:
             candidates_set = set()
-	    candidates_set.add(q2.upper())
-            if tags:
-        	candidates_set.add(q2.split('_')[0] + '_UNKN')
-        	candidates_set.add(q2.split('_')[0].lower() + '_' + q2.split('_')[1])
-        	candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
-            else:
-        	candidates_set.add(q2.lower())
-        	candidates_set.add(q2.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model:
-                    qf2 = candidate
-                    noresults = False
-                    break
-            if noresults == True:
-                return ["The model does not know the word %s" % q2]
-        pair2 = (qf1, qf2)
-        result = model.similarity(qf1, qf2)
-        results.append('#'.join(pair2) + "#" + str(result))
+        candidates_set.add(q2.upper())
+        if tags:
+            candidates_set.add(q2.split('_')[0] + '_UNKN')
+            candidates_set.add(q2.split('_')[0].lower() + '_' + q2.split('_')[1])
+            candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
+        else:
+            candidates_set.add(q2.lower())
+            candidates_set.add(q2.capitalize())
+        noresults = True
+        for candidate in candidates_set:
+            if candidate in model:
+                qf2 = candidate
+                noresults = False
+                break
+        if noresults:
+            return ["The model does not know the word %s" % q2]
+    pair2 = (qf1, qf2)
+    result = model.similarity(qf1, qf2)
+    results.append('#'.join(pair2) + "#" + str(result))
     return results
 
 
@@ -145,23 +148,23 @@ def scalculator(query):
         if word in model:
             plist.append(word)
             continue
-        elif not word in model:
+        elif word not in model:
             candidates_set = set()
             candidates_set.add(word.upper())
             if tags:
-        	candidates_set.add(word.split('_')[0] + '_UNKN')
-        	candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
-        	candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
+                candidates_set.add(word.split('_')[0] + '_UNKN')
+                candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
+                candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
             else:
-        	candidates_set.add(word.lower())
-        	candidates_set.add(word.capitalize())
+                candidates_set.add(word.lower())
+                candidates_set.add(word.capitalize())
             noresults = True
             for candidate in candidates_set:
                 if candidate in model:
                     q = candidate
                     noresults = False
                     break
-            if noresults == True:
+            if noresults:
                 return ["The model does not know the word %s" % word]
             else:
                 plist.append(q)
@@ -171,23 +174,23 @@ def scalculator(query):
         if word in model:
             nlist.append(word)
             continue
-        elif not word in model:
+        elif word not in model:
             candidates_set = set()
             candidates_set.add(word.upper())
             if tags:
-        	candidates_set.add(word.split('_')[0] + '_UNKN')
-        	candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
-        	candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
+                candidates_set.add(word.split('_')[0] + '_UNKN')
+                candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
+                candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
             else:
-        	candidates_set.add(word.lower())
-        	candidates_set.add(word.capitalize())
+                candidates_set.add(word.lower())
+                candidates_set.add(word.capitalize())
             noresults = True
             for candidate in candidates_set:
                 if candidate in model:
                     q = candidate
                     noresults = False
                     break
-            if noresults == True:
+            if noresults:
                 return ["The model does not know the word %s" % word]
             else:
                 nlist.append(q)
@@ -200,8 +203,8 @@ def scalculator(query):
                 results.append(w[0] + "#" + str(w[1]))
             if len(results) == 5:
                 break
-	if len(results) == 0:
-	    results.append("No results")
+    if len(results) == 0:
+        results.append("No results")
     return results
 
 
@@ -209,27 +212,27 @@ def vector(query):
     (q, usermodel) = query
     qf = q
     model = models_dic[usermodel]
-    if not q in model:
+    if q not in model:
         candidates_set = set()
         candidates_set.add(q.upper())
         if tags:
-        	candidates_set.add(q.split('_')[0] + '_UNKN')
-        	candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
-        	candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
+            candidates_set.add(q.split('_')[0] + '_UNKN')
+            candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
+            candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         else:
-        	candidates_set.add(q.lower())
-        	candidates_set.add(q.capitalize())
+            candidates_set.add(q.lower())
+            candidates_set.add(q.capitalize())
         noresults = True
         for candidate in candidates_set:
             if candidate in model:
                 qf = candidate
                 noresults = False
                 break
-        if noresults == True:
+        if noresults:
             return q + " is unknown to the model"
-    vector = model[qf]
-    vector = vector.tolist()
-    str_vector = ','.join([str(e) for e in vector])
+    raw_vector = model[qf]
+    raw_vector = raw_vector.tolist()
+    str_vector = ','.join([str(e) for e in raw_vector])
     return str_vector
 
 
@@ -248,48 +251,50 @@ except socket.error, msg:
 
 print >> sys.stderr, 'Socket bind complete'
 
-#Start listening on socket
+# Start listening on socket
 s.listen(100)
 print >> sys.stderr, 'Socket now listening on port', PORT
 
-#Function for handling connections. This will be used to create threads
-def clientthread(conn, addr):
-    #Sending message to connected client
-    conn.send('word2vec model server')  #send only takes string
 
-    #infinite loop so that function do not terminate and thread do not end.
+# Function for handling connections. This will be used to create threads
+def clientthread(connect, addres):
+    # Sending message to connected client
+    connect.send('word2vec model server')  # send only takes string
+
+    # infinite loop so that function do not terminate and thread do not end.
     while True:
-        #Receiving from client
-        data = conn.recv(1024)
+        # Receiving from client
+        data = connect.recv(1024)
         data = data.decode("utf-8")
         query = data.split(";")
         output = operations[query[0]]((query[1:]))
         if not data:
             break
         now = datetime.datetime.now()
-        print >> sys.stderr, now.strftime("%Y-%m-%d %H:%M"), '\t', addr[0] + ':' + str(addr[1]), '\t', data
-        if query[0] == "1" and not 'unknown to the' in output[0] and not "No results" in output[0]:
+        print >> sys.stderr, now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data
+        if query[0] == "1" and 'unknown to the' not in output[0] and "No results" not in output[0]:
             reply = ' '.join(output[:-1])
-            vector = output[-1].tolist()
-            str_vector = ','.join([str(e) for e in vector])
-            conn.sendall(reply.encode('utf-8') + "&" + str_vector)
+            raw_vector = output[-1].tolist()
+            str_vector = ','.join([str(e) for e in raw_vector])
+            connect.sendall(reply.encode('utf-8') + "&" + str_vector)
         elif query[0] == "4":
             reply = output
-            conn.sendall(reply.encode('utf-8'))
+            connect.sendall(reply.encode('utf-8'))
         else:
             reply = ' '.join(output)
-            conn.sendall(reply.encode('utf-8'))
+            connect.sendall(reply.encode('utf-8'))
         break
 
-    #came out of loop
-    conn.close()
+    # came out of loop
+    connect.close()
 
-#now keep talking with the client
+
+# now keep talking with the client
 while 1:
-    #wait to accept a connection - blocking call
+    # wait to accept a connection - blocking call
     conn, addr = s.accept()
 
-    #start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
+    # start new thread takes 1st argument as a function name to be run, 2nd is the tuple of arguments to the function.
     start_new_thread(clientthread, (conn, addr))
 
 s.close()

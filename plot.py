@@ -1,21 +1,24 @@
-#!/bin/python
+#!/usr/bin/python
 # coding: utf-8
-import matplotlib, sys
+import matplotlib
+import sys
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import pylab as Plot
+import pylab as plot
 import numpy as np
 from matplotlib import font_manager
 from tsne import tsne
 import hashlib
 
 import ConfigParser
+
 config = ConfigParser.RawConfigParser()
 config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 path = config.get('Files and directories', 'font')
 font = font_manager.FontProperties(fname=path)
+
 
 def singularplot(word, modelname, vector):
     xlocations = np.array(range(len(vector)))
@@ -33,14 +36,14 @@ def singularplot(word, modelname, vector):
 def embed(words, matrix, usermodel):
     perplexity = 5.0
     dimensionality = matrix.shape[1]
-    Y = tsne(matrix, 2, dimensionality, perplexity)
+    y = tsne(matrix, 2, dimensionality, perplexity)
     print >> sys.stderr, '2-d embedding finished'
-    Plot.scatter(Y[:, 0], Y[:, 1], 20, marker='.')
-    for label, x, y in zip(words, Y[:, 0], Y[:, 1]):
-        Plot.annotate(label.split('_')[0], xy=(x - 20, y), size='x-large', weight='bold', fontproperties=font)
+    plot.scatter(y[:, 0], y[:, 1], 20, marker='.')
+    for label, x, y in zip(words, y[:, 0], y[:, 1]):
+        plot.annotate(label.split('_')[0], xy=(x - 20, y), size='x-large', weight='bold', fontproperties=font)
     m = hashlib.md5()
     name = '_'.join(words).encode('ascii', 'backslashreplace')
     m.update(name)
     fname = m.hexdigest()
-    Plot.savefig(root + 'static/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
-    Plot.close()
+    plot.savefig(root + 'static/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plot.close()

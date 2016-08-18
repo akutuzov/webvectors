@@ -1,13 +1,13 @@
-#!/usr/local/python/bin/python
+#!/usr/bin/python
 # coding: utf-8
 
-# test comment
-import codecs, logging, urllib, hashlib, os, sys, json
-
+import logging
+import hashlib
+import os
+import sys
+import json
 from flask import render_template, Blueprint, redirect, Response
-from flask import request, url_for
-from flask import current_app
-from string import Template
+from flask import request
 import numpy as np
 
 from flask import g
@@ -58,8 +58,6 @@ def serverquery(message):
 
     # Connect to remote server
     s.connect((remote_ip, port))
-    # Now receive data
-    reply = s.recv(1024)
 
     # Send some data to remote server
     try:
@@ -108,7 +106,7 @@ def per_request_callbacks(response):
 
 
 def process_query(userquery):
-    userquery = userquery.strip().replace(u'ё', u'е')
+    userquery = userquery.strip()
     if tags:
         if '_' in userquery:
             query_split = userquery.split('_')
@@ -119,11 +117,11 @@ def process_query(userquery):
         else:
             if lemmatize:
                 pos_tag = freeling_lemmatizer(userquery)
-                if pos_tag == 'A' and userquery.endswith(u'о'):
-                    pos_tag = 'ADV'
                 query = userquery.lower() + '_' + pos_tag
             else:
                 return 'Incorrect tag!'
+    else:
+        query = userquery
     return query
 
 
@@ -198,7 +196,7 @@ def similar_page(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html')
                 for query in input_data.split(','):
-                    if not ' ' in query.strip():
+                    if '' not in query.strip():
                         continue
                     query = query.split()
                     words = []
@@ -264,15 +262,13 @@ def similar_page(lang):
                 else:
                     output = result.split('&')
                     associates = output[0]
-                    if len(associates) > 1:
-                        vector = output[1:]
                     for word in associates.split():
                         w = word.split("#")
                         associates_list.append((w[0].decode('utf-8'), float(w[1])))
                     models_row[model] = associates_list
 
             return render_template('similar.html', list_value=models_row, word=query, pos=pos,
-                                   number=len(model_value), model=model, models=our_models, tags=tags)
+                                   number=len(model_value), models=our_models, tags=tags)
         else:
             error_value = "Incorrect query!"
             return render_template("similar.html", error=error_value, models=our_models, tags=tags)
@@ -299,8 +295,7 @@ def visual_page(lang):
 
             model_value = request.form.getlist('model')
             if "Incorrect tag!" in querywords:
-                return render_template('visual.html', list_value=[query], word=list_data, model=model,
-                                       models=our_models)
+                return render_template('visual.html', word=list_data, models=our_models)
 
             if len(model_value) < 1:
                 model_value = [defaultmodel]
@@ -319,7 +314,7 @@ def visual_page(lang):
                 plotfile = model + '_' + fname + '.png'
                 models_row[model] = plotfile
                 labels = []
-                if os.access(root + '/static/tsneplots/' + plotfile, os.F_OK) == False:
+                if not os.access(root + '/static/tsneplots/' + plotfile, os.F_OK):
                     print >> sys.stderr, 'No previous image found'
                     vectors = []
                     for w in words2vis:
@@ -397,7 +392,6 @@ def finder(lang):
             if len(calcmodel_value) < 1:
                 calcmodel_value = [defaultmodel]
             models_row = {}
-            unknown_words = False
             for model in calcmodel_value:
                 if not model.strip() in our_models:
                     return render_template('home.html')
@@ -413,7 +407,6 @@ def finder(lang):
                     continue
                 if "does not know" in result:
                     results.append(result)
-                    unknown_words = True
                     models_row[model] = results
                     continue
                 for word in result.split():
@@ -457,7 +450,6 @@ def finder(lang):
                     continue
                 if "does not know" in result:
                     results.append(result)
-                    unknown_words = True
                     models_row[model] = results
                     continue
                 for word in result.split():
@@ -499,6 +491,8 @@ def raw_finder(lang, model, userquery):
             associates = output[0]
             if len(associates) > 1:
                 vector = ','.join(output[1:])
+            else:
+                vector = ''
             for word in associates.split():
                 w = word.split("#")
                 associates_list.append((w[0].decode('utf-8'), float(w[1])))
@@ -507,7 +501,7 @@ def raw_finder(lang, model, userquery):
             m.update(name)
             fname = m.hexdigest()
             plotfile = root + 'static/singleplots/' + model + '_' + fname + '.png'
-            if os.access(plotfile, os.F_OK) == False:
+            if not os.access(plotfile, os.F_OK):
                 vector2 = output[1].split(',')
                 vector2 = [float(a) for a in vector2]
                 singularplot(query, model, vector2)
@@ -524,18 +518,16 @@ def raw_finder(lang, model, userquery):
         error_value = u'Incorrect query: %s' % userquery
         return render_template("wordpage.html", error=error_value, tags=tags)
 
-    return render_template("wordpage.html", tags=tags)
 
-
-def generate(word, model, format):
+def generate(word, model, api_format):
     """
     yields result of the query
     :param model: name of a model to be queried
     :param word: query word
-    :param format: format of the output - csv or json
+    :param api_format: format of the output - csv or json
     """
 
-    formats = set(['csv', 'json'])
+    formats = {'csv', 'json'}
 
     # check the sanity of the query word: no punctuation marks, not an empty string
     if not word.strip().replace('_', '').replace('-', '').isalnum():
@@ -544,82 +536,76 @@ def generate(word, model, format):
     else:
         query = process_query(word.strip())
 
-	# if tags are used, check whether the word is tagged
-	if tags:
-	    if len(query.split('_')) < 2:
-        	yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
+        # if tags are used, check whether the word is tagged
+        if tags:
+            if len(query.split('_')) < 2:
+                yield query.strip() + '\t' + model.strip() + '\t' + 'Error!'
 
-	# check whether the format is correct
-	if format not in formats:
-	    yield format + '\t' + 'Output format error!'
+        # check whether the format is correct
+        if api_format not in formats:
+            yield api_format + '\t' + 'Output format error!'
 
-	
+        # if all is OK...
+        # check that the model exists
+        if not model.strip() in our_models:
+            yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
+        else:
+            # form the query and get the result from the server
+            message = "1;" + query + ";" + 'ALL' + ";" + model
+            result = serverquery(message)
+            associates_list = []
 
-	# if all is OK...
-	# check that the model exists
-	if not model.strip() in our_models:
-	    yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
-	else:
-	    # form the query and get the result from the server
-	    message = "1;" + query + ";" + 'ALL' + ";" + model
-	    result = serverquery(message)
-	    associates_list = []
+            # handle cases when the server returned that the word is unknown to the model,
+            # or for some other reason the associates list is empty
+            if "unknown to the" in result or "No results" in result:
+                yield query + '\t' + result.decode('utf-8')
+            else:
+                output = result.split('&')
+                associates = output[0]
 
-	    # handle cases when the server returned that the word is unknown to the model,
-	    # or for some other reason the associates list is empty
-	    if "unknown to the" in result or "No results" in result:
-		yield query + '\t' + result.decode('utf-8')
-	    else:
-		output = result.split('&')
-		associates = output[0]
+                # take the associates and their similarity measures
+                for word in associates.split():
+                    w = word.split("#")
+                    associates_list.append((w[0].decode('utf-8'), float(w[1])))
 
-        	# store embedding for the query word, in case we need it
-        	if len(associates) > 1:
-		    vector = ','.join(output[1:])
+                # return result in csv
+                if api_format == 'csv':
+                    yield model + '\n'
+                    yield query + '\n'
+                    for associate in associates_list:
+                        yield associate[0] + '\t' + str(associate[1]) + '\n'
 
-        	# take the associates and their similarity measures
-        	for word in associates.split():
-		    w = word.split("#")
-		    associates_list.append((w[0].decode('utf-8'), float(w[1])))
-
-        	# return result in csv
-        	if format == 'csv':
-		    yield model + '\n'
-		    yield query + '\n'
-		    for associate in associates_list:
-			yield associate[0] + '\t' + str(associate[1]) + '\n'
-
-        	# return result in json
-        	elif format == 'json':
-		    associates = OrderedDict()
-		    for associate in associates_list:
-			associates[associate[0]] = associate[1]
-		    result = {model: {query: associates}}
-		    yield json.dumps(result, ensure_ascii=False)
+                # return result in json
+                elif api_format == 'json':
+                    associates = OrderedDict()
+                    for associate in associates_list:
+                        associates[associate[0]] = associate[1]
+                    result = {model: {query: associates}}
+                    yield json.dumps(result, ensure_ascii=False)
 
 
 @wvectors.route('/<model>/<word>/api/<format>', methods=['GET'])
-def api(model, word, format):
+def api(model, word, api_format):
     """
     provides a list of neighbors for a given word in downloadable form: csv or json
     :param model: a name of a model to be queried
     :param word: a query word
-    :param format: a format of the output - csv or json
+    :param api_format: a format of the output - csv or json
     :return: generated file with neighbors in the requested format
     all function arguments are strings
     """
     model = model.strip()
 
     # define mime type
-    if format == 'csv':
+    if api_format == 'csv':
         mime = 'text/csv'
     else:
         mime = 'application/json'
 
     cleanword = ''.join([char for char in word if char.isalnum()])
-    return Response(generate(word, model, format), mimetype=mime,
+    return Response(generate(word, model, api_format), mimetype=mime,
                     headers={"Content-Disposition": "attachment;filename=%s.%s" % (cleanword.encode('utf-8'),
-                                                                                   format.encode('utf-8'))})
+                                                                                   api_format.encode('utf-8'))})
 
 
 @wvectors.route('/<lang:lang>/about')

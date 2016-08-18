@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # coding:utf8
 
 """
@@ -5,16 +6,16 @@ this module reads strings.csv, which contains all
 the strings, and lets the main app use it 
 """
 
-import codecs, csv
+import csv
 from flask import Markup
 
 import ConfigParser
+
 config = ConfigParser.RawConfigParser()
 config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 l10nfile = config.get('Files and directories', 'l10n')
-
 
 # the encoding to use
 encoding = 'utf8'

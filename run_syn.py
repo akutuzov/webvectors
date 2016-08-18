@@ -1,7 +1,6 @@
-from flask import Flask, request, url_for
-from webvectors import *
+from flask import Flask, url_for
 from lang_converter import LangConverter
-from flask import g
+from webvectors import *
 
 app_syn = Flask(__name__)
 

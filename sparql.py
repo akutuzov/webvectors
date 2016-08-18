@@ -1,15 +1,17 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 # coding: utf-8
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 import codecs
 
 import ConfigParser
+
 config = ConfigParser.RawConfigParser()
 config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 cachefile = config.get('Files and directories', 'image_cache')
+
 
 def getdbpediaimage(query):
     query = query.decode('utf-8')
@@ -25,12 +27,12 @@ def getdbpediaimage(query):
 
     if query in cache:
         return cache[query]
-    #else:
+    # else:
     #    return None
     sparql = SPARQLWrapper("http://dbpedia.org/sparql")
     sparql.setQuery("""
-	SELECT DISTINCT ?e ?pic
-	WHERE {
+    SELECT DISTINCT ?e ?pic
+    WHERE {
         ?e rdfs:label "%s"@ru .
         ?e <http://dbpedia.org/ontology/thumbnail> ?pic .
             }
