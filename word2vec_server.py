@@ -114,7 +114,7 @@ def find_similarity(query):
                 return ["The model does not know the word %s" % q1]
         if q2 not in model:
             candidates_set = set()
-        candidates_set.add(q2.upper())
+            candidates_set.add(q2.upper())
         if tags:
             candidates_set.add(q2.split('_')[0] + '_UNKN')
             candidates_set.add(q2.split('_')[0].lower() + '_' + q2.split('_')[1])
@@ -130,9 +130,9 @@ def find_similarity(query):
                 break
         if noresults:
             return ["The model does not know the word %s" % q2]
-    pair2 = (qf1, qf2)
-    result = model.similarity(qf1, qf2)
-    results.append('#'.join(pair2) + "#" + str(result))
+        pair2 = (qf1, qf2)
+        result = model.similarity(qf1, qf2)
+        results.append('#'.join(pair2) + "#" + str(result))
     return results
 
 

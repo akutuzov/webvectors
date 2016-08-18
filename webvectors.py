@@ -58,6 +58,8 @@ def serverquery(message):
 
     # Connect to remote server
     s.connect((remote_ip, port))
+    # Now receive initial data
+    initial_reply = s.recv(1024)
 
     # Send some data to remote server
     try:
@@ -184,7 +186,7 @@ def similar_page(lang):
             pass
         if input_data != 'dummy':
             if ' ' in input_data.strip():
-                input_data = input_data.replace(u'ё', u'е').strip()
+                input_data = input_data.strip()
                 if input_data.endswith(','):
                     input_data = input_data[:-1]
                 cleared_data = []
@@ -236,13 +238,15 @@ def similar_page(lang):
                     pos = query.split('_')[-1]
                 else:
                     pos = pos_value[0]
-
+            else:
+                pos = 'All PoS'
             model_value = request.form.getlist('model')
 
             if len(model_value) < 1:
                 model_value = [defaultmodel]
 
             models_row = {}
+            model = model_value[0]
             for model in model_value:
                 if not model.strip() in our_models:
                     return render_template('home.html')
@@ -268,7 +272,7 @@ def similar_page(lang):
                     models_row[model] = associates_list
 
             return render_template('similar.html', list_value=models_row, word=query, pos=pos,
-                                   number=len(model_value), models=our_models, tags=tags)
+                                   number=len(model_value), models=our_models, tags=tags, model=model)
         else:
             error_value = "Incorrect query!"
             return render_template("similar.html", error=error_value, models=our_models, tags=tags)
@@ -311,7 +315,7 @@ def visual_page(lang):
                 name = '_'.join(words2vis).encode('ascii', 'backslashreplace')
                 m.update(name)
                 fname = m.hexdigest()
-                plotfile = model + '_' + fname + '.png'
+                plotfile = "%s_%s.png" % (model, fname)
                 models_row[model] = plotfile
                 labels = []
                 if not os.access(root + '/static/tsneplots/' + plotfile, os.F_OK):
@@ -333,7 +337,7 @@ def visual_page(lang):
                         name = '_'.join(labels).encode('ascii', 'backslashreplace')
                         m.update(name)
                         fname = m.hexdigest()
-                        plotfile = model + '_' + fname + '.png'
+                        plotfile = "%s_%s.png" % (model, fname)
                         models_row[model] = plotfile
                     else:
                         models_row[model] = "Too few words!"
@@ -388,6 +392,8 @@ def finder(lang):
                     pos = defaulttag
                 else:
                     pos = calcpos_value[0]
+            else:
+                pos = 'All PoS'
             calcmodel_value = request.form.getlist('calcmodel')
             if len(calcmodel_value) < 1:
                 calcmodel_value = [defaultmodel]
@@ -573,7 +579,7 @@ def generate(word, model, api_format):
                     yield model + '\n'
                     yield query + '\n'
                     for associate in associates_list:
-                        yield associate[0] + '\t' + str(associate[1]) + '\n'
+                        yield "%s\t%s\n" % (associate[0], str(associate[1]))
 
                 # return result in json
                 elif api_format == 'json':
@@ -582,6 +588,13 @@ def generate(word, model, api_format):
                         associates[associate[0]] = associate[1]
                     result = {model: {query: associates}}
                     yield json.dumps(result, ensure_ascii=False)
+
+
+@wvectors.route('/<lang:lang>/models')
+def models_page(lang):
+    g.lang = lang
+    g.strings = language_dicts[lang]
+    return render_template('%s/about.html' % lang)
 
 
 @wvectors.route('/<model>/<word>/api/<format>', methods=['GET'])
