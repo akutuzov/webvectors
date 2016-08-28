@@ -597,7 +597,7 @@ def models_page(lang):
     return render_template('%s/about.html' % lang)
 
 
-@wvectors.route('/<model>/<word>/api/<format>', methods=['GET'])
+@wvectors.route('/<model>/<word>/api/<api_format>', methods=['GET'])
 def api(model, word, api_format):
     """
     provides a list of neighbors for a given word in downloadable form: csv or json
