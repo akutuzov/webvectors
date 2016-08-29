@@ -276,7 +276,7 @@ def clientthread(connect, addres):
             reply = ' '.join(output[:-1])
             raw_vector = output[-1].tolist()
             str_vector = ','.join([str(e) for e in raw_vector])
-            connect.sendall(reply.encode('utf-8') + "&" + str_vector)
+            connect.sendall(reply.encode('utf-8') + "&&&" + str_vector)
         elif query[0] == "4":
             reply = output
             connect.sendall(reply.encode('utf-8'))

@@ -155,7 +155,7 @@ def home(lang):
             if "unknown to the" in result or "No result" in result:
                 return render_template('home.html', error=result.decode('utf-8'))
             else:
-                output = result.split('&')
+                output = result.split('&&&')
                 associates = output[0]
                 for word in associates.split():
                     w = word.split("#")
@@ -264,7 +264,7 @@ def similar_page(lang):
                     models_row[model] = associates_list
                     continue
                 else:
-                    output = result.split('&')
+                    output = result.split('&&&')
                     associates = output[0]
                     for word in associates.split():
                         w = word.split("#")
@@ -493,7 +493,7 @@ def raw_finder(lang, model, userquery):
         if "unknown to the" in result or "No results" in result:
             return render_template('wordpage.html', error=result.decode('utf-8'))
         else:
-            output = result.split('&')
+            output = result.split('&&&')
             associates = output[0]
             if len(associates) > 1:
                 vector = ','.join(output[1:])
@@ -566,7 +566,7 @@ def generate(word, model, api_format):
             if "unknown to the" in result or "No results" in result:
                 yield query + '\t' + result.decode('utf-8')
             else:
-                output = result.split('&')
+                output = result.split('&&&')
                 associates = output[0]
 
                 # take the associates and their similarity measures
