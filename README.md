@@ -85,7 +85,9 @@ Tune them as you wish. The main menu is defined at `base.html`.
 Once you have modified all the settings according to your workflow, made sure the templates are OK for you and launched the models daemon, you are ready to actually start the service.
 If you use _Apache_ integration, simply restart/reload _Apache_.
 If you prefer the standalone option, execute the following command in the root directory of the project:
-gunicorn run_syn:app_syn -b address:port
+
+`gunicorn run_syn:app_syn -b address:port`
+
 where _address_ is the address on which the service should be active (can be localhost), and _port_ is, well, port to listen (for example, 9999).
 
 
