@@ -25,7 +25,7 @@
                 <small>
                 {% for m in models %}
 		    <label>
-                	<input type="checkbox" name="model" value="{{ m }}">{{ strings[models[m]] }}
+                	<input type="checkbox" checked name="model" value="{{ m }}">{{ strings[models[m]] }}
             	    </label>
                 {% endfor %}
                 </small>
@@ -70,7 +70,7 @@
         <ol>
         {% for res in list_value[model] if not "No results" in res and res != "Incorrect tag!" %}
         <li>
-        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
+        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.3f} ".format(res[1]) }}
         </li>
         {% endfor %}
         </ol>
@@ -132,7 +132,7 @@
             <table class="table"><tr>
             <td><strong>{{strings['calc29']}}</strong></td><td><strong>{{strings['calc30']}}</strong><br/>(<a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
             {% for res in value if not "unknown to the model" in res and not "Incorrect tag!" in res  %}
-            <tr><td style="vertical-align:top"><em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0]}}</a></em> <em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.5f} ".format(res[2]) }}</td></tr>
+            <tr><td style="vertical-align:top"><em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0]}}</a></em> <em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.3f} ".format(res[2]) }}</td></tr>
             {% endfor %}
             {% for res in value if "unknown to the model" in res or "Incorrect tag!" in res  %}
             <tr><td style="vertical-align:top"><em>{{res}}</em></td> <td></td></tr>

@@ -49,7 +49,7 @@
         
     	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
     		<li>
-    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
+    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.3f} ".format(res[1]) }}
     		</li>
     	    {% endfor %}
         
@@ -73,7 +73,7 @@
                       <small>
                         {% for m in models %}
                       <label>
-                          <input type="checkbox" name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
+                          <input type="checkbox" checked name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
                       </label>
                       {% endfor %}
                       </small>
@@ -126,7 +126,7 @@
         
     	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
     		<li>
-    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
+    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.3f} ".format(res[1]) }}
     		</li>
     	    {% endfor %}
         
@@ -149,7 +149,7 @@
                       <small>
                         {% for m in models %}
                       <label>
-                          <input type="checkbox" name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
+                          <input type="checkbox" checked name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
                       </label>
                       {% endfor %}
                       </small>

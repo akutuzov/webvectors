@@ -27,7 +27,7 @@
         {% for res in list_value if res[0] != "No results" and not "unknown to the model" in res %}
         <li>
         <span style = "font-size:larger;">
-        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ res[0] }}">{{res[0].split('_')[0]}}</a> {{ "{:.5f} ".format(res[1]) }}
+        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ res[0] }}">{{res[0].split('_')[0]}}</a> {{ "{:.4f} ".format(res[1]) }}
         </span>
         </li>
         {% endfor %}
