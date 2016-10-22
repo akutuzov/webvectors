@@ -80,6 +80,10 @@ By default, language 1 is Russian and language 2 is English. This can be changed
 Actual web pages shown to user are defined in the files `templates/*.html`.
 Tune them as you wish. The main menu is defined at `base.html`.
 
+**Query hints**
+If you want query hints to work, do not forget to compile your own list of hints (JSON format). Example of such a list is given in data/example_vocab.json.
+Real URL of this list should be stated in data/hint.js.
+
 **Running WebVectors**
 
 Once you have modified all the settings according to your workflow, made sure the templates are OK for you and launched the models daemon, you are ready to actually start the service.

@@ -159,7 +159,7 @@ def home(lang):
                 associates = output[0]
                 for word in associates.split():
                     w = word.split("#")
-                    associates_list.append((w[0].decode('utf-8'), float(w[1])))
+                    associates_list.append((w[0].decode('utf-8'), float(w[-1])))
 
                 return render_template('home.html', list_value=associates_list, word=query, model=model, tags=tags)
         else:
@@ -220,7 +220,7 @@ def similar_page(lang):
                     return render_template("similar.html", error_sim=result.strip())
                 for word in result.split():
                     w = word.split("#")
-                    results.append((w[0].decode('utf-8'), w[1].decode('utf-8'), float(w[2])))
+                    results.append((w[0].decode('utf-8'), w[1].decode('utf-8'), float(w[-1])))
                 return render_template('similar.html', value=results, model=model, query=cleared_data,
                                        models=our_models, tags=tags)
             else:
