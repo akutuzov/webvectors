@@ -9,13 +9,14 @@
         <div class="row">
             <div class="col-md-7">
         <h2>{{strings['similar1']}}</h2>
-        <form method=post>
+         <div id="queryform">
+         <form id="inputform" action="#" method=post>
               <div class="form-group">
                   <p>{{strings['similar2']}}</p>
                 {% if list_value %}
-                <input type="text" class="form-control" name="list_query" value="{{ word }}" maxlength=100>
+                <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
                 {% else %}
-                <input type="text" class="form-control" name="list_query" placeholder="вычислять_V" maxlength=100>
+                <input type="text" class="typeahead" id="query" name="list_query" placeholder="вычислять_V" maxlength=100>
                 {% endif %}
               </div>
               
@@ -55,8 +56,9 @@
                 </small>
                 </div>
                 
-              <button type="submit" class="btn btn-primary" name="list_query" value = "Produce a list of quazy-synonyms">{{strings['similar15']}}</button>
+           <button type="submit" class="btn btn-primary" id="send" name="list_query" value = "Produce a list of quazy-synonyms">{{strings['similar15']}}</button>
             </form>
+            </div>
  {% if list_value %}
       <h3><strong>{{strings['similar16']}} <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{word}}"><i>{{ word.split('_')[0] }}</i></a></strong> ({{ pos }})</h3>
         <div class="row">

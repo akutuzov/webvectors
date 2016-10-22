@@ -16,9 +16,9 @@
 
     {%- block styles %}
     <!-- Bootstrap -->
-      <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous"-->
       <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
       <link href="/css/avatar.css" rel="stylesheet" media="screen">
+      <link rel="stylesheet" href="https://twitter.github.io/typeahead.js/css/examples.css">
     {%- endblock styles %}
     {%- endblock head %}
   </head>
@@ -69,6 +69,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/dist/js/ie10-viewport-bug-workaround.js"></script>
+    <script type="text/javascript" src="https://github.com/twitter/typeahead.js/blob/master/dist/bloodhound.min.js"></script>
+    <script type="text/javascript" src="https://github.com/twitter/typeahead.js/blob/master/dist/typeahead.bundle.min.js"></script>
+    <script type="text/javascript" src="data/hint.js"></script>
     {%- endblock scripts %}
     {%- endblock body %}
   </body>
