@@ -318,6 +318,8 @@ def visual_page(lang):
                 plotfile = "%s_%s.png" % (model, fname)
                 models_row[model] = plotfile
                 labels = []
+                if not os.path.exists(root + '/static/tsneplots'):
+                    os.makedirs(root + '/static/tsneplots')
                 if not os.access(root + '/static/tsneplots/' + plotfile, os.F_OK):
                     print >> sys.stderr, 'No previous image found'
                     vectors = []

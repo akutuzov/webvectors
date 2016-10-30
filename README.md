@@ -59,6 +59,7 @@ The list of models you want to use is defined in the file `models.csv`. It consi
 <li> path to model </li>
 <li> identifier of localized model name </li>
 <li> is the model default or not </li></ul>
+Model identifier will be used as the name for checkboxes, and it is also important that in `strings.csv` the same identifier is used when denoting model names.
 
 Models can be of two formats:
 <ul><li> binary _word2vec_ models compressed with gzip (ends with `.bin.gz`) </li>
