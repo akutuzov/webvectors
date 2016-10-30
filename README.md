@@ -33,7 +33,7 @@ with the absolute path to the `webvectors.cfg` file
 Set up your service using the configuration file `webvectors.cfg`.
 Most important settings are:
 <ul>
-<li> `root` - absolute path to your _WebVectors_ directory </li>
+<li> `root` - absolute path to your _WebVectors_ directory (**NB: end it with a slash!**)</li>
 <li> `temp` - absolute path to your temporary files directory </li>
 <li> `font` - absolute path to a TTF font you want to use for plots (otherwise default system font will be used) </li>
 <li> `lemmatize` - whether to use automatic PoS-tagging and lemmatization </li>
