@@ -634,9 +634,12 @@ def similarity_api(model, wordpair):
     """
     model = model.strip()
     wordpair = wordpair.split('___')
-    cleanword0 = ''.join([char for char in process_query(wordpair[0]) if char.isalnum()])
-    cleanword1 = ''.join([char for char in process_query(wordpair[1]) if char.isalnum()])
-    message = "2;" + " ".join(wordpair) + ";" + model
+    cleanword0 = ''.join([char for char in wordpair[0] if char.isalnum() or char == '_'])
+    cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_'])
+    cleanword0 = process_query(cleanword0)
+    cleanword1 = process_query(cleanword1)
+    message = "2;" + " ".join([cleanword0, cleanword1]) + ";" + model
+
     result = serverquery(message)
     if 'does not know the word' in result:
         return 'Unknown'
