@@ -621,6 +621,27 @@ def api(model, word, api_format):
                                                                                    api_format.encode('utf-8'))})
 
 
+@wvectors.route('/<model>/<wordpair>/similarity/', methods=['GET'])
+def similarity_api(model, wordpair):
+    """
+    provides a similarity value for a given word pair
+    :param model: a name of a model to be queried
+    :param wordpair: a query word pair separated by ___ (3 underscores)
+    :return: similarity value as a string
+    all function arguments are strings
+    """
+    model = model.strip()
+    wordpair = wordpair.split('___')
+    cleanword0 = ''.join([char for char in process_query(wordpair[0]) if char.isalnum()])
+    cleanword1 = ''.join([char for char in process_query(wordpair[1]) if char.isalnum()])
+    message = "2;" + " ".join(wordpair) + ";" + model
+    result = serverquery(message)
+    if 'does not know the word' in result:
+        return 'Unknown'
+    w = result.split("#")
+    return str(w[2]) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
+
+
 @wvectors.route('/<lang:lang>/about')
 def about_page(lang):
     g.lang = lang
