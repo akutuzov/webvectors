@@ -25,7 +25,7 @@
 		<small>
 		{% for m in models %}
 		<label>
-                  <input type="checkbox" name="model" value="{{ m }}">{{ strings[models[m]] }}
+                  <input type="checkbox" checked name="model" value="{{ m }}">{{ strings[models[m]] }}
                 </label>
                 {% endfor %}
 		</small>
@@ -43,7 +43,7 @@
         <div class="col-md-4">
         <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
         {% if not 'Too few words' in visual[model] %}
-	<a href="/dsm/static/tsneplots/{{ visual[model] }}" target="_blank"><img src = "/dsm/static/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}" width="400"></a>
+	<a href="/static/tsneplots/{{ visual[model] }}" target="_blank"><img src = "/static/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}" width="400"></a>
 	{% else %}
 	{{ visual[model] }}
 	{% endif %}
@@ -64,11 +64,11 @@
     <div class="row">
     <div class="col-md-5">
     <h3>{{strings['visual18']}}</h3>
-    <a href="/dsm/static/ruscorpora_nouns_tsne.png" target = "_blank"><img src = "/dsm/static/ruscorpora_nouns_tsne_thumb.png" alt = "{{strings['visual19']}}" title = "{{strings['visual19']}}"></a>
+    <a href="/static/ruscorpora_nouns_tsne_thumb.png" target = "_blank"><img src = "/static/ruscorpora_nouns_tsne_thumb.png" alt = "{{strings['visual19']}}" title = "{{strings['visual19']}}"></a>
     </div>
     <div class="col-md-5">
     <h3>{{strings['visual21']}}</h3>
-    <a href="/dsm/static/news_nouns_tsne.png" target = "_blank"><img src = "/dsm/static/news_nouns_tsne_thumb.png" alt = "{{strings['visual19']}}" title = "{{strings['visual19']}}"></a>
+    <a href="/static/news_nouns_tsne.png" target = "_blank"><img src = "/static/news_nouns_tsne.png" alt = "{{strings['visual19']}}" title = "{{strings['visual19']}}"></a>
     </div>
     </div>
     {% endif %}
