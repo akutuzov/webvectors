@@ -43,10 +43,10 @@
             <li><a href="{{request.script_root}}/{{lang}}/visual">{{strings['base13']}}</a></li>
             <li><a href="{{request.script_root}}/{{lang}}/calculator">{{strings['base5']}}</a></li>
             <li><a href="{{request.script_root}}/{{lang}}/about">{{strings['base4']}}</a></li>
-            {% if lang=="ru" %}
-            <li><a title="Switch language" href="{{request.script_root}}/en{{request.path[3:]}}">EN/RU</a></li>
+            {% if lang=="en" %}
+            <li><a title="{{strings['base16']}}" href="{{request.script_root}}/{{ other_lang }}{{request.path[3:]}}">{{ languages }}</a></li>
             {% else %}
-            <li><a title="Сменить язык" href="{{request.script_root}}/ru{{request.path[3:]}}">RU/EN</a></li>
+            <li><a title="{{strings['base16']}}" href="{{request.script_root}}/{{ other_lang }}{{request.path[3:]}}">{{ languages }}</a></li>
             {% endif %}
           </ul>
         </div><!--/.nav-collapse -->

@@ -21,6 +21,7 @@ import socket  # for sockets
 
 # import strings data from respective module
 from strings_reader import language_dicts
+languages = '/'.join(language_dicts.keys()).upper()
 
 import ConfigParser
 
@@ -132,7 +133,11 @@ def home(lang):
     # pass all required variables to template
     # repeated within each @wvectors.route function
     g.lang = lang
+    s = set()
+    s.add(lang)
+    g.other_lang = set(language_dicts.keys()) - s # works only for two languages
     g.strings = language_dicts[lang]
+    g.languages = languages
 
     if request.method == 'POST':
         list_data = 'dummy'
@@ -171,7 +176,11 @@ def home(lang):
 @wvectors.route('/<lang:lang>/similar', methods=['GET', 'POST'])
 def similar_page(lang):
     g.lang = lang
+    s = set()
+    s.add(lang)
+    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
     g.strings = language_dicts[lang]
+    g.languages = languages
 
     if request.method == 'POST':
         input_data = 'dummy'
@@ -282,7 +291,11 @@ def similar_page(lang):
 @wvectors.route('/<lang:lang>/visual', methods=['GET', 'POST'])
 def visual_page(lang):
     g.lang = lang
+    s = set()
+    s.add(lang)
+    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
     g.strings = language_dicts[lang]
+    g.languages = languages
 
     if request.method == 'POST':
         list_data = 'dummy'
@@ -355,7 +368,11 @@ def visual_page(lang):
 @wvectors.route('/<lang:lang>/calculator', methods=['GET', 'POST'])
 def finder(lang):
     g.lang = lang
+    s = set()
+    s.add(lang)
+    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
     g.strings = language_dicts[lang]
+    g.languages = languages
 
     if request.method == 'POST':
         positive_data = ''
@@ -476,7 +493,11 @@ def finder(lang):
 @wvectors.route('/<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
 def raw_finder(lang, model, userquery):
     g.lang = lang
+    s = set()
+    s.add(lang)
+    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
     g.strings = language_dicts[lang]
+    g.languages = languages
 
     model = model.strip()
     if not model.strip() in our_models:
@@ -595,7 +616,11 @@ def generate(word, model, api_format):
 @wvectors.route('/<lang:lang>/models')
 def models_page(lang):
     g.lang = lang
+    s = set()
+    s.add(lang)
+    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
     g.strings = language_dicts[lang]
+    g.languages = languages
     return render_template('%s/about.html' % lang)
 
 
@@ -650,7 +675,11 @@ def similarity_api(model, wordpair):
 @wvectors.route('/<lang:lang>/about')
 def about_page(lang):
     g.lang = lang
+    s = set()
+    s.add(lang)
+    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
     g.strings = language_dicts[lang]
+    g.languages = languages
 
     return render_template('%s/about.html' % lang)
 
