@@ -34,6 +34,8 @@ temp = config.get('Files and directories', 'temp')
 tags = config.getboolean('Tags', 'use_tags')
 lemmatize = config.getboolean('Other', 'lemmatize')
 dbpedia = config.getboolean('Other', 'dbpedia_images')
+languages = config.get('Languages', 'interface_languages').split(',')
+languages = '/'.join(languages).upper()
 
 if lemmatize:
     from lemmatizer import freeling_lemmatizer
@@ -135,7 +137,7 @@ def home(lang):
     g.lang = lang
     s = set()
     s.add(lang)
-    g.other_lang = set(language_dicts.keys()) - s # works only for two languages
+    g.other_lang = list(set(language_dicts.keys()) - s)[0] # works only for two languages
     g.strings = language_dicts[lang]
     g.languages = languages
 
@@ -178,7 +180,7 @@ def similar_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
-    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
+    g.other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     g.languages = languages
 
@@ -293,7 +295,7 @@ def visual_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
-    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
+    g.other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     g.languages = languages
 
@@ -370,7 +372,7 @@ def finder(lang):
     g.lang = lang
     s = set()
     s.add(lang)
-    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
+    g.other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     g.languages = languages
 
@@ -495,7 +497,7 @@ def raw_finder(lang, model, userquery):
     g.lang = lang
     s = set()
     s.add(lang)
-    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
+    g.other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     g.languages = languages
 
@@ -618,7 +620,7 @@ def models_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
-    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
+    g.other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     g.languages = languages
     return render_template('%s/about.html' % lang)
@@ -677,7 +679,7 @@ def about_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
-    g.other_lang = set(language_dicts.keys()) - s  # works only for two languages
+    g.other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     g.languages = languages
 
