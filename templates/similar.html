@@ -14,9 +14,9 @@
               <div class="form-group">
                   <p>{{strings['similar2']}}</p>
                 {% if list_value %}
-                <input type="text" class="form-control" id="query" name="list_query" value="{{ word }}" maxlength=100>
+                <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
                 {% else %}
-                <input type="text" class="form-control" id="query" name="list_query" placeholder="вычислять_V" maxlength=100>
+                <input type="text" class="typeahead" id="query" name="list_query" placeholder="вычислять_V" maxlength=100>
                 {% endif %}
               </div>
               
