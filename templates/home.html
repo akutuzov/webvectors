@@ -9,9 +9,9 @@
             <form id="inputform" action="#" method=post>
               <div class="form-group">
         {% if word %}
-        <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
+        <input type="text" class="form-control" id="query" name="list_query" value="{{ word }}" maxlength=100>
         {% else %}
-        <input type="text" class="typeahead" id="query" name="list_query" placeholder="вычислять_V" maxlength=100>
+        <input type="text" class="form-control" id="query" name="list_query" placeholder="вычислять_V" maxlength=100>
         {% endif %}
       </div>
       <button type="submit" class="btn btn-primary" id="send" name="list_query" value = "Produce a list of quazy-synonyms">{{strings['home3']}}</button>
