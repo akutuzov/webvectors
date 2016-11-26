@@ -10,7 +10,7 @@ app_syn.register_blueprint(wvectors)
 
 @app_syn.context_processor
 def set_globals():
-    return dict(lang=g.lang, strings=g.strings)
+    return dict(lang=g.lang, strings=g.strings, other_lang=g.other_lang, languages=g.languages)
 
 
 def url_for_other_page(page):
