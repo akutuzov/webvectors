@@ -13,17 +13,17 @@ import numpy as np
 from flask import g
 from collections import OrderedDict
 
-from plot import singularplot
-from plot import embed
+from plotting import singularplot
+from plotting import embed
 from sparql import getdbpediaimage
 
 import socket  # for sockets
 
+import ConfigParser
+
 # import strings data from respective module
 from strings_reader import language_dicts
 languages = '/'.join(language_dicts.keys()).upper()
-
-import ConfigParser
 
 config = ConfigParser.RawConfigParser()
 config.read('webvectors.cfg')
@@ -137,7 +137,7 @@ def home(lang):
     g.lang = lang
     s = set()
     s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0] # works only for two languages
+    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
 
     if request.method == 'POST':
@@ -159,7 +159,8 @@ def home(lang):
             result = serverquery(message)
             associates_list = []
             if "unknown to the" in result or "No result" in result:
-                return render_template('home.html', error=result.decode('utf-8'), other_lang=other_lang, languages=languages)
+                return render_template('home.html', error=result.decode('utf-8'), other_lang=other_lang,
+                                       languages=languages)
             else:
                 output = result.split('&&&')
                 associates = output[0]
@@ -171,7 +172,8 @@ def home(lang):
                                        tags=tags, other_lang=other_lang, languages=languages)
         else:
             error_value = u"Incorrect query!"
-            return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang, languages=languages)
+            return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,
+                                   languages=languages)
     return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages)
 
 
@@ -561,7 +563,8 @@ def raw_finder(lang, model, userquery):
                                    other_lang=other_lang, languages=languages)
     else:
         error_value = u'Incorrect query: %s' % userquery
-        return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang, languages=languages)
+        return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
+                               languages=languages)
 
 
 def generate(word, model, api_format):

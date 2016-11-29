@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding: utf-8
-import matplotlib
 import sys
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pylab as plot
 import numpy as np
