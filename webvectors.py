@@ -232,7 +232,7 @@ def similar_page(lang):
                 result = serverquery(message)
                 if 'does not know the word' in result:
                     return render_template("similar.html", error_sim=result.strip(), other_lang=other_lang,
-                                           languages=languages)
+                                           languages=languages, models=our_models, tags=tags, query=cleared_data)
                 for word in result.split():
                     w = word.split("#")
                     results.append((w[0].decode('utf-8'), w[1].decode('utf-8'), float(w[-1])))

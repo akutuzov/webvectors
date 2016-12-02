@@ -22,7 +22,7 @@
         </script>
         <div class="row">
         <div class="col-md-7">
-        <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ word }}">"{{word.split('_')[0]}}"</a></strong></span> {{strings['synraw3']}} <a href="{{request.script_root}}/{{lang}}/models#{{model}}"> {{ model }}</a>?</h2>
+        <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ word }}">"{{word.split('_')[0]}}"</a></strong></span> {{strings['synraw5']}} <a href="{{request.script_root}}/{{lang}}/models#{{model}}"> {{ model }}</a>?</h2>
         <ol>
         {% for res in list_value if res[0] != "No results" and not "unknown to the model" in res %}
         <li>

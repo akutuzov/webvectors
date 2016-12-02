@@ -110,7 +110,7 @@
                 <h2>{{strings['calc19']}}</h2>
                 <p>{{strings['calc20']}}</p>
                 {% if query %}
-                <input type="text" class="form-control" name="query" value="{% for res in value if not "unknown to the model" in res  %}{{' '.join(res[:-1])+','}}{% endfor %}" maxlength=300>
+                    <input type="text" class="form-control" name="query" value="{{','.join(query)}}" maxlength=300>
                 {% else %}
                 <input type="text" class="form-control" name="query" placeholder="цветок роза, цветок камень" maxlength=300>
                 {% endif %}
