@@ -51,14 +51,6 @@ home2,"Введите слово, чтобы получить список из 
 home3,Найти похожие слова!,Find similar words!
 home4,Семантические аналоги для ,Semantic associates for
 home5,вычисленные на модели ,computed on
-home6,Новости проекта,Project news
-home7,16/12/2015 - Обновлена <a href="/about#models">модель на корпусе новостей</a>. Теперь она обучена на текстах вплоть до ноября 2015.,16/12/2015 - <a href="/about#models">News model</a> is updated. It is now trained on texts up to November 2015.
-home8,15/12/2015 - В <a href="/similar">"Похожие слова"</a> добавлен фильтр "Часть речи запроса".,15/12/2015 - In <a href="/similar">Similar Words</a> one can now filter results with the query part of speech.
-home9,"11/12/2015 - Реализован API, отдающий ближайшие десять соседей для данных слова и модели. Результат можно получить в двух форматах: json и csv. Пример: <a href=""http://ling.go.mail.ru/dsm/news/удар/api/csv"">http://ling.go.mail.ru/dsm/news/удар/api/csv</a> или <a href=""http://ling.go.mail.ru/dsm/news/удар/api/json"">http://ling.go.mail.ru/dsm/news/удар/api/json</a>","11/12/2015 - API is implemented. It outputs 10 nearest neighbors for given word and model. There are two possible formats: json and csv. Example: <a href=""http://ling.go.mail.ru/dsm/news/удар/api/json"">http://ling.go.mail.ru/dsm/news/удар/api/json</a> or <a href=""http://ling.go.mail.ru/dsm/news/удар/api/csv"">http://ling.go.mail.ru/dsm/news/удар/api/csv</a>"
-home10,22/12/2015 - Официально запущена версия RusVectōrēs 2.0: Christmas Edition.
-home11,"03/02/2016 - Исправлена ошибка, приводящая к невозможности <a href=""/ru/upload"">обучить собственную модель</a>.",03/02/2016 - We fixed a bug because of which <a href="/dsm/en/upload">training user models</a> was broken.
-home12,"15/03/2016 - На движке RusVectōrēs запущен <a href=""http://ltr.uio.no/semvec/"">веб-сервис с дистрибутивными моделями для английского и норвежского языков</a>.","15/03/2016 - <a href=""http://ltr.uio.no/semvec/"">Web service with distributional models for English and Norwegian</a> is launched, based on RusVectōrēs engine."
-home13,"04/04/2016 - Появилась возможность получать данные по API в формате json. Пример запроса - <a href=""http://ling.go.mail.ru/dsm/news/праздник/api/json"">http://ling.go.mail.ru/dsm/news/праздник/api/json</a>","04/04/2016 - API now provides output in the json format. Example query - <a href=""http://ling.go.mail.ru/dsm/news/удар/api/json"">http://ling.go.mail.ru/dsm/news/удар/api/json</a>"
 similar10,Существительные,Nouns
 similar11,Глаголы,Verbs
 similar12,Наречия,Adverbs
