@@ -14,33 +14,33 @@ def freeling_lemmatizer(word):
     tagged = tagged[0].split('\n')[0]
     freeling_pos = tagged.split()[2][0]
     if freeling_pos == 'A':
-        mystem_pos = 'A'
+        universal_pos = 'ADJ'
     elif freeling_pos == 'N':
-        mystem_pos = 'S'
+        universal_pos = 'NOUN'
     elif freeling_pos == 'V':
-        mystem_pos = 'V'
+        universal_pos = 'VERB'
     elif freeling_pos == 'Q':
-        mystem_pos = 'S'
+        universal_pos = 'NOUN'
     elif freeling_pos == 'D':
-        mystem_pos = 'ADV'
+        universal_pos = 'ADV'
     elif freeling_pos == 'E':
-        mystem_pos = 'SPRO'
+        universal_pos = 'PRON'
     elif freeling_pos == 'P':
-        mystem_pos = 'ADVPRO'
+        universal_pos = 'ADV'
     elif freeling_pos == 'Y':
-        mystem_pos = 'ANUM'
+        universal_pos = 'ADJ'
     elif freeling_pos == 'R':
-        mystem_pos = 'APRO'
+        universal_pos = 'DET'
     elif freeling_pos == 'C':
-        mystem_pos = 'CONJ'
+        universal_pos = 'CCONJ'
     elif freeling_pos == 'J':
-        mystem_pos = 'INTJ'
+        universal_pos = 'INTJ'
     elif freeling_pos == 'Z':
-        mystem_pos = 'NUM'
+        universal_pos = 'NUM'
     elif freeling_pos == 'T':
-        mystem_pos = 'PART'
+        universal_pos = 'PART'
     elif freeling_pos == 'B':
-        mystem_pos = 'PR'
+        universal_pos = 'ADP'
     else:
-        mystem_pos = 'UNKN'
-    return mystem_pos
+        universal_pos = 'X'
+    return universal_pos

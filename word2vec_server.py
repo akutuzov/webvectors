@@ -52,7 +52,7 @@ def find_synonyms(query):
         candidates_set = set()
         candidates_set.add(q.upper())
         if tags:
-            candidates_set.add(q.split('_')[0] + '_UNKN')
+            candidates_set.add(q.split('_')[0] + '_X')
             candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
             candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         else:
@@ -98,7 +98,7 @@ def find_similarity(query):
             candidates_set = set()
             candidates_set.add(q1.upper())
             if tags:
-                candidates_set.add(q1.split('_')[0] + '_UNKN')
+                candidates_set.add(q1.split('_')[0] + '_X')
                 candidates_set.add(q1.split('_')[0].lower() + '_' + q1.split('_')[1])
                 candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
             else:
@@ -116,7 +116,7 @@ def find_similarity(query):
             candidates_set = set()
             candidates_set.add(q2.upper())
             if tags:
-                candidates_set.add(q2.split('_')[0] + '_UNKN')
+                candidates_set.add(q2.split('_')[0] + '_X')
                 candidates_set.add(q2.split('_')[0].lower() + '_' + q2.split('_')[1])
                 candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
             else:
@@ -152,7 +152,7 @@ def scalculator(query):
             candidates_set = set()
             candidates_set.add(word.upper())
             if tags:
-                candidates_set.add(word.split('_')[0] + '_UNKN')
+                candidates_set.add(word.split('_')[0] + '_X')
                 candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
                 candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
             else:
@@ -178,7 +178,7 @@ def scalculator(query):
             candidates_set = set()
             candidates_set.add(word.upper())
             if tags:
-                candidates_set.add(word.split('_')[0] + '_UNKN')
+                candidates_set.add(word.split('_')[0] + '_X')
                 candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
                 candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
             else:
@@ -216,7 +216,7 @@ def vector(query):
         candidates_set = set()
         candidates_set.add(q.upper())
         if tags:
-            candidates_set.add(q.split('_')[0] + '_UNKN')
+            candidates_set.add(q.split('_')[0] + '_X')
             candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
             candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         else:

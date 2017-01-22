@@ -34,8 +34,8 @@ temp = config.get('Files and directories', 'temp')
 tags = config.getboolean('Tags', 'use_tags')
 lemmatize = config.getboolean('Other', 'lemmatize')
 dbpedia = config.getboolean('Other', 'dbpedia_images')
-languages = config.get('Languages', 'interface_languages').split(',')
-languages = '/'.join(languages).upper()
+languages_list = config.get('Languages', 'interface_languages').split(',')
+languages = '/'.join(languages_list).upper()
 
 if lemmatize:
     from lemmatizer import freeling_lemmatizer
@@ -146,7 +146,7 @@ def home(lang):
             list_data = request.form['list_query']
         except:
             pass
-        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').isalnum():
+        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', '').isalnum():
             query = process_query(list_data)
             if query == "Incorrect tag!":
                 return render_template('home.html', error=query, other_lang=other_lang, languages=languages)
@@ -215,7 +215,7 @@ def similar_page(lang):
                     query = query.split()
                     words = []
                     for w in query[:2]:
-                        if w.replace('_', '').replace('-', '').isalnum():
+                        if w.replace('_', '').replace('-', '').replace('::', '').isalnum():
                             w = process_query(w)
                             if "Incorrect tag!" in w:
                                 return render_template('similar.html', value=["Incorrect tag!"], models=our_models,
@@ -243,7 +243,7 @@ def similar_page(lang):
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
                                        other_lang=other_lang, languages=languages)
 
-        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').isalnum():
+        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', '').isalnum():
             list_data = list_data.split()[0].strip()
             query = process_query(list_data)
             if query == "Incorrect tag!":
@@ -314,7 +314,7 @@ def visual_page(lang):
             pass
         if list_data != 'dummy':
             querywords = set([process_query(w) for w in list_data.split() if
-                              len(w) > 1 and w.replace('_', '').replace('-', '').isalnum()][:30])
+                              len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:30])
             if len(querywords) < 7:
                 error_value = "Too few words!"
                 return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
@@ -408,9 +408,9 @@ def finder(lang):
             positive2_data = positive2_data.split()[0]
             positive_data_list = [positive_data, positive2_data]
             negative_list = [process_query(w) for w in negative_data if
-                             len(w) > 1 and w.replace('_', '').replace('-', '').isalnum()]
+                             len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()]
             positive_list = [process_query(w) for w in positive_data_list if
-                             len(w) > 1 and w.replace('_', '').replace('-', '').isalnum()]
+                             len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()]
             if len(positive_list) < 2 or len(negative_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", error=error_value, models=our_models, other_lang=other_lang,
@@ -457,9 +457,9 @@ def finder(lang):
 
         if positive1_data != '':
             negative_list = [process_query(w) for w in negative1_data.split() if
-                             len(w) > 1 and w.replace('_', '').replace('-', '').isalnum()][:10]
+                             len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
             positive_list = [process_query(w) for w in positive1_data.split() if
-                             len(w) > 1 and w.replace('_', '').replace('-', '').isalnum()][:10]
+                             len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
             if len(positive_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", error=error_value, other_lang=other_lang, languages=languages)
@@ -518,7 +518,7 @@ def raw_finder(lang, model, userquery):
     model = model.strip()
     if not model.strip() in our_models:
         return render_template('home.html', other_lang=other_lang, languages=languages)
-    if userquery.strip().replace('_', '').replace('-', '').isalnum():
+    if userquery.strip().replace('_', '').replace('-', '').replace('::', '').isalnum():
         query = process_query(userquery.strip())
         if tags:
             if len(query.split('_')) < 2:
@@ -578,7 +578,7 @@ def generate(word, model, api_format):
     formats = {'csv', 'json'}
 
     # check the sanity of the query word: no punctuation marks, not an empty string
-    if not word.strip().replace('_', '').replace('-', '').isalnum():
+    if not word.strip().replace('_', '').replace('-', '').replace('::', '').isalnum():
         word = ''.join([char for char in word if char.isalnum()])
         yield word.strip() + '\t' + model.strip() + '\t' + 'Word error!'
     else:
@@ -679,8 +679,8 @@ def similarity_api(model, wordpair):
     wordpair = wordpair.split('__')
     if not model.strip() in our_models:
         return 'The model '+model.strip()+' is unknown'
-    cleanword0 = ''.join([char for char in wordpair[0] if char.isalnum() or char == '_'])
-    cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_'])
+    cleanword0 = ''.join([char for char in wordpair[0] if char.isalnum() or char == '_' or char == '::'])
+    cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::'])
     cleanword0 = process_query(cleanword0)
     cleanword1 = process_query(cleanword1)
     message = "2;" + " ".join([cleanword0, cleanword1]) + ";" + model

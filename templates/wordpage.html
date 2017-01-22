@@ -22,12 +22,12 @@
         </script>
         <div class="row">
         <div class="col-md-7">
-        <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ word }}">"{{word.split('_')[0]}}"</a></strong></span> {{strings['synraw5']}} <a href="{{request.script_root}}/{{lang}}/models#{{model}}"> {{ model }}</a>?</h2>
+        <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ word }}">"{{word.split('_')[0].replace('::', ' ')}}"</a></strong></span> {{strings['synraw5']}} <a href="{{request.script_root}}/{{lang}}/models#{{model}}"> {{ model }}</a>?</h2>
         <ol>
         {% for res in list_value if res[0] != "No results" and not "unknown to the model" in res %}
         <li>
         <span style = "font-size:larger;">
-        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ res[0] }}">{{res[0].split('_')[0]}}</a> {{ "{:.4f} ".format(res[1]) }}
+        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{ res[0] }}">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.4f} ".format(res[1]) }}
         </span>
         </li>
         {% endfor %}
@@ -43,7 +43,7 @@
         <span style = "font-size:larger;"><strong>{{ res }}</strong></span>
         {% endfor %}
 	<span style = "font-size:larger;">
-        <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} "{{word.split('_')[0]}}" {{strings['synraw5']}} {{ model }}:</a>
+        <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} "{{word.split('_')[0].replace('::', ' ')}}" {{strings['synraw5']}} {{ model }}:</a>
         </span>
         <div class="vector" id="HiddenDiv" style="DISPLAY: none" >
         {{ vector }}
@@ -54,12 +54,12 @@
 	<a href="/static/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank"><img src = '/static/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}" title = "{{word}} {{strings['synraw10']}}" width="300"></a>
 	<hr/>
       <ul>
-        <li><span style = "font-size:larger;"><a target="_blank" href="http://go.mail.ru/search?q={{ word.split('_')[0] }}">{{strings['synraw6']}} "{{ word.split('_')[0] }}" {{strings['synraw7']}}</a></span></li>
-	<li><span style = "font-size:larger;"><a target="_blank" href="https://ru.wiktionary.org/wiki/{{ word.split('_')[0] }}">"{{ word.split('_')[0] }}" {{strings['synraw8']}}</a></span></li>
+        <li><span style = "font-size:larger;"><a target="_blank" href="http://go.mail.ru/search?q={{ word.split('_')[0].replace('::', ' ') }}">{{strings['synraw6']}} "{{ word.split('_')[0].replace('::', ' ') }}" {{strings['synraw7']}}</a></span></li>
+	<li><span style = "font-size:larger;"><a target="_blank" href="https://ru.wiktionary.org/wiki/{{ word.split('_')[0].replace('::', ' ') }}">"{{ word.split('_')[0].replace('::', ' ') }}" {{strings['synraw8']}}</a></span></li>
     </ul>
     <hr/>
     {% if image %}
-    <a href="https://ru.wikipedia.org/wiki/{{ word.split('_')[0]  }}" target="_blank"><img src = '{{ image }}' alt = "{{word.split('_')[0] }} {{strings['synraw11']}}" title = "{{word.split('_')[0] }} {{strings['synraw11']}}" width="200"></a>
+    <a href="https://ru.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank"><img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" width="200"></a>
     {% endif %}
 
             </div>

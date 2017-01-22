@@ -51,7 +51,7 @@
         
     	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
     		<li>
-    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.3f} ".format(res[1]) }}
+    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
     		</li>
     	    {% endfor %}
         
@@ -85,16 +85,16 @@
                   <div class="radio">
                       <small>
                           <label>
-                              <input type="radio" name="calcpos" value="S"> {{strings['calc13']}}
+                              <input type="radio" name="calcpos" value="NOUN"> {{strings['calc13']}}
                           </label>
                           <label>
-                              <input type="radio" name="calcpos" value="V"> {{strings['calc14']}}
+                              <input type="radio" name="calcpos" value="VERB"> {{strings['calc14']}}
                           </label>
                           <label>
                               <input type="radio" name="calcpos" value="ADV"> {{strings['calc15']}}
                           </label>
                           <label>
-                              <input type="radio" name="calcpos" value="A"> {{strings['calc16']}}
+                              <input type="radio" name="calcpos" value="ADJ"> {{strings['calc16']}}
                           </label>
                           <label>
                               <input type="radio" name="calcpos" value="ALL" checked> {{strings['calc17']}}
@@ -128,7 +128,7 @@
         
     	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
     		<li>
-    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0]}}</a> {{ "{:.3f} ".format(res[1]) }}
+    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
     		</li>
     	    {% endfor %}
         
@@ -161,16 +161,16 @@
                         <div class="radio">
                             <small>
                                 <label>
-                                    <input type="radio" name="calcpos" value="S"> {{strings['calc13']}}
+                                    <input type="radio" name="calcpos" value="NOUN"> {{strings['calc13']}}
                                 </label>
                                 <label>
-                                    <input type="radio" name="calcpos" value="V"> {{strings['calc14']}}
+                                    <input type="radio" name="calcpos" value="VERB"> {{strings['calc14']}}
                                 </label>
                                 <label>
                                     <input type="radio" name="calcpos" value="ADV"> {{strings['calc15']}}
                                 </label>
                                 <label>
-                                    <input type="radio" name="calcpos" value="A"> {{strings['calc16']}}
+                                    <input type="radio" name="calcpos" value="ADJ"> {{strings['calc16']}}
                                 </label>
                                 <label>
                                     <input type="radio" name="calcpos" value="ALL" checked> {{strings['calc17']}}
