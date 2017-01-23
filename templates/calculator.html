@@ -30,12 +30,12 @@
                 <p>{{strings['calc4']}}
 		<div class = "row">
 		<div class = "col-md-5">
-		<input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="самолет"{% endif %} maxlength=50><img style="margin:0px auto;display:block" src = "/static/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="крыло"{% endif %} maxlength=50>
+		<input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="mother"{% endif %} maxlength=50><img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png"width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
+		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="daughter"{% endif %} maxlength=50>
 		</div>
 		<div class = "col-md-5">
 
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} placeholder="машина"{% endif %} maxlength=50><img style="margin:0px auto;display:block" src = "/static/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
+		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} placeholder="father"{% endif %} maxlength=50><img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
 		<p style = "text-align:center;"><strong>???</strong></p>
 		</div>
 		</div>
@@ -66,9 +66,9 @@
     {% endif %}
     
     {% if error %}
-    <p> <span style = "font-size:larger;"><strong>{{ error }}</strong></span><p>
+    <p> <span style = "font-size:larger;"><strong>{{ error }}</strong></span><div>
     {% endif %}
-
+            </div>
               <div class="checkbox">
                   <p><small><em>{{strings['calc6']}}</em></small></p>
                   <fieldset>
@@ -114,7 +114,7 @@
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" value="{{ ' '.join(plist2) }}" maxlength=300>
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" value="{{ ' '.join(nlist2) }}" maxlength=300>
                             {% else %}
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="компьютер маленький" maxlength=300>
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="computer small" maxlength=300>
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" maxlength=300>
                             {% endif %}
                         </div>

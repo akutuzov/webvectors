@@ -65,9 +65,9 @@ similar1,Вычисление семантических ассоциатов,Co
 similar2,"Введите слово, чтобы получить список из 10 его ближайших семантических аналогов (квази-синонимов). Вы можете приписать к слову знак подчеркивания ""_"" и <a href=""http://ruscorpora.ru/corpora-morph.html"" target=""_blank"">тэг части речи</a> (<i>""река_S""</i>). Если вы этого не сделаете, <i>RusVectōrēs</i> определит часть речи автоматически.","Enter a word to produce a list of its 10 nearest semantic associates (quazy-synonyms). You can optionally end the word with an underscore and a <a href=""http://ruscorpora.ru/en/corpora-morph.html"" target=""_blank"">PoS tag</a> (<i>""река_S""</i>). Otherwise, <i>RusVectōrēs</i> will detect it."
 similar3,Выберите модель:,Choose the model:
 similar4,НКРЯ,Ruscorpora
-similar5,Русская Wikipedia,Russian Wikipedia
-similar6,НКРЯ и русская Wikipedia,Ruscorpora and Russian Wikipedia
-similar7,Веб-корпус,Web corpus
+similar5,Английская Wikipedia,English Wikipedia
+similar6,Британский Национальный Корпус,British National Corpus
+similar7,Норвежский новостной корпус,Norsk Aviskorpus
 similar8,Новостной корпус,News corpus
 similar9,Показывать только:,Show only:
 synonyms10,Новостной корпус,News corpus

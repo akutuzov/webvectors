@@ -16,9 +16,9 @@
 
     {%- block styles %}
     <!-- Bootstrap -->
-      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
-      <link href="/css/avatar.css" rel="stylesheet" media="screen">
-      <link rel="stylesheet" href="https://twitter.github.io/typeahead.js/css/examples.css">
+      <link href="{{ url }}data/css/bootstrap.min.css" rel="stylesheet" media="screen">
+      <link rel="stylesheet" href="{{ url }}data/css/typeahead.css">
+      <link href="{{ url }}data/css/avatar.css" rel="stylesheet" media="screen">
     {%- endblock styles %}
     {%- endblock head %}
   </head>
@@ -35,14 +35,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{request.script_root}}/{{lang}}">{{strings['base3']}}</a>
+          <a class="navbar-brand" href="{{ url }}{{lang}}">{{strings['base3']}}</a>
+
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="{{request.script_root}}/{{lang}}/similar">{{strings['base6']}}</a></li>
-            <li><a href="{{request.script_root}}/{{lang}}/visual">{{strings['base13']}}</a></li>
-            <li><a href="{{request.script_root}}/{{lang}}/calculator">{{strings['base5']}}</a></li>
-            <li><a href="{{request.script_root}}/{{lang}}/about">{{strings['base4']}}</a></li>
+            <li><a href="{{ url }}{{lang}}/similar">{{strings['base6']}}</a></li>
+            <li><a href="{{ url }}{{lang}}/visual">{{strings['base13']}}</a></li>
+            <li><a href="{{ url }}{{lang}}/calculator">{{strings['base5']}}</a></li>
+            <li><a href="{{ url }}{{lang}}/about">{{strings['base4']}}</a></li>
             {% if lang=="en" %}
             <li><a title="{{strings['base16']}}" href="{{request.script_root}}/{{ other_lang }}{{request.path[3:]}}">{{ languages }}</a></li>
             {% else %}
@@ -59,19 +60,18 @@
     {% block content -%}
     {%- endblock content %}
         <div class="text-nowrap"><hr>
-                <p style="text-align:right;"><small><a href='{{request.script_root}}/{{lang}}/contacts'>{{strings['base11']}}</a></small></p>
-                <p style="text-align:right;"><small><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="{{strings['base12']}}" style="border-width:0" src="/static/88x31.png" /></a></small></p>
+                <p style="text-align:right;"><small><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="{{strings['base12']}}" style="border-width:0" src="{{ url }}data/images/88x31.png" /></a></small></p>
         </div>
     </div>
 </div>
     {% block scripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="{{ url }}data/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="/dist/js/ie10-viewport-bug-workaround.js"></script>
-    <script type="text/javascript" src="https://github.com/twitter/typeahead.js/blob/master/dist/bloodhound.min.js"></script>
-    <script type="text/javascript" src="https://github.com/twitter/typeahead.js/blob/master/dist/typeahead.bundle.min.js"></script>
-    <script type="text/javascript" src="data/hint.js"></script>
+    <script src="{{ url }}data/js/ie10-viewport-bug-workaround.js"></script>
+    <script type="text/javascript" src="{{ url }}data/js/typeahead/bloodhound.min.js"></script>
+    <script type="text/javascript" src="{{ url }}data/js/typeahead/typeahead.bundle.min.js"></script>
+    <script type="text/javascript" src="{{ url }}data/js/hint.js"></script>
     {%- endblock scripts %}
     {%- endblock body %}
   </body>

@@ -152,7 +152,7 @@ def home(lang):
         if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', '').isalnum():
             query = process_query(list_data)
             if query == "Incorrect tag!":
-                return render_template('home.html', error=query, other_lang=other_lang, languages=languages)
+                return render_template('home.html', error=query, other_lang=other_lang, languages=languages, url=url)
             model_value = request.form.getlist('model')
             if len(model_value) < 1:
                 model = defaultmodel
@@ -163,7 +163,7 @@ def home(lang):
             associates_list = []
             if "unknown to the" in result or "No result" in result:
                 return render_template('home.html', error=result.decode('utf-8'), other_lang=other_lang,
-                                       languages=languages)
+                                       languages=languages, url=url)
             else:
                 output = result.split('&&&')
                 associates = output[0]
@@ -172,12 +172,12 @@ def home(lang):
                     associates_list.append((w[0].decode('utf-8'), float(w[-1])))
 
                 return render_template('home.html', list_value=associates_list, word=query, model=model,
-                                       tags=tags, other_lang=other_lang, languages=languages)
+                                       tags=tags, other_lang=other_lang, languages=languages, url=url)
         else:
             error_value = u"Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,
-                                   languages=languages)
-    return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages)
+                                   languages=languages, url=url)
+    return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
 
 @wvectors.route(url+'<lang:lang>/similar', methods=['GET', 'POST'])
@@ -211,7 +211,7 @@ def similar_page(lang):
                 else:
                     model = model_value[0]
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages)
+                    return render_template('home.html', other_lang=other_lang, languages=languages, url=url)
                 for query in input_data.split(','):
                     if '' not in query.strip():
                         continue
@@ -222,36 +222,38 @@ def similar_page(lang):
                             w = process_query(w)
                             if "Incorrect tag!" in w:
                                 return render_template('similar.html', value=["Incorrect tag!"], models=our_models,
-                                                       other_lang=other_lang, languages=languages)
+                                                       other_lang=other_lang, languages=languages, url=url)
                             words.append(w.strip())
                     if len(words) == 2:
                         cleared_data.append(words[0].strip() + " " + words[1].strip())
                 if len(cleared_data) == 0:
                     error_value = "Incorrect query!"
                     return render_template("similar.html", error_sim=error_value, other_lang=other_lang,
-                                           languages=languages)
+                                           languages=languages, url=url)
                 message = "2;" + ",".join(cleared_data) + ";" + model
                 results = []
                 result = serverquery(message)
                 if 'does not know the word' in result:
                     return render_template("similar.html", error_sim=result.strip(), other_lang=other_lang,
-                                           languages=languages, models=our_models, tags=tags, query=cleared_data)
+                                           languages=languages, models=our_models,
+                                           tags=tags, query=cleared_data, url=url)
                 for word in result.split():
                     w = word.split("#")
                     results.append((w[0].decode('utf-8'), w[1].decode('utf-8'), float(w[-1])))
                 return render_template('similar.html', value=results, model=model, query=cleared_data,
-                                       models=our_models, tags=tags, other_lang=other_lang, languages=languages)
+                                       models=our_models, tags=tags, other_lang=other_lang,
+                                       languages=languages, url=url)
             else:
                 error_value = "Incorrect query!"
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
-                                       other_lang=other_lang, languages=languages)
+                                       other_lang=other_lang, languages=languages, url=url)
 
         if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', '').isalnum():
             list_data = list_data.split()[0].strip()
             query = process_query(list_data)
             if query == "Incorrect tag!":
                 return render_template('similar.html', error=query, word=list_data, models=our_models,
-                                       other_lang=other_lang, languages=languages)
+                                       other_lang=other_lang, languages=languages, url=url)
             if tags:
                 pos_value = request.form.getlist('pos')
                 if len(pos_value) < 1 or pos_value[0] == 'Q':
@@ -269,7 +271,7 @@ def similar_page(lang):
             model = model_value[0]
             for model in model_value:
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages)
+                    return render_template('home.html', other_lang=other_lang, languages=languages, url=url)
                 if tags:
                     message = "1;" + query + ";" + pos + ";" + model
                 else:
@@ -293,12 +295,12 @@ def similar_page(lang):
 
             return render_template('similar.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), models=our_models, tags=tags, model=model,
-                                   other_lang=other_lang, languages=languages)
+                                   other_lang=other_lang, languages=languages, url=url)
         else:
             error_value = "Incorrect query!"
-            return render_template("similar.html", error=error_value, models=our_models, tags=tags)
+            return render_template("similar.html", error=error_value, models=our_models, tags=tags, url=url)
     return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang,
-                           languages=languages)
+                           languages=languages, url=url)
 
 
 @wvectors.route(url+'<lang:lang>/visual', methods=['GET', 'POST'])
@@ -321,12 +323,12 @@ def visual_page(lang):
             if len(querywords) < 7:
                 error_value = "Too few words!"
                 return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
-                                       languages=languages)
+                                       languages=languages, url=url)
 
             model_value = request.form.getlist('model')
             if "Incorrect tag!" in querywords:
                 return render_template('visual.html', word=list_data, models=our_models, other_lang=other_lang,
-                                       languages=languages)
+                                       languages=languages, url=url)
 
             if len(model_value) < 1:
                 model_value = [defaultmodel]
@@ -334,7 +336,7 @@ def visual_page(lang):
             models_row = {}
             for model in model_value:
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages)
+                    return render_template('home.html', other_lang=other_lang, languages=languages, url=url)
                 print >> sys.stderr, 'Embedding!'
                 unknown[model] = set()
                 words2vis = querywords
@@ -372,12 +374,12 @@ def visual_page(lang):
                         models_row[model] = "Too few words!"
 
             return render_template('visual.html', visual=models_row, words=querywords, number=len(model_value),
-                                   models=our_models, unknown=unknown)
+                                   models=our_models, unknown=unknown, url=url)
         else:
             error_value = "Incorrect query!"
             return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
-                                   languages=languages)
-    return render_template('visual.html', models=our_models, other_lang=other_lang, languages=languages)
+                                   languages=languages, url=url)
+    return render_template('visual.html', models=our_models, other_lang=other_lang, languages=languages, url=url)
 
 
 @wvectors.route(url+'<lang:lang>/calculator', methods=['GET', 'POST'])
@@ -417,10 +419,10 @@ def finder(lang):
             if len(positive_list) < 2 or len(negative_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", error=error_value, models=our_models, other_lang=other_lang,
-                                       languages=languages)
+                                       languages=languages, url=url)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 return render_template('calculator.html', calc_value=["Incorrect tag!"], models=our_models,
-                                       other_lang=other_lang, languages=languages)
+                                       other_lang=other_lang, languages=languages, url=url)
             if tags:
                 calcpos_value = request.form.getlist('calcpos')
                 if len(calcpos_value) < 1:
@@ -435,7 +437,8 @@ def finder(lang):
             models_row = {}
             for model in calcmodel_value:
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages)
+                    return render_template('home.html', other_lang=other_lang, languages=languages,
+                                           models=our_models, url=url)
                 if tags:
                     message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
                 else:
@@ -456,7 +459,7 @@ def finder(lang):
                 models_row[model] = results
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
                                    nlist=negative_list, models=our_models, tags=tags, other_lang=other_lang,
-                                   languages=languages)
+                                   languages=languages, url=url)
 
         if positive1_data != '':
             negative_list = [process_query(w) for w in negative1_data.split() if
@@ -465,10 +468,11 @@ def finder(lang):
                              len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
             if len(positive_list) == 0:
                 error_value = "Incorrect query!"
-                return render_template("calculator.html", error=error_value, other_lang=other_lang, languages=languages)
+                return render_template("calculator.html", error=error_value, other_lang=other_lang,
+                                       languages=languages, models=our_models, url=url)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 return render_template('calculator.html', calc_value=["Incorrect tag!"], other_lang=other_lang,
-                                       languages=languages)
+                                       languages=languages, models=our_models, url=url)
             if tags:
                 calcpos_value = request.form.getlist('calcpos')
                 if len(calcpos_value) < 1:
@@ -483,7 +487,8 @@ def finder(lang):
             models_row = {}
             for model in calcmodel_value:
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages)
+                    return render_template('home.html', other_lang=other_lang, languages=languages,
+                                           models=our_models, url=url)
                 message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
                 result = serverquery(message)
                 results = []
@@ -501,13 +506,14 @@ def finder(lang):
                 models_row[model] = results
             return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
                                    nlist2=negative_list, models=our_models, tags=tags, other_lang=other_lang,
-                                   languages=languages)
+                                   languages=languages, url=url)
 
         else:
             error_value = "Incorrect query!"
             return render_template("calculator.html", calc_error=error_value, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages)
-    return render_template("calculator.html", models=our_models, tags=tags, other_lang=other_lang, languages=languages)
+                                   other_lang=other_lang, languages=languages, url=url)
+    return render_template("calculator.html", models=our_models, tags=tags, other_lang=other_lang,
+                           languages=languages, url=url)
 
 
 @wvectors.route(url+'<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
@@ -520,12 +526,13 @@ def raw_finder(lang, model, userquery):
 
     model = model.strip()
     if not model.strip() in our_models:
-        return render_template('home.html', other_lang=other_lang, languages=languages)
+        return render_template('home.html', other_lang=other_lang, languages=languages, url=url)
     if userquery.strip().replace('_', '').replace('-', '').replace('::', '').isalnum():
         query = process_query(userquery.strip())
         if tags:
             if len(query.split('_')) < 2:
-                return render_template('wordpage.html', error=query, other_lang=other_lang, languages=languages)
+                return render_template('wordpage.html', error=query, other_lang=other_lang,
+                                       languages=languages, url=url)
             pos_tag = query.split('_')[-1]
         else:
             pos_tag = 'ALL'
@@ -534,7 +541,7 @@ def raw_finder(lang, model, userquery):
         associates_list = []
         if "unknown to the" in result or "No results" in result:
             return render_template('wordpage.html', error=result.decode('utf-8'), other_lang=other_lang,
-                                   languages=languages)
+                                   languages=languages, url=url)
         else:
             output = result.split('&&&')
             associates = output[0]
@@ -563,11 +570,11 @@ def raw_finder(lang, model, userquery):
                 image = None
             return render_template('wordpage.html', list_value=associates_list, word=query, model=model,
                                    pos=pos_tag, vector=vector, image=image, vectorvis=fname, tags=tags,
-                                   other_lang=other_lang, languages=languages)
+                                   other_lang=other_lang, languages=languages, url=url)
     else:
         error_value = u'Incorrect query: %s' % userquery
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
-                               languages=languages)
+                               languages=languages, url=url)
 
 
 def generate(word, model, api_format):
@@ -635,15 +642,6 @@ def generate(word, model, api_format):
                     yield json.dumps(result, ensure_ascii=False)
 
 
-@wvectors.route(url+'<lang:lang>/models')
-def models_page(lang):
-    g.lang = lang
-    s = set()
-    s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
-    g.strings = language_dicts[lang]
-    return render_template('%s/about.html' % lang, other_lang=other_lang, languages=languages)
-
 
 @wvectors.route(url+'<model>/<word>/api/<api_format>', methods=['GET'])
 def api(model, word, api_format):
@@ -694,6 +692,15 @@ def similarity_api(model, wordpair):
     w = result.split("#")
     return str(w[2]) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
 
+@wvectors.route(url+'<lang:lang>/models')
+def models_page(lang):
+    g.lang = lang
+    s = set()
+    s.add(lang)
+    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
+    g.strings = language_dicts[lang]
+    return render_template('%s/about.html' % lang, other_lang=other_lang, languages=languages, url=url)
+
 
 @wvectors.route(url+'<lang:lang>/about')
 def about_page(lang):
@@ -703,7 +710,7 @@ def about_page(lang):
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
 
-    return render_template('%s/about.html' % lang, other_lang=other_lang, languages=languages)
+    return render_template('%s/about.html' % lang, other_lang=other_lang, languages=languages, url=url)
 
 
 # redirecting requests with no lang:
