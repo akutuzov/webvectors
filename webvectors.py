@@ -32,6 +32,9 @@ root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')
 temp = config.get('Files and directories', 'temp')
 tags = config.getboolean('Tags', 'use_tags')
+
+url = config.get('Other', 'url')
+
 lemmatize = config.getboolean('Other', 'lemmatize')
 dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
@@ -130,7 +133,7 @@ def process_query(userquery):
     return query
 
 
-@wvectors.route('/<lang:lang>/', methods=['GET', 'POST'])
+@wvectors.route(url+'<lang:lang>/', methods=['GET', 'POST'])
 def home(lang):
     # pass all required variables to template
     # repeated within each @wvectors.route function
@@ -177,7 +180,7 @@ def home(lang):
     return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages)
 
 
-@wvectors.route('/<lang:lang>/similar', methods=['GET', 'POST'])
+@wvectors.route(url+'<lang:lang>/similar', methods=['GET', 'POST'])
 def similar_page(lang):
     g.lang = lang
     s = set()
@@ -298,7 +301,7 @@ def similar_page(lang):
                            languages=languages)
 
 
-@wvectors.route('/<lang:lang>/visual', methods=['GET', 'POST'])
+@wvectors.route(url+'<lang:lang>/visual', methods=['GET', 'POST'])
 def visual_page(lang):
     g.lang = lang
     s = set()
@@ -377,7 +380,7 @@ def visual_page(lang):
     return render_template('visual.html', models=our_models, other_lang=other_lang, languages=languages)
 
 
-@wvectors.route('/<lang:lang>/calculator', methods=['GET', 'POST'])
+@wvectors.route(url+'<lang:lang>/calculator', methods=['GET', 'POST'])
 def finder(lang):
     g.lang = lang
     s = set()
@@ -507,7 +510,7 @@ def finder(lang):
     return render_template("calculator.html", models=our_models, tags=tags, other_lang=other_lang, languages=languages)
 
 
-@wvectors.route('/<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
+@wvectors.route(url+'<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
 def raw_finder(lang, model, userquery):
     g.lang = lang
     s = set()
@@ -632,7 +635,7 @@ def generate(word, model, api_format):
                     yield json.dumps(result, ensure_ascii=False)
 
 
-@wvectors.route('/<lang:lang>/models')
+@wvectors.route(url+'<lang:lang>/models')
 def models_page(lang):
     g.lang = lang
     s = set()
@@ -642,7 +645,7 @@ def models_page(lang):
     return render_template('%s/about.html' % lang, other_lang=other_lang, languages=languages)
 
 
-@wvectors.route('/<model>/<word>/api/<api_format>', methods=['GET'])
+@wvectors.route(url+'<model>/<word>/api/<api_format>', methods=['GET'])
 def api(model, word, api_format):
     """
     provides a list of neighbors for a given word in downloadable form: csv or json
@@ -666,7 +669,7 @@ def api(model, word, api_format):
                                                                                    api_format.encode('utf-8'))})
 
 
-@wvectors.route('/<model>/<wordpair>/api/similarity/', methods=['GET'])
+@wvectors.route(url+'<model>/<wordpair>/api/similarity/', methods=['GET'])
 def similarity_api(model, wordpair):
     """
     provides a similarity value for a given word pair
@@ -692,7 +695,7 @@ def similarity_api(model, wordpair):
     return str(w[2]) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
 
 
-@wvectors.route('/<lang:lang>/about')
+@wvectors.route(url+'<lang:lang>/about')
 def about_page(lang):
     g.lang = lang
     s = set()
@@ -704,10 +707,10 @@ def about_page(lang):
 
 
 # redirecting requests with no lang:
-@wvectors.route('/about', methods=['GET', 'POST'])
-@wvectors.route('/calculator', methods=['GET', 'POST'])
-@wvectors.route('/similar', methods=['GET', 'POST'])
-@wvectors.route('/visual', methods=['GET', 'POST'])
-@wvectors.route('/', methods=['GET', 'POST'])
+@wvectors.route(url+'about', methods=['GET', 'POST'])
+@wvectors.route(url+'calculator', methods=['GET', 'POST'])
+@wvectors.route(url+'similar', methods=['GET', 'POST'])
+@wvectors.route(url+'visual', methods=['GET', 'POST'])
+@wvectors.route(url, methods=['GET', 'POST'])
 def redirect_main():
-    return redirect(request.script_root + '/en' + request.path)
+    return return redirect(url+'en' + request.path.split('/')[-1])
