@@ -1,8 +1,19 @@
-from flask import Flask, url_for
+from flask import Flask, url_for, send_from_directory
 from lang_converter import LangConverter
 from webvectors import *
+import ConfigParser
 
-app_syn = Flask(__name__)
+config = ConfigParser.RawConfigParser()
+config.read('webvectors.cfg')
+url = config.get('Other', 'url')
+
+
+app_syn = Flask(__name__, static_url_path='/data/')
+
+@app_syn.route(url+'data/<path:path>')
+def send_js(path):
+    return send_from_directory('data/', path)
+
 
 app_syn.url_map.converters['lang'] = LangConverter
 app_syn.register_blueprint(wvectors)
