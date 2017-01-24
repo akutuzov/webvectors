@@ -52,7 +52,12 @@
     	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res and not 'No similar words' in res %}
     		<li>
     		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
-    		</li>
+    		{% if wordimages[res[0].split('_')[0]]  %}
+	        <div class="avataricon">
+		    <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>
+	        </div>
+            {% endif %}
+            </li>
     	    {% endfor %}
         
     	    </ol></span>
@@ -128,7 +133,12 @@
     	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
     		<li>
     		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
-    		</li>
+    		{% if wordimages[res[0].split('_')[0]]  %}
+	        <div class="avataricon">
+		    <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>
+	        </div>
+            {% endif %}
+            </li>
     	    {% endfor %}
         
     	    </ol></span>

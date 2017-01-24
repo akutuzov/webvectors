@@ -4,6 +4,7 @@
 import logging
 import hashlib
 import os
+import codecs
 import sys
 import json
 from flask import render_template, Blueprint, redirect, Response
@@ -31,6 +32,7 @@ config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')
+cachefile = config.get('Files and directories', 'image_cache')
 temp = config.get('Files and directories', 'temp')
 tags = config.getboolean('Tags', 'use_tags')
 
@@ -39,7 +41,6 @@ url = config.get('Other', 'url')
 lemmatize = config.getboolean('Other', 'lemmatize')
 dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
-languages = '/'.join(languages_list).upper()
 
 if lemmatize:
     from lemmatizer import tagword
@@ -163,6 +164,8 @@ def home(lang):
                 model = defaultmodel
             else:
                 model = model_value[0]
+            images = {}
+            images[query.split('_')[0]] = None
             message = "1;" + query + ";" + 'ALL' + ";" + model
             result = serverquery(message)
             associates_list = []
@@ -175,8 +178,19 @@ def home(lang):
                 for word in associates.split():
                     w = word.split("#")
                     associates_list.append((w[0].decode('utf-8'), float(w[-1])))
-
-                return render_template('home.html', list_value=associates_list, word=query, model=model,
+                    images[w[0].split('_')[0].decode('utf-8')] = None
+                imagecache = {}
+                imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
+                for line in imagedata:
+                    res = line.strip().split('\t')
+                    (word, image) = res
+                    imagecache[word.strip()] = image.strip()
+                imagedata.close()
+                for w in images:
+                    image = getdbpediaimage(w.encode('utf-8'), imagecache)
+                    if image:
+                        images[w] = image
+                return render_template('home.html', list_value=associates_list, word=query, wordimages=images, model=model,
                                        tags=tags, other_lang=other_lang, languages=languages, url=url)
         else:
             error_value = u"Incorrect query!"
@@ -272,6 +286,8 @@ def similar_page(lang):
             if len(model_value) < 1:
                 model_value = [defaultmodel]
 
+            images = {}
+            images[query.split('_')[0]] = None
             models_row = {}
             model = model_value[0]
             for model in model_value:
@@ -296,10 +312,21 @@ def similar_page(lang):
                     for word in associates.split():
                         w = word.split("#")
                         associates_list.append((w[0].decode('utf-8'), float(w[1])))
+                        images[w[0].split('_')[0].decode('utf-8')] = None
                     models_row[model] = associates_list
-
+                    imagecache = {}
+                    imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
+                    for line in imagedata:
+                        res = line.strip().split('\t')
+                        (word, image) = res
+                        imagecache[word.strip()] = image.strip()
+                    imagedata.close()
+                    for w in images:
+                        image = getdbpediaimage(w.encode('utf-8'), imagecache)
+                        if image:
+                            images[w] = image
             return render_template('similar.html', list_value=models_row, word=query, pos=pos,
-                                   number=len(model_value), models=our_models, tags=tags, model=model,
+                                   number=len(model_value), wordimages=images, models=our_models, tags=tags, model=model,
                                    other_lang=other_lang, languages=languages, url=url)
         else:
             error_value = "Incorrect query!"
@@ -440,6 +467,7 @@ def finder(lang):
             if len(calcmodel_value) < 1:
                 calcmodel_value = [defaultmodel]
             models_row = {}
+            images = {}
             for model in calcmodel_value:
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
@@ -461,9 +489,21 @@ def finder(lang):
                 for word in result.split():
                     w = word.split("#")
                     results.append((w[0].decode('utf-8'), float(w[1])))
+                    images[w[0].split('_')[0].decode('utf-8')] = None
                 models_row[model] = results
+                imagecache = {}
+                imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
+                for line in imagedata:
+                    res = line.strip().split('\t')
+                    (word, image) = res
+                    imagecache[word.strip()] = image.strip()
+                imagedata.close()
+                for w in images:
+                    image = getdbpediaimage(w.encode('utf-8'), imagecache)
+                    if image:
+                        images[w] = image
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
-                                   nlist=negative_list, models=our_models, tags=tags, other_lang=other_lang,
+                                   nlist=negative_list, wordimages=images, models=our_models, tags=tags, other_lang=other_lang,
                                    languages=languages, url=url)
 
         if positive1_data != '':
@@ -490,6 +530,7 @@ def finder(lang):
             if len(calcmodel_value) < 1:
                 calcmodel_value = [defaultmodel]
             models_row = {}
+            images = {}
             for model in calcmodel_value:
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
@@ -508,9 +549,21 @@ def finder(lang):
                 for word in result.split():
                     w = word.split("#")
                     results.append((w[0].decode('utf-8'), float(w[1])))
+                    images[w[0].split('_')[0].decode('utf-8')] = None
                 models_row[model] = results
+                imagecache = {}
+                imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
+                for line in imagedata:
+                    res = line.strip().split('\t')
+                    (word, image) = res
+                    imagecache[word.strip()] = image.strip()
+                imagedata.close()
+                for w in images:
+                    image = getdbpediaimage(w.encode('utf-8'), imagecache)
+                    if image:
+                        images[w] = image
             return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
-                                   nlist2=negative_list, models=our_models, tags=tags, other_lang=other_lang,
+                                   nlist2=negative_list, wordimages=images, models=our_models, tags=tags, other_lang=other_lang,
                                    languages=languages, url=url)
 
         else:

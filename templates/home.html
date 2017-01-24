@@ -24,6 +24,11 @@
         {% for res in list_value if not "unknown to the model" in list_value and res[0] != "No results" and res != "Incorrect tag!"  %}
         <li>
         <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+        {% if wordimages[res[0].split('_')[0]]  %}
+	        <div class="avataricon">
+		    <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>
+	        </div>
+            {% endif %}
         </li>
         {% endfor %}
         </ol>
