@@ -15,7 +15,7 @@
                 {% if visual %}
                 <input type="text" class="form-control" name="list_query" value="{{ ' '.join(words) }}" maxlength=200>
                 {% else %}
-                <input type="text" class="form-control" name="list_query" placeholder="car tank transport computer mouse moscow paris london russia france britain" maxlength=200>
+                <input type="text" class="form-control" name="list_query" value="car tank transport computer mouse Moscow Paris London Russia France Britain" placeholder="car tank transport computer mouse Moscow Paris London Russia France Britain" maxlength=200>
                 {% endif %}
               </div>
               
@@ -36,14 +36,14 @@
       {% if visual %}
 	<h3>{{strings['visual3']}}<sup>*</sup></h3>
 	{% for word in words %}
-	<a href="{{request.script_root}}/{{lang}}/{{ visual.keys()[0] }}/{{word}}">{{ word.split('_')[0].replace('::', ' ') }}</a>
+	<a href="{{ url }}{{lang}}/{{ visual.keys()[0] }}/{{word}}">{{ word.split('_')[0].replace('::', ' ') }}</a>
 	{% endfor %}
         <div class="row">
         {% for model in visual %}
         <div class="col-md-4">
-        <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
+        <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
         {% if not 'Too few words' in visual[model] %}
-	<a href="/static/tsneplots/{{ visual[model] }}" target="_blank"><img src = "/static/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}" width="400"></a>
+    <a href="{{ url }}data/images/tsneplots/{{ visual[model] }}" target="_blank"><img src = "{{ url }}data/images/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}" width="400"></a>
 	{% else %}
 	{{ visual[model] }}
 	{% endif %}
@@ -60,15 +60,10 @@
          {% endfor %}
          </div>
     {% else %}
-    <h2>{{strings['visual20']}}<sup>*</sup></h2>
     <div class="row">
     <div class="col-md-5">
-    <h3>{{strings['visual18']}}</h3>
-    <a href="/static/ruscorpora_nouns_tsne_thumb.png" target = "_blank"><img src = "/static/ruscorpora_nouns_tsne_thumb.png" alt = "{{strings['visual19']}}" title = "{{strings['visual19']}}"></a>
     </div>
     <div class="col-md-5">
-    <h3>{{strings['visual21']}}</h3>
-    <a href="/static/news_nouns_tsne.png" target = "_blank"><img src = "/static/news_nouns_tsne.png" alt = "{{strings['visual19']}}" title = "{{strings['visual19']}}"></a>
     </div>
     </div>
     {% endif %}

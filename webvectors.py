@@ -23,6 +23,7 @@ import ConfigParser
 
 # import strings data from respective module
 from strings_reader import language_dicts
+
 languages = '/'.join(language_dicts.keys()).upper()
 
 config = ConfigParser.RawConfigParser()
@@ -41,7 +42,7 @@ languages_list = config.get('Languages', 'interface_languages').split(',')
 languages = '/'.join(languages_list).upper()
 
 if lemmatize:
-    from lemmatizer import freeling_lemmatizer
+    from lemmatizer import tagword
 
 # Establishing connection to model server
 host = config.get('Sockets', 'host')
@@ -119,13 +120,17 @@ def process_query(userquery):
         if '_' in userquery:
             query_split = userquery.split('_')
             if query_split[-1] in taglist:
-                query = ''.join(query_split[:-1]).lower() + '_' + query_split[-1]
+                query = ''.join(query_split[:-1]) + '_' + query_split[-1]
             else:
                 return 'Incorrect tag!'
         else:
             if lemmatize:
-                pos_tag = freeling_lemmatizer(userquery)
-                query = userquery.lower() + '_' + pos_tag
+                poses = tagword(userquery)
+                if len(poses) == 1:
+                    pos_tag = poses[0]
+                else:
+                    pos_tag = poses[-1]
+                query = userquery + '_' + pos_tag
             else:
                 return 'Incorrect tag!'
     else:
@@ -133,7 +138,7 @@ def process_query(userquery):
     return query
 
 
-@wvectors.route(url+'<lang:lang>/', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/', methods=['GET', 'POST'])
 def home(lang):
     # pass all required variables to template
     # repeated within each @wvectors.route function
@@ -180,7 +185,7 @@ def home(lang):
     return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
 
-@wvectors.route(url+'<lang:lang>/similar', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/similar', methods=['GET', 'POST'])
 def similar_page(lang):
     g.lang = lang
     s = set()
@@ -303,7 +308,7 @@ def similar_page(lang):
                            languages=languages, url=url)
 
 
-@wvectors.route(url+'<lang:lang>/visual', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/visual', methods=['GET', 'POST'])
 def visual_page(lang):
     g.lang = lang
     s = set()
@@ -347,9 +352,9 @@ def visual_page(lang):
                 plotfile = "%s_%s.png" % (model, fname)
                 models_row[model] = plotfile
                 labels = []
-                if not os.path.exists(root + '/static/tsneplots'):
-                    os.makedirs(root + '/static/tsneplots')
-                if not os.access(root + '/static/tsneplots/' + plotfile, os.F_OK):
+                if not os.path.exists(root + 'data/images/tsneplots'):
+                    os.makedirs(root + 'data/images/tsneplots')
+                if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK):
                     print >> sys.stderr, 'No previous image found'
                     vectors = []
                     for w in words2vis:
@@ -382,7 +387,7 @@ def visual_page(lang):
     return render_template('visual.html', models=our_models, other_lang=other_lang, languages=languages, url=url)
 
 
-@wvectors.route(url+'<lang:lang>/calculator', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/calculator', methods=['GET', 'POST'])
 def finder(lang):
     g.lang = lang
     s = set()
@@ -516,7 +521,7 @@ def finder(lang):
                            languages=languages, url=url)
 
 
-@wvectors.route(url+'<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
 def raw_finder(lang, model, userquery):
     g.lang = lang
     s = set()
@@ -556,7 +561,7 @@ def raw_finder(lang, model, userquery):
             name = query.encode('ascii', 'backslashreplace')
             m.update(name)
             fname = m.hexdigest()
-            plotfile = root + 'static/singleplots/' + model + '_' + fname + '.png'
+            plotfile = root + 'data/images/singleplots/' + model + '_' + fname + '.png'
             if not os.access(plotfile, os.F_OK):
                 vector2 = output[1].split(',')
                 vector2 = [float(a) for a in vector2]
@@ -642,8 +647,7 @@ def generate(word, model, api_format):
                     yield json.dumps(result, ensure_ascii=False)
 
 
-
-@wvectors.route(url+'<model>/<word>/api/<api_format>', methods=['GET'])
+@wvectors.route(url + '<model>/<word>/api/<api_format>', methods=['GET'])
 def api(model, word, api_format):
     """
     provides a list of neighbors for a given word in downloadable form: csv or json
@@ -667,7 +671,7 @@ def api(model, word, api_format):
                                                                                    api_format.encode('utf-8'))})
 
 
-@wvectors.route(url+'<model>/<wordpair>/api/similarity/', methods=['GET'])
+@wvectors.route(url + '<model>/<wordpair>/api/similarity/', methods=['GET'])
 def similarity_api(model, wordpair):
     """
     provides a similarity value for a given word pair
@@ -679,7 +683,7 @@ def similarity_api(model, wordpair):
     model = model.strip()
     wordpair = wordpair.split('__')
     if not model.strip() in our_models:
-        return 'The model '+model.strip()+' is unknown'
+        return 'The model ' + model.strip() + ' is unknown'
     cleanword0 = ''.join([char for char in wordpair[0] if char.isalnum() or char == '_' or char == '::'])
     cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::'])
     cleanword0 = process_query(cleanword0)
@@ -692,7 +696,8 @@ def similarity_api(model, wordpair):
     w = result.split("#")
     return str(w[2]) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
 
-@wvectors.route(url+'<lang:lang>/models')
+
+@wvectors.route(url + '<lang:lang>/models')
 def models_page(lang):
     g.lang = lang
     s = set()
@@ -702,7 +707,7 @@ def models_page(lang):
     return render_template('%s/about.html' % lang, other_lang=other_lang, languages=languages, url=url)
 
 
-@wvectors.route(url+'<lang:lang>/about')
+@wvectors.route(url + '<lang:lang>/about')
 def about_page(lang):
     g.lang = lang
     s = set()
@@ -714,10 +719,10 @@ def about_page(lang):
 
 
 # redirecting requests with no lang:
-@wvectors.route(url+'about', methods=['GET', 'POST'])
-@wvectors.route(url+'calculator', methods=['GET', 'POST'])
-@wvectors.route(url+'similar', methods=['GET', 'POST'])
-@wvectors.route(url+'visual', methods=['GET', 'POST'])
+@wvectors.route(url + 'about', methods=['GET', 'POST'])
+@wvectors.route(url + 'calculator', methods=['GET', 'POST'])
+@wvectors.route(url + 'similar', methods=['GET', 'POST'])
+@wvectors.route(url + 'visual', methods=['GET', 'POST'])
 @wvectors.route(url, methods=['GET', 'POST'])
 def redirect_main():
-    return return redirect(url+'en' + request.path.split('/')[-1])
+    return redirect(url + 'en' + request.path.split('/')[-1])

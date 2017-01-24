@@ -30,7 +30,7 @@
                 <p>{{strings['calc4']}}
 		<div class = "row">
 		<div class = "col-md-5">
-		<input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="mother"{% endif %} maxlength=50><img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png"width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
+        <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="mother"{% endif %} maxlength=50><img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
 		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="daughter"{% endif %} maxlength=50>
 		</div>
 		<div class = "col-md-5">
@@ -45,20 +45,19 @@
 
 	{% for model in analogy_value %}
 	    <div class = "col-md-5">
-    	    <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
+    	    <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
+    	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res and not 'No similar words' in res %}
     		<li>
-    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+    		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
     		</li>
     	    {% endfor %}
         
     	    </ol></span>
         
-    	    {% for res in analogy_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect tag!" or 'does not know' in res or 'No results' in res %}
-    		<strong>{{ res.decode('utf-8') }}</strong>
+            {% for res in analogy_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect tag!" or 'does not know' in res or 'No results' in res or 'No similar words' in res %}    		<strong>{{ res.decode('utf-8') }}</strong>
     	    {% endfor %}
         </div>
 	{% endfor %}
@@ -66,7 +65,7 @@
     {% endif %}
     
     {% if error %}
-    <p> <span style = "font-size:larger;"><strong>{{ error }}</strong></span><div>
+    <p> <span style = "font-size:larger;"><strong>{{ error }}</strong></span></p>>
     {% endif %}
             </div>
               <div class="checkbox">
@@ -114,7 +113,7 @@
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" value="{{ ' '.join(plist2) }}" maxlength=300>
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" value="{{ ' '.join(nlist2) }}" maxlength=300>
                             {% else %}
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="computer small" maxlength=300>
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="computer linguistics" maxlength=300>
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" maxlength=300>
                             {% endif %}
                         </div>
@@ -122,13 +121,13 @@
         <div class = "row">
 	{% for model in calc_value %}
 	    <div class = "col-md-5">
-    	    <h3><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
+    	    <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
     	    <span style = "font-size:larger;">
     	    <ol>
         
     	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res %}
     		<li>
-    		<a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+    		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
     		</li>
     	    {% endfor %}
         

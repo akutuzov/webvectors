@@ -60,11 +60,11 @@
             </form>
             </div>
  {% if list_value %}
-      <h3><strong>{{strings['similar16']}} <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{word}}"><i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></strong> ({{ pos }})</h3>
+      <h3><strong>{{strings['similar16']}} <a href="{{ url }}{{lang}}/{{ model }}/{{word}}"><i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></strong> ({{ pos }})</h3>
         <div class="row">
     {% for model in list_value%}
         <div class="col-md-4">
-        <h4><strong><a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
+        <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
         <big>
         {% if list_value[model] == "Unknown!" %}
         {{ strings['similar18'] }} "{{ word.split('_')[0] }}"</big>
@@ -72,7 +72,7 @@
         <ol>
         {% for res in list_value[model] if not "No results" in res and res != "Incorrect tag!" %}
         <li>
-        <a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+        <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
         </li>
         {% endfor %}
         </ol>
@@ -132,9 +132,9 @@
           {% if value %}
             <span style = "font-size:larger;">
             <table class="table"><tr>
-            <td><strong>{{strings['calc29']}}</strong></td><td><strong>{{strings['calc30']}}</strong><br/>(<a href="{{request.script_root}}/{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
+            <td><strong>{{strings['calc29']}}</strong></td><td><strong>{{strings['calc30']}}</strong><br/>(<a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
             {% for res in value if not "unknown to the model" in res and not "Incorrect tag!" in res  %}
-            <tr><td style="vertical-align:top"><em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0].replace('::', ' ')}}</a></em> <em><a href="{{request.script_root}}/{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.3f} ".format(res[2]) }}</td></tr>
+            <tr><td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0].replace('::', ' ')}}</a></em> <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.3f} ".format(res[2]) }}</td></tr>
             {% endfor %}
             {% for res in value if "unknown to the model" in res or "Incorrect tag!" in res  %}
             <tr><td style="vertical-align:top"><em>{{res}}</em></td> <td></td></tr>

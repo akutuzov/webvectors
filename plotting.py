@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # coding: utf-8
 import sys
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pylab as plot
 import numpy as np
@@ -27,7 +29,7 @@ def singularplot(word, modelname, vector):
     name = word.encode('ascii', 'backslashreplace')
     m.update(name)
     fname = m.hexdigest()
-    plt.savefig(root + 'static/singleplots/' + modelname + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plt.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150, bbox_inches='tight')
     plt.close()
 
 
@@ -43,5 +45,5 @@ def embed(words, matrix, usermodel):
     name = '_'.join(words).encode('ascii', 'backslashreplace')
     m.update(name)
     fname = m.hexdigest()
-    plot.savefig(root + 'static/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plot.savefig(root + 'data/images/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
     plot.close()

@@ -1,12 +1,12 @@
 id,ru,en
 base16,Switch language,Сменить язык
 base10,Контакты,Contacts
-base11,Команда RusVectōrēs,RusVectōrēs team
+base11,Команда WebVectors,Language Tecnhology Group
 base12,Лицензия Creative Commons,Creative Commons License
 base13,Визуализации,Visualizations
-base1,RusVectōrēs: дистрибутивные семантические модели для русского языка,RusVectōrēs: distributional semantic models for Russian
+base1,WebVectors: дистрибутивные семантические модели для русского языка,WebVectors: distributional semantic models online
 base2,Показать/скрыть меню,Toggle Navigation
-base3,RusVectōrēs,RusVectōrēs
+base3,WebVectors,WebVectors
 base4,О проекте,About
 base5,Калькулятор,Calculator
 base6,Похожие слова,Similar words
@@ -25,7 +25,7 @@ calc18,Вычислить!,Calculate!
 calc19,Вычисление семантической близости,Computing similarity
 calc1,Семантический калькулятор,Semantic Calculator
 calc20,"Введите через пробел 2 слова, чтобы вычислить их семантическое сходство. Можно также ввести несколько пар, разделяя их запятыми, как в примере.","Enter 2 space-separated words to calculate their similarity. It is also possible to enter several pairs separating them with commas, as in the placeholder."
-calc21," Вы можете приписать к слову знак подчеркивания ""_"" и <a href=""http://ruscorpora.ru/corpora-morph.html"">тэг части речи</a> (<i>""река_S""</i>). В ином случае <i>RusVectōrēs</i> определит часть речи самостоятельно.","You can optionally end the words with an underscore and a <a href=""http://ruscorpora.ru/en/corpora-morph.html"">PoS tag</a> (<i>""река_S""</i>). Otherwise, <i>RusVectōrēs</i> will analyze words on its own."
+calc21," Вы можете приписать к слову знак подчеркивания ""_"" и <a href=""http://ruscorpora.ru/corpora-morph.html"">тэг части речи</a> (<i>""tea_NOUN""</i>). В ином случае <i>WebVectors</i> определит часть речи самостоятельно.","You can optionally end the words with an underscore and a <a href=""http://universaldependencies.org/u/pos/all.html"">PoS tag</a> (<i>""tea_NOUN""</i>). Otherwise, <i>WebVectors</i> will analyze words on its own."
 calc22,Выберите модель:,Choose the model:
 calc23,НКРЯ,Ruscorpora
 calc24,Русская Wikipedia,Russian Wikipedia
@@ -38,16 +38,16 @@ calc2,Алгебраические операции,Algebraic operations
 calc30,Косинусная близость,Cosine similarity
 calc31,Относится к, Relates to
 calc32,"Вы также можете попробовать более сложные операции над векторами, чем простое решение пропорции.","If you feel confident with algebraic operations on vectors, you can try something more sophisticated than simple analogical inference."
-calc3,"Введите в ""<strong>положительную</strong>"" и ""<strong>отрицательную</strong>"" формы не более 10 слов через пробел. <i>RusVectōrēs</i> сложит вектора положительных слов и вычтет из них отрицательные. Затем он выдаст слова, наиболее близкие к получившемуся вектору. Если вы оставите отрицательное поле пустым, <i>RusVectōrēs</i> просто найдет центр лексического кластера, образованного положительными словами.","Enter not more than 10 space-separated words into <strong>positive</strong> and <strong>negative</strong> forms. <i>RusVectōrēs</i> will sum up vectors for the positive words and subtract vectors from the negative ones. Then it will output the word closest to the resulting vector. If you leave negative form empty, <i>RusVectōrēs</i> will simply find the center of word cluster formed by your positive words."
-calc4,"Вы можете вычислять отношения. Например, ""<strong>найти слово D, связанное со словом C таким же образом, как слово A связано со словом B</strong>"". Таким образом можно определять семантические связи между понятиями. В форме ввода приведен пример: какое слово относится к слову <strong>""машина""</strong>, так же, как <strong>""крыло""</strong> относится к <strong>""самолету""</strong>? Ответ - ""<strong>колесо</strong>"": машины передвигаются с помощью колес, а самолеты - с помощью крыльев.</p><p><small>Можно сказать, что это вычитание компоненты ""самолет"" из семантики слова ""крыло"" и добавление компоненты ""машина"". Модель приходит к выводу, что ""крылья для машин - это колеса"" и выдает ""колесо"" в качестве ответа.</small></p><p><small>К словам можно дописывать символ подчеркивания ""_"" и <a href=""http://ruscorpora.ru/corpora-morph.html"">тэг части речи</a> (<i>""река_S""</i>). В ином случае, <i>RusVectōrēs</i> определит часть речи автоматически.</small></p>","You can calculate ratios, such as ""<strong>find a word D related to the word C in the same way as the word A is related to the word B</strong>"". In this way, semantic links between concepts are grasped. An example is given in the placeholder: which word is in the same relation to the word ""<strong>машина</strong>"" as ""<strong>крыло</strong>"" is to ""<strong>самолет</strong>""? The answer is ""<strong>колесо</strong>"": cars move on wheels, while airplanes move on wings.</p><p><small>You can also think of this operation as removing the ""самолет"" component from the semantics of ""крыло"" and augmenting it with ""машина"" component. The model inferences that ""wings for cars are wheels"" and outputs ""колесо"" as an answer.</small></p><p><small>You can optionally end the words with an underscore and a <a href=""http://ruscorpora.ru/en/corpora-morph.html"">PoS tag</a> (<i>""река_S""</i>). Otherwise, <i>RusVectōrēs</i> will analyze words on its own.</small></p>"
+calc3,"Введите в ""<strong>положительную</strong>"" и ""<strong>отрицательную</strong>"" формы не более 10 слов через пробел. <i>WebVectors</i> сложит вектора положительных слов и вычтет из них отрицательные. Затем он выдаст слова, наиболее близкие к получившемуся вектору. Если вы оставите отрицательное поле пустым, <i>WebVectors</i> просто найдет центр лексического кластера, образованного положительными словами.","Enter not more than 10 space-separated words into <strong>positive</strong> and <strong>negative</strong> forms. <i>WebVectors</i> will sum up vectors for the positive words and subtract vectors from the negative ones. Then it will output the word closest to the resulting vector. If you leave negative form empty, <i>WebVectors</i> will simply find the center of word cluster formed by your positive words."
+calc4,"Вы можете вычислять отношения. Например, ""<strong>найти слово D, связанное со словом C таким же образом, как слово A связано со словом B</strong>"". Таким образом можно определять семантические связи между понятиями. В форме ввода приведен пример: какое слово относится к слову <strong>""машина""</strong>, так же, как <strong>""крыло""</strong> относится к <strong>""самолету""</strong>? Ответ - ""<strong>колесо</strong>"": машины передвигаются с помощью колес, а самолеты - с помощью крыльев.</small></p><p><small>Можно сказать, что это вычитание компоненты ""самолет"" из семантики слова ""крыло"" и добавление компоненты ""машина"". Модель приходит к выводу, что ""крылья для машин - это колеса"" и выдает ""колесо"" в качестве ответа.</small></p><p><small>К словам можно дописывать символ подчеркивания ""_"" и <a href=""http://ruscorpora.ru/corpora-morph.html"">тэг части речи</a> (<i>""tea_NOUN""</i>). В ином случае, <i>RusVectōrēs</i> определит часть речи автоматически.","Calculate ratios, such as ""<strong>find a word D related to the word C in the same way as the word A is related to the word B</strong>"". An example is given in the placeholder: which word is in the same relation to the word ""<strong>daughter</strong>"" as ""<strong>father</strong>"" is to ""<strong>mother</strong>""? The answer is ""<strong>son</strong>"": these concepts are in identical binary gender oppositions.</p><p><small>You can also think of this operation as removing the ""mother"" component from the semantics of ""father"" and augmenting it with ""daughter"" component. The model inferences that it should change age from adult to young and change gender from female to male. Thus, it outputs ""son"" as an answer.</small></p>"
 calc5,"считает, что это будет:",thinks it will be:
 calc6,Выберите модель:,Choose the model:
 calc7,НКРЯ,Ruscorpora
 calc8,Русская Wikipedia,Russian Wikipedia
 calc9,НКРЯ и русская Wikipedia,Ruscorpora and Russian Wikipedia
-description1,РусВекторес: семантический калькулятор на нейронных сетях,RusVectōrēs: neural networks based semantic calculator
-home1,RusVectōrēs: дистрибутивные семантические модели для русского языка,RusVectōrēs: distributional semantic models for Russian
-home2,"Введите слово, чтобы получить список из 10 его ближайших семантических аналогов. По умолчанию используется модель на основе <a href=""http://ruscorpora.ru"">Национального Корпуса Русского Языка</a>; другие модели доступны во вкладке <a href=""/ru/similar"">""Похожие слова""</a>.","Enter a word to produce a list of its 10 nearest semantic associates. Model trained on <a href=""http://ruscorpora.ru/en"">Russian National Corpus</a> is used by default. Other models are available at <a href=""/en/similar"">Similar Words</a> tab."
+description1,РусВекторес: семантический калькулятор на нейронных сетях,WebVectors: neural networks based semantic calculator
+home1,WebVectors: дистрибутивные семантические модели для русского языка,WebVectors: distributional semantic models online
+home2,"Введите слово, чтобы получить список из 10 его ближайших семантических аналогов (квази-синонимов).","Enter a word to produce a list of its 10 nearest semantic associates.<br/>English Wikipedia model will be used; for other models, visit <a href=""similar"">Similar Words</a> tab."
 home3,Найти похожие слова!,Find similar words!
 home4,Семантические аналоги для ,Semantic associates for
 home5,вычисленные на модели ,computed on
@@ -61,52 +61,16 @@ similar16,Cемантические аналоги для,Semantic associates fo
 similar17,вычислено на модели,computed on data from
 similar18,Модели неизвестно слово,Model does not know
 similar19,Часть речи запроса, Query part of speech
+similar20,Имя собственное,Proper names
 similar1,Вычисление семантических ассоциатов,Computing associates
-similar2,"Введите слово, чтобы получить список из 10 его ближайших семантических аналогов (квази-синонимов). Вы можете приписать к слову знак подчеркивания ""_"" и <a href=""http://ruscorpora.ru/corpora-morph.html"" target=""_blank"">тэг части речи</a> (<i>""река_S""</i>). Если вы этого не сделаете, <i>RusVectōrēs</i> определит часть речи автоматически.","Enter a word to produce a list of its 10 nearest semantic associates (quazy-synonyms). You can optionally end the word with an underscore and a <a href=""http://ruscorpora.ru/en/corpora-morph.html"" target=""_blank"">PoS tag</a> (<i>""река_S""</i>). Otherwise, <i>RusVectōrēs</i> will detect it."
+similar2,"Введите слово, чтобы получить список из 10 его ближайших семантических аналогов (квази-синонимов). Вы можете приписать к слову знак подчеркивания ""_"" и <a href=""http://ruscorpora.ru/corpora-morph.html"" target=""_blank"">тэг части речи</a> (<i>""tea_NOUN""</i>). Если вы этого не сделаете, <i>WebVectors</i> определит часть речи автоматически.","Enter a word to produce a list of its 10 nearest semantic associates (quazy-synonyms). You can optionally end the word with an underscore and a <a href=""http://universaldependencies.org/u/pos/all.html"" target=""_blank"">PoS tag</a> (<i>""tea_NOUN""</i>). Otherwise, <i>WebVectors</i> will detect it."
 similar3,Выберите модель:,Choose the model:
 similar4,НКРЯ,Ruscorpora
 similar5,Английская Wikipedia,English Wikipedia
 similar6,Британский Национальный Корпус,British National Corpus
 similar7,Норвежский новостной корпус,Norsk Aviskorpus
-similar8,Новостной корпус,News corpus
+similar8,Английский Gigaword,English Gigaword
 similar9,Показывать только:,Show only:
-synonyms10,Новостной корпус,News corpus
-synonyms11,Показывать только:,Show only:
-synonyms12,Существительные,Nouns
-synonyms13,Глаголы,Verbs
-synonyms14,Наречия,Adverbs
-synonyms15,Прилагательные,Adjectives
-synonyms16,Все части речи,All of them
-synonyms17,Семантические аналоги для ,Semantic associates for
-synonyms18,вычислено на модели,computed on model
-synonyms19,"Введите через пробел 2 слова, чтобы вычислить их семантическое сходство. Можно также ввести несколько пар, разделяя их запятыми, как в примере.","Enter 2 space-separated words to calculate their similarity. It is also possible to enter several pairs separating them with commas, as in the example"
-synonyms1,Семантический калькулятор 2.0,Semantic Calculator 2.0
-synonyms20,НКРЯ,Ruscorpora
-synonyms21,Русская Wikipedia,Russian Wikipedia
-synonyms22,НКРЯ и русская Wikipedia,Ruscorpora and Russian Wikipedia
-synonyms23,Веб-корпус,Web corpus
-synonyms24,Новостной корпус,News corpus
-synonyms25,Вычислить семантическое сходство,Calculate semantic similarity
-synonyms26,"<strong>Attention! Letter <i>ё</i> is considered to be a variant of letter <i>е</i>!</strong>It is preferrable to use nouns as queries. For other parts of speech (and proper nouns), we can't guarantee good results, as their semantics is in more complex relations with their typical contexts.","<strong>Attention! Letter <i>ё</i> is considered to be a variant of letter <i>е</i>!</strong>It is preferrable to use nouns as queries. For other parts of speech (and proper nouns), we can't guarantee good results, as their semantics is in more complex relations with their typical contexts."
-synonyms27,Пары слов,Word pairs
-synonyms28,Косинусная близость в модели,Cosine similarity in model
-synonyms29,"Этот калькулятор подсчитывает семантическое сходство русских слов (определяет степень их ""квази-синонимии""). Вычисление основано на частотах сочетаний в большом корпусе статей из новостных лент. Объем корпуса - около 1.8 млн. токеноы, более 19 уникальных словоформ. Он был составлен на основе 1500 русскоязычных новостных сайтов, и все отобранные материалы попадают в промежуток от 1 сентября 2013 до 30 июня 2014. Всего собрана 9208471 статья.","This calculator computes semantic similarity between words in Russian (detects the degree of their ""quazy-synonymy""). Semantic similarity calculation is based on frequencies of lexical co-occurrences in a large corpus of newswire texts. Corpus volume is about 1.8 billion tokens, more than 19 million word types. It was crawled from 1500 Russian-language news sites, and newswires themselves were dated from 1 September of 2013 to 30 June of 2014 (9208471 documents total)."
-synonyms2,Калькулятор семантической близости,Semantic proximity calculator
-synonyms30,"Корпус был предварительно обработан: стоп-слова и токены короче 2 символов были удалены. Затем была построена модель сочетаний токенов. Она была обучена с помощью алгоритма глубинного обучения <i>continuous skip-gram</i>, воплощенного в инструменте <a href=""https://code.google.com/p/word2vec/"">word2vec</a> (см. ссылку [Mikolov et al 2013] ниже). Слова с абсолютной частотой ниже 100 были проигнорированы.","First, the corpus was preprocessed: stopwords and tokens less than 2 characters length were removed. Then co-occurrence model was built. It was trained using <i>continuous skip-gram</i> deep learning algorithm implemented in the <a href=""https://code.google.com/p/word2vec/"">word2vec</a> tool (see [Mikolov et al 2013] reference below). The model ignored words with absolute frequency below 100."
-synonyms31,"В итоге каждое слово было представлено вектором в многомерном пространстве. Семантическое сходство между двумя словами тривиально вычисляется как <a href=""https://en.wikipedia.org/wiki/Cosine_similarity"">сходство по косинусу</a> между соответствующими им векторами; область его значений - от 0 до 1. значение <strong>0</strong> означает отсутсвтие у этих слов схожих контекстов. Значение <strong>1</strong>, напротив, означает, что контексты слов абсолютно идентичны.","Finally, each word was represented with a vector in a multi-dimensional space. Semantic similarity between two words is then trivially calculated as a <a href=""https://en.wikipedia.org/wiki/Cosine_similarity"">cosine similarity</a> between their corresponding vectors; it takes values between 0 and 1. <strong>0</strong> value means the words lack similar contexts. <strong>1</strong> value means that the words' contexts are absolutely identical."
-synonyms32,Ссылки,References
-synonyms33,Андрей Кутузов,Andrey Kutuzov
-synonyms34,и,and
-synonyms35,Елизавета Кузьменко,Elizaveta Kuzmenko
-synonyms36,"Национальный исследовательский университет ""Высшая школа экономики""",National Research University Higher School of Economics
-synonyms37,и,and
-synonyms3,Дистрибутивные семантические модели для русского языка,Distributional semantic models for Russian
-synonyms4,"Введите слово, чтобы получить список из 10 его ближайших семантических аналогов (квази-синонимов). Вы можете приписать к слову знак подчеркивания ""_"" и <a href=""http://ruscorpora.ru/corpora-morph.html"">тэг части речи</a> (<i>""река_S""</i>).","Enter a word to produce a list of its 10 nearest semantic associates (quazy-synonyms). End the word with an underscore and a <a href=""http://ruscorpora.ru/en/corpora-morph.html"">PoS tag</a>"
-synonyms5,Выберите модель:,Choose the model:
-synonyms6,НКРЯ,Ruscorpora
-synonyms7,Русская Wikipedia,Russian Wikipedia
-synonyms8,НКРЯ и русская Wikipedia,Ruscorpora and Russian Wikipedia
-synonyms9,Веб-корпус,Web corpus
 synraw1,"Слова, семантически связанные с",Semantically related words for
 synraw2,Какие слова близки к слову,What words are related to
 synraw3,в,in the
