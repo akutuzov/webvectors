@@ -14,8 +14,8 @@ port = 9999
 def tagword(word):
     corenlp = requests.post(
         'http://localhost:%s/?properties={"annotators": "tokenize, pos,lemma", "outputFormat": "json"}' % port,
-        data=word).content
-    tagged = json.loads(corenlp)
+        data=word.encode('utf-8')).content
+    tagged = json.loads(corenlp, strict=False)
     if len(tagged["sentences"]) < 1:
         return 'Error!'
     poses = []
