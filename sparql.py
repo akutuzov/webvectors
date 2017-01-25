@@ -21,7 +21,6 @@ def getdbpediaimage(query, cache):
         return cache[query]
     else:
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
-        print query
         sparql.setQuery("""
         SELECT DISTINCT ?e ?pic
         WHERE {
@@ -33,7 +32,6 @@ def getdbpediaimage(query, cache):
         sparql.setReturnFormat(JSON)
         try:
             results = sparql.query().convert()
-            print results
         except:
             return None
         if len(results["results"]["bindings"]) > 0:
@@ -43,4 +41,4 @@ def getdbpediaimage(query, cache):
             data.close()
             return image
         else:
-            return None
+            return None # todo: return information that picture is not found for future knowledge

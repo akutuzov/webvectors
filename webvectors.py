@@ -187,7 +187,7 @@ def home(lang):
                     imagecache[word.strip()] = image.strip()
                 imagedata.close()
                 for w in images:
-                    image = getdbpediaimage(w.encode('utf-8'), imagecache)
+                    image = getdbpediaimage(w.encode('utf-8'), imagecache) # todo: is it possible to get all 10 associates at a time?
                     if image:
                         images[w] = image
                 return render_template('home.html', list_value=associates_list, word=query, wordimages=images, model=model,
