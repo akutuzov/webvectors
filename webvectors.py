@@ -201,7 +201,10 @@ def home(lang):
                     w = word.split("#")
                     associates_list.append((w[0].decode('utf-8'), float(w[-1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
-                images = get_images(images)
+                try:
+                    images = get_images(images)
+                except:
+                    pass
                 return render_template('home.html', list_value=associates_list, word=query, wordimages=images,
                                        model=model, tags=tags, other_lang=other_lang, languages=languages, url=url)
         else:
@@ -330,7 +333,10 @@ def similar_page(lang):
                         associates_list.append((w[0].decode('utf-8'), float(w[1])))
                         images[w[0].split('_')[0].decode('utf-8')] = None
                     models_row[model] = associates_list
-                    images = get_images(images)
+                    try:
+                        images = get_images(images)
+                    except:
+                        pass
             return render_template('similar.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages,
@@ -506,7 +512,10 @@ def finder(lang):
                     results.append((w[0].decode('utf-8'), float(w[1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
                 models_row[model] = results
-                images = get_images(images)
+                try:
+                    images = get_images(images)
+                except:
+                    pass
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
                                    nlist=negative_list, wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
@@ -560,7 +569,10 @@ def finder(lang):
                     results.append((w[0].decode('utf-8'), float(w[1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
                 models_row[model] = results
-                images = get_images(images)
+                try:
+                    images = get_images(images)
+                except:
+                    pass
             return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
                                    nlist2=negative_list, wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
