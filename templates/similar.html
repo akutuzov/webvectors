@@ -26,7 +26,7 @@
                 <small>
                 {% for m in models %}
 		    <label>
-                	<input type="checkbox" checked name="model" value="{{ m }}">{{ strings[models[m]] }}
+                	<input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
             	    </label>
                 {% endfor %}
                 </small>
@@ -60,7 +60,7 @@
             </form>
             </div>
  {% if list_value %}
-      <h3><strong>{{strings['similar16']}} <a href="{{ url }}{{lang}}/{{ model }}/{{word}}"><i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></strong> ({{ pos }})</h3>
+      <h3><strong>{{strings['similar16']}} <a href="{{ url }}{{lang}}/{{ usermodels[0] }}/{{word}}"><i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></strong> ({{ pos }})</h3>
         <div class="row">
     {% for model in list_value%}
         <div class="col-md-4">
@@ -125,7 +125,7 @@
                   <small>
                   {% for m in models %}
 		    <label>
-                	<input type="radio" name="simmodel" value="{{ m }}">{{ strings[models[m]] }}
+                	<input type="radio" name="simmodel" {%if m in usermodels %}checked{% endif %} value="{{ m }}">{{ strings[models[m]] }}
             	    </label>
                 {% endfor %}
                   </small>
