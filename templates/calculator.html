@@ -131,7 +131,7 @@
     	    <ol>
         
     	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res and not 'No similar words' in res %}
-    		<li>
+    		<li style='margin: 10px 0;'>
     		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
     		{% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">

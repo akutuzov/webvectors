@@ -36,6 +36,7 @@ def getdbpediaimage(query, cache):
             return None
         if len(results["results"]["bindings"]) > 0:
             image = results["results"]["bindings"][0]["pic"]["value"]
+            image = image.replace('http://', 'https://')
             data = codecs.open(root + cachefile, 'a', 'utf-8')
             data.write(query + '\t' + image + '\n')
             data.close()

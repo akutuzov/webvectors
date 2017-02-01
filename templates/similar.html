@@ -63,7 +63,7 @@
       <h3><strong>{{strings['similar16']}} <a href="{{ url }}{{lang}}/{{ usermodels[0] }}/{{word}}"><i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></strong> ({{ pos }})</h3>
         <div class="row">
     {% for model in list_value%}
-        <div class="col-md-4">
+        <div class="col-md-5">
         <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
         <big>
         {% if list_value[model] == "Unknown!" %}
@@ -71,8 +71,8 @@
 	{% else %}
         <ol>
         {% for res in list_value[model] if not "No results" in res and res != "Incorrect tag!" %}
-        <li>
-        <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+        <li style='margin: 10px 0;'>
+        <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
 		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>

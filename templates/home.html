@@ -19,10 +19,11 @@
      </div>
       {% if list_value %}
         <h3><strong>{{strings['home4']}} <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/">{{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}} <a href="{{ url }}{{lang}}/models#{{model}}">{{ model}}</a>)</strong></h3>
+        <div style="width:40%;">
         <big>
         <ol>
         {% for res in list_value if not "unknown to the model" in list_value and res[0] != "No results" and res != "Incorrect tag!"  %}
-        <li>
+        <li style='margin: 10px 0;'>
         <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
@@ -33,6 +34,7 @@
         {% endfor %}
         </ol>
         </big>
+        </div>
         {% for res in list_value if "unknown to the model" in res or res[0] == "No results" %}
 	{% if res[0] == "No results" %}
         <big><strong>{{ res[0] }}</strong></big>
