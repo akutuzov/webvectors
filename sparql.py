@@ -41,4 +41,7 @@ def getdbpediaimage(query, cache):
             data.close()
             return image
         else:
-            return None # todo: return information that picture is not found for future knowledge
+            data = codecs.open(root + cachefile, 'a', 'utf-8')
+            data.write(query + '\tNone\n')
+            data.close()
+            return None

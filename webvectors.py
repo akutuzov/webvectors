@@ -17,6 +17,7 @@ from collections import OrderedDict
 from plotting import singularplot
 from plotting import embed
 from sparql import getdbpediaimage
+from timeout import timeout
 
 import socket  # for sockets
 
@@ -139,6 +140,28 @@ def process_query(userquery):
     return query
 
 
+@timeout(3)
+def get_images(images):
+    imagecache = {}
+    imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
+    for line in imagedata:
+        res = line.strip().split('\t')
+        if len(res) == 2:
+            (word, image) = res
+            image = image.strip()
+            if image == 'None':
+                image = None
+            imagecache[word.strip()] = image
+        else:
+            continue
+    imagedata.close()
+    for w in images:
+        image = getdbpediaimage(w.encode('utf-8'), imagecache)
+        if image:
+            images[w] = image
+    return images
+
+
 @wvectors.route(url + '<lang:lang>/', methods=['GET', 'POST'])
 def home(lang):
     # pass all required variables to template
@@ -178,18 +201,7 @@ def home(lang):
                     w = word.split("#")
                     associates_list.append((w[0].decode('utf-8'), float(w[-1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
-                imagecache = {}
-                imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
-                for line in imagedata:
-                    res = line.strip().split('\t')
-                    (word, image) = res
-                    imagecache[word.strip()] = image.strip()
-                imagedata.close()
-                for w in images:
-                    image = getdbpediaimage(w.encode('utf-8'),
-                                            imagecache)  # todo: is it possible to get all 10 associates at a time?
-                    if image:
-                        images[w] = image
+                images = get_images(images)
                 return render_template('home.html', list_value=associates_list, word=query, wordimages=images,
                                        model=model, tags=tags, other_lang=other_lang, languages=languages, url=url)
         else:
@@ -318,17 +330,7 @@ def similar_page(lang):
                         associates_list.append((w[0].decode('utf-8'), float(w[1])))
                         images[w[0].split('_')[0].decode('utf-8')] = None
                     models_row[model] = associates_list
-                    imagecache = {}
-                    imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
-                    for line in imagedata:
-                        res = line.strip().split('\t')
-                        (word, image) = res
-                        imagecache[word.strip()] = image.strip()
-                    imagedata.close()
-                    for w in images:
-                        image = getdbpediaimage(w.encode('utf-8'), imagecache)
-                        if image:
-                            images[w] = image
+                    images = get_images(images)
             return render_template('similar.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages,
@@ -504,17 +506,7 @@ def finder(lang):
                     results.append((w[0].decode('utf-8'), float(w[1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
                 models_row[model] = results
-                imagecache = {}
-                imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
-                for line in imagedata:
-                    res = line.strip().split('\t')
-                    (word, image) = res
-                    imagecache[word.strip()] = image.strip()
-                imagedata.close()
-                for w in images:
-                    image = getdbpediaimage(w.encode('utf-8'), imagecache)
-                    if image:
-                        images[w] = image
+                images = get_images(images)
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
                                    nlist=negative_list, wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
@@ -568,17 +560,7 @@ def finder(lang):
                     results.append((w[0].decode('utf-8'), float(w[1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
                 models_row[model] = results
-                imagecache = {}
-                imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
-                for line in imagedata:
-                    res = line.strip().split('\t')
-                    (word, image) = res
-                    imagecache[word.strip()] = image.strip()
-                imagedata.close()
-                for w in images:
-                    image = getdbpediaimage(w.encode('utf-8'), imagecache)
-                    if image:
-                        images[w] = image
+                images = get_images(images)
             return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
                                    nlist2=negative_list, wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
@@ -637,10 +619,20 @@ def raw_finder(lang, model, userquery):
                 vector2 = [float(a) for a in vector2]
                 singularplot(query, model, vector2)
             if dbpedia:
-                if tags:
-                    image = getdbpediaimage(query.split('_')[0].encode('utf-8'), cachefile)
-                else:
-                    image = getdbpediaimage(query.encode('utf-8'), cachefile)
+                imagecache = {}
+                imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
+                for line in imagedata:
+                    res = line.strip().split('\t')
+                    if len(res) == 2:
+                        (word, image) = res
+                        image = image.strip()
+                        if image == 'None':
+                            image = None
+                        imagecache[word.strip()] = image
+                    else:
+                        continue
+                imagedata.close()
+                image = getdbpediaimage(query.split('_')[0].encode('utf-8'), imagecache)
             else:
                 image = None
             return render_template('wordpage.html', list_value=associates_list, word=query, model=model,
