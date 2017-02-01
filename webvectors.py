@@ -556,7 +556,7 @@ def finder(lang):
                 message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
                 result = serverquery(message)
                 results = []
-                if len(result) == 0:
+                if len(result) == 0 or "No results" in result:
                     results.append("No similar words with this tag.")
                     models_row[model] = results
                     continue
