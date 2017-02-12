@@ -3,7 +3,7 @@ _Webvectors_ is a toolkit to serve distributional semantic models (particularly,
 
 Working demos:
 <ul>
-<li>http://ling.go.mail.ru/dsm (for Russian)</li>
+<li>http://rusvectores.org (for Russian)</li>
 <li>http://ltr.uio.no/semvec (for English and Norwegian)</li>
 </ul>
 
