@@ -118,6 +118,7 @@ def per_request_callbacks(response):
 
 def process_query(userquery):
     userquery = userquery.strip()
+    query = userquery
     if tags:
         if '_' in userquery:
             query_split = userquery.split('_')
@@ -132,11 +133,9 @@ def process_query(userquery):
                     pos_tag = poses[0]
                 else:
                     pos_tag = poses[-1]
-                query = userquery + '_' + pos_tag
+                query = userquery.replace(' ', '::') + '_' + pos_tag
             else:
                 return 'Incorrect tag!'
-    else:
-        query = userquery
     return query
 
 
@@ -178,7 +177,8 @@ def home(lang):
             list_data = request.form['list_query']
         except:
             pass
-        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', '').isalnum():
+        if list_data != 'dummy' and \
+                list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
             query = process_query(list_data)
             if query == "Incorrect tag!":
                 return render_template('home.html', error=query, other_lang=other_lang, languages=languages, url=url)
@@ -286,7 +286,8 @@ def similar_page(lang):
                                        other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
 
         # Nearest associates queries
-        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', '').isalnum():
+        if list_data != 'dummy' and \
+                list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
             list_data = list_data.split()[0].strip()
             query = process_query(list_data)
 
@@ -458,14 +459,16 @@ def finder(lang):
             pass
         # Analogical inference
         if negative_data != '' and positive_data != '' and positive2_data != '':
-            negative_data = negative_data.split()[0].split()
-            positive_data = positive_data.split()[0]
-            positive2_data = positive2_data.split()[0]
             positive_data_list = [positive_data, positive2_data]
-            negative_list = [process_query(w) for w in negative_data if
-                             len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()]
-            positive_list = [process_query(w) for w in positive_data_list if
-                             len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()]
+            negative_list = []
+            if len(negative_data.strip()) > 1:
+                if negative_data.strip().replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
+                    negative_list = [process_query(negative_data)]
+
+            positive_list = []
+            for w in positive_data_list:
+                if len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
+                    positive_list.append(process_query(w))
 
             calcmodel_value = request.form.getlist('calcmodel')
             if len(calcmodel_value) < 1:

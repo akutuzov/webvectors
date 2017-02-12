@@ -15,7 +15,10 @@ cachefile = config.get('Files and directories', 'image_cache')
 
 def getdbpediaimage(query, cache):
     query = query.decode('utf-8')
-    query = query.capitalize()
+    if '::' in query:
+        query = ' '.join([w.capitalize() for w in query.split('::')])
+    else:
+        query = query.capitalize()
 
     if query in cache:
         return cache[query]
