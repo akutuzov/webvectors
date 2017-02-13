@@ -7,13 +7,12 @@ import json
 # Stanford CoreNLP tagging for English (and other languages)
 # Demands Stanford Core NLP server running on a defined port
 # Start server with something like:
-# java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer --port 9000
+# java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer --port 9999
 port = 9999
-
 
 def tagword(word):
     corenlp = requests.post(
-        'http://localhost:%s/?properties={"annotators": "tokenize, pos,lemma", "outputFormat": "json"}' % port,
+        'http://localhost:%s/?properties={"annotators": "tokenize, pos, lemma", "outputFormat": "json"}' % port,
         data=word.encode('utf-8')).content
     tagged = json.loads(corenlp, strict=False)
     if len(tagged["sentences"]) < 1:
@@ -24,26 +23,9 @@ def tagword(word):
         poses.append(ptb2upos[pos])
     return poses
 
-
-# Freeling lemmatization for Russian
+# Freeling tagging for Russian
 # Queries Freeling service at localhost port 50006
-# Converts Freeling tags into Mystem ones
-freeling2upos = {"A": "ADJ",
-                 "N": "NOUN",
-                 "V": "VERB",
-                 "Q": "NOUN",
-                 "D": "ADV",
-                 "E": "PRON",
-                 "P": "ADV",
-                 "Y": "ADJ",
-                 "R": "DET",
-                 "C": "CCONJ",
-                 "J": "INTJ",
-                 "Z": "NUM",
-                 "T": "PART",
-                 "B": "ADP"}
-
-
+# Converts Freeling tags into Universal ones
 def freeling_lemmatizer(word):
     freeling = subprocess.Popen([u'/usr/local/bin/analyzer_client', u'50006'], stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE)
@@ -61,7 +43,6 @@ def freeling_lemmatizer(word):
             universal_pos = 'X'
         poses.append(universal_pos)
     return poses
-
 
 # Mappings from Penn Treebank tagset to Universal PoS tags
 ptb2upos = {"!": "PUNCT",
@@ -134,3 +115,19 @@ ptb2upos = {"!": "PUNCT",
             "WP$": "PRON",
             "WRB": "ADV",
             "``": "PUNCT"}
+
+# Mappings from Mystem Russian tagset to Universal PoS tags
+freeling2upos = {"A": "ADJ",
+                 "N": "NOUN",
+                 "V": "VERB",
+                 "Q": "NOUN",
+                 "D": "ADV",
+                 "E": "PRON",
+                 "P": "ADV",
+                 "Y": "ADJ",
+                 "R": "DET",
+                 "C": "CCONJ",
+                 "J": "INTJ",
+                 "Z": "NUM",
+                 "T": "PART",
+                 "B": "ADP"}
