@@ -13,7 +13,7 @@ The service can be either integrated into Apache web server as a WSGI applicatio
 
 1. Install _Apache_ for Apache integration or _Gunicorn_ for standalone server.
 2. Install _Flask_ and _Gensim_.
-3. If you want to use lemmatization, install [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
+3. If you want to use lemmatization, install [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/), [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
 4. Clone [WebVectors code](https://github.com/akutuzov/webvectors) into a directory accessible by your web server.
 5. Configure the files:
 
