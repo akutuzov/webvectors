@@ -67,7 +67,7 @@ Models can be of two formats:
 
 _Webvectors_ will automatically detect models format and load all of them into memory. The users will be able to choose among loaded models.
 
-**Localization.**
+**Localization**
 
 _WebVectors_ uses `strings.csv` file as the source of localized strings. It is a comma-separated file with 3 fields:
 <ul><li> identifier </li>
