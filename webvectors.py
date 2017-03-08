@@ -802,4 +802,10 @@ def about_page(lang):
 @wvectors.route(url + 'visual', methods=['GET', 'POST'])
 @wvectors.route(url, methods=['GET', 'POST'])
 def redirect_main():
-    return redirect(url + 'en' + request.path.split('/')[-1])
+    req = request.path.split('/')[-1]
+    if len(req) == 0:
+        req = '/'
+    else:
+        if req[-1] != '/':
+            req += '/'
+    return redirect(url + 'en' + req)

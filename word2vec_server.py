@@ -34,7 +34,7 @@ models_dic = {}
 
 for m in our_models:
     if our_models[m].endswith('.bin.gz'):
-        models_dic[m] = gensim.models.Word2Vec.load_word2vec_format(our_models[m], binary=True)
+        models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(our_models[m], binary=True)
     else:
         models_dic[m] = gensim.models.Word2Vec.load(our_models[m])
     models_dic[m].init_sims(replace=True)
