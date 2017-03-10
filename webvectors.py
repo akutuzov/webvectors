@@ -201,10 +201,11 @@ def home(lang):
                     w = word.split("#")
                     associates_list.append((w[0].decode('utf-8'), float(w[-1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
-                try:
-                    images = get_images(images)
-                except:
-                    pass
+                if dbpedia:
+                    try:
+                        images = get_images(images)
+                    except:
+                        pass
                 return render_template('home.html', list_value=associates_list, word=query, wordimages=images,
                                        model=model, tags=tags, other_lang=other_lang, languages=languages, url=url)
         else:
@@ -334,10 +335,11 @@ def similar_page(lang):
                         associates_list.append((w[0].decode('utf-8'), float(w[1])))
                         images[w[0].split('_')[0].decode('utf-8')] = None
                     models_row[model] = associates_list
-                    try:
-                        images = get_images(images)
-                    except:
-                        pass
+                    if dbpedia:
+                        try:
+                            images = get_images(images)
+                        except:
+                            pass
             return render_template('similar.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages,
@@ -515,10 +517,11 @@ def finder(lang):
                     results.append((w[0].decode('utf-8'), float(w[1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
                 models_row[model] = results
-                try:
-                    images = get_images(images)
-                except:
-                    pass
+                if dbpedia:
+                    try:
+                        images = get_images(images)
+                    except:
+                        pass
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
                                    nlist=negative_list, wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
@@ -572,10 +575,11 @@ def finder(lang):
                     results.append((w[0].decode('utf-8'), float(w[1])))
                     images[w[0].split('_')[0].decode('utf-8')] = None
                 models_row[model] = results
-                try:
-                    images = get_images(images)
-                except:
-                    pass
+                if dbpedia:
+                    try:
+                        images = get_images(images)
+                    except:
+                        pass
             return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
                                    nlist2=negative_list, wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
@@ -608,6 +612,9 @@ def raw_finder(lang, model, userquery):
             pos_tag = query.split('_')[-1]
         else:
             pos_tag = 'ALL'
+        images = {}
+        images[query.split('_')[0]] = None
+        image = None
         message = "1;" + query + ";" + pos_tag + ";" + model
         result = serverquery(message)
         associates_list = []
@@ -624,6 +631,7 @@ def raw_finder(lang, model, userquery):
             for word in associates.split():
                 w = word.split("#")
                 associates_list.append((w[0].decode('utf-8'), float(w[1])))
+                images[w[0].split('_')[0].decode('utf-8')] = None
             m = hashlib.md5()
             name = query.encode('ascii', 'backslashreplace')
             m.update(name)
@@ -634,24 +642,13 @@ def raw_finder(lang, model, userquery):
                 vector2 = [float(a) for a in vector2]
                 singularplot(query, model, vector2)
             if dbpedia:
-                imagecache = {}
-                imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
-                for line in imagedata:
-                    res = line.strip().split('\t')
-                    if len(res) == 2:
-                        (word, image) = res
-                        image = image.strip()
-                        if image == 'None':
-                            image = None
-                        imagecache[word.strip()] = image
-                    else:
-                        continue
-                imagedata.close()
-                image = getdbpediaimage(query.split('_')[0].encode('utf-8'), imagecache)
-            else:
-                image = None
+                try:
+                    images = get_images(images)
+                    image = images[query.split('_')[0]]
+                except:
+                    pass
             return render_template('wordpage.html', list_value=associates_list, word=query, model=model,
-                                   pos=pos_tag, vector=vector, image=image, vectorvis=fname, tags=tags,
+                                   pos=pos_tag, vector=vector, image=image, wordimages=images, vectorvis=fname, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url)
     else:
         error_value = u'Incorrect query: %s' % userquery

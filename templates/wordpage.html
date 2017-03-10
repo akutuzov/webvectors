@@ -25,10 +25,15 @@
         <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}">"{{word.split('_')[0].replace('::', ' ')}}"</a></strong></span> {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}"> {{ model }}</a>?</h2>
         <ol>
         {% for res in list_value if res[0] != "No results" and not "unknown to the model" in res %}
-        <li>
-        <span style = "font-size:larger;">
+        <li style='margin: 10px 0;'>
+        <!--span style = "font-size:larger;"-->
         <a href="{{ url }}{{lang}}/{{ model }}/{{ res[0] }}">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.4f} ".format(res[1]) }}
-        </span>
+        {% if wordimages[res[0].split('_')[0]]  %}
+	        <div class="avataricon" style="clear:both;">
+		    <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>
+	        </div>
+            {% endif %}
+        <!--/span-->
         </li>
         {% endfor %}
         </ol>
