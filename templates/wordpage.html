@@ -26,14 +26,14 @@
         <ol>
         {% for res in list_value if res[0] != "No results" and not "unknown to the model" in res %}
         <li style='margin: 10px 0;'>
-        <!--span style = "font-size:larger;"-->
+       <div style = "font-size:larger;">
         <a href="{{ url }}{{lang}}/{{ model }}/{{ res[0] }}">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.4f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>
+		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30"></a>
 	        </div>
             {% endif %}
-        <!--/span-->
+       </div>
         </li>
         {% endfor %}
         </ol>
