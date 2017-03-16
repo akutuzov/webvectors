@@ -34,7 +34,7 @@ def singularplot(word, modelname, vector):
 
 
 def embed(words, matrix, usermodel):
-    perplexity = 5.0
+    perplexity = 5.0 # Should be smaller than the number of points!
     dimensionality = matrix.shape[1]
     y = tsne(matrix, 2, dimensionality, perplexity)
     print >> sys.stderr, '2-d embedding finished'
