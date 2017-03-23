@@ -11,7 +11,6 @@ The service can be either integrated into Apache web server as a WSGI applicatio
 
 ## Funny picture
 ![alt-text](https://github.com/akutuzov/webvectors/blob/master/word2vec.jpg "future with word2vec")
-<img src="https://github.com/akutuzov/webvectors/blob/master/word2vec.jpg" alt="future with word2vec" style="width: 100px;"/>
 
 ## Brief installation instructions
 
