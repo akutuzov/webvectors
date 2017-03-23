@@ -10,8 +10,7 @@ Working demos:
 The service can be either integrated into Apache web server as a WSGI application or run as a standalone server using Gunicorn.
 
 ## Funny picture
-![alt-text](https://github.com/akutuzov/webvectors/blob/master/word2vec.jpg "future with word2vec")
-<img src="https://raw.githubusercontent.com/akutuzov/webvectors/master/word2vec.jpg" width="200" height="200" />
+<img src="https://raw.githubusercontent.com/akutuzov/webvectors/master/word2vec.jpg" alt="future with word2vec" width="500" height="500" />
 
 ## Brief installation instructions
 
