@@ -9,9 +9,6 @@ Working demos:
 
 The service can be either integrated into Apache web server as a WSGI application or run as a standalone server using Gunicorn.
 
-## Funny picture
-<img src="https://raw.githubusercontent.com/akutuzov/webvectors/master/word2vec.jpg" alt="future with word2vec" width="500" height="500" />
-
 ## Brief installation instructions
 
 1. Install _Apache_ for Apache integration or _Gunicorn_ for standalone server.
