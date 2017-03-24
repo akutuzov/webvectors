@@ -4,7 +4,7 @@ _Webvectors_ is a toolkit to serve distributional semantic models (particularly,
 Working demos:
 <ul>
 <li>http://rusvectores.org (for Russian)</li>
-<li>http://ltr.uio.no/semvec (for English and Norwegian)</li>
+<li>http://vectors.nlpl.eu/explore/embeddings/ (for English and Norwegian)</li>
 </ul>
 
 The service can be either integrated into Apache web server as a WSGI application or run as a standalone server using Gunicorn.
