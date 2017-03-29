@@ -2,6 +2,7 @@
 # coding: utf-8
 import sys
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pylab as plot
@@ -34,13 +35,13 @@ def singularplot(word, modelname, vector):
 
 
 def embed(words, matrix, usermodel):
-    perplexity = 5.0 # Should be smaller than the number of points!
+    perplexity = 5.0  # Should be smaller than the number of points!
     dimensionality = matrix.shape[1]
     y = tsne(matrix, 2, dimensionality, perplexity)
     print >> sys.stderr, '2-d embedding finished'
     plot.scatter(y[:, 0], y[:, 1], 20, marker='.')
     for label, x, y in zip(words, y[:, 0], y[:, 1]):
-        plot.annotate(label.split('_')[0], xy=(x - 20, y), size='x-large', weight='bold', fontproperties=font)
+        plot.annotate(label.split('_')[0], xy=(x - 30, y), size='x-large', weight='bold', fontproperties=font)
     m = hashlib.md5()
     name = '_'.join(words).encode('ascii', 'backslashreplace')
     m.update(name)

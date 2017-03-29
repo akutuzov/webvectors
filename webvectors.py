@@ -143,10 +143,10 @@ def process_query(userquery):
 def get_images(images):
     imagecache = {}
     imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
-    for line in imagedata:
-        res = line.strip().split('\t')
-        if len(res) == 2:
-            (word, image) = res
+    for LINE in imagedata:
+        result = LINE.strip().split('\t')
+        if len(result) == 2:
+            (word, image) = result
             image = image.strip()
             if image == 'None':
                 image = None
@@ -215,7 +215,7 @@ def home(lang):
     return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
 
-@wvectors.route(url + '<lang:lang>/similar', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
 def similar_page(lang):
     g.lang = lang
     s = set()
@@ -289,7 +289,7 @@ def similar_page(lang):
         # Nearest associates queries
         if list_data != 'dummy' and \
                 list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
-            list_data = list_data.split()[0].strip()
+            list_data = list_data.strip()
             query = process_query(list_data)
 
             model_value = request.form.getlist('model')
@@ -352,7 +352,7 @@ def similar_page(lang):
                            languages=languages, url=url, usermodels=[defaultmodel])
 
 
-@wvectors.route(url + '<lang:lang>/visual', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
 def visual_page(lang):
     g.lang = lang
     s = set()
@@ -434,7 +434,7 @@ def visual_page(lang):
                            url=url, usermodels=[defaultmodel])
 
 
-@wvectors.route(url + '<lang:lang>/calculator', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/calculator/', methods=['GET', 'POST'])
 def finder(lang):
     g.lang = lang
     s = set()
@@ -612,8 +612,7 @@ def raw_finder(lang, model, userquery):
             pos_tag = query.split('_')[-1]
         else:
             pos_tag = 'ALL'
-        images = {}
-        images[query.split('_')[0]] = None
+        images = {query.split('_')[0]: None}
         image = None
         message = "1;" + query + ";" + pos_tag + ";" + model
         result = serverquery(message)
@@ -648,8 +647,8 @@ def raw_finder(lang, model, userquery):
                 except:
                     pass
             return render_template('wordpage.html', list_value=associates_list, word=query, model=model,
-                                   pos=pos_tag, vector=vector, image=image, wordimages=images, vectorvis=fname, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url)
+                                   pos=pos_tag, vector=vector, image=image, wordimages=images, vectorvis=fname,
+                                   tags=tags, other_lang=other_lang, languages=languages, url=url)
     else:
         error_value = u'Incorrect query: %s' % userquery
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
@@ -771,7 +770,7 @@ def similarity_api(model, wordpair):
     return str(w[2]) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
 
 
-@wvectors.route(url + '<lang:lang>/models')
+@wvectors.route(url + '<lang:lang>/models/')
 def models_page(lang):
     g.lang = lang
     s = set()
@@ -781,7 +780,7 @@ def models_page(lang):
     return render_template('%s/about.html' % lang, other_lang=other_lang, languages=languages, url=url)
 
 
-@wvectors.route(url + '<lang:lang>/about')
+@wvectors.route(url + '<lang:lang>/about/')
 def about_page(lang):
     g.lang = lang
     s = set()
@@ -793,10 +792,10 @@ def about_page(lang):
 
 
 # redirecting requests with no lang:
-@wvectors.route(url + 'about', methods=['GET', 'POST'])
-@wvectors.route(url + 'calculator', methods=['GET', 'POST'])
-@wvectors.route(url + 'similar', methods=['GET', 'POST'])
-@wvectors.route(url + 'visual', methods=['GET', 'POST'])
+@wvectors.route(url + 'about/', methods=['GET', 'POST'])
+@wvectors.route(url + 'calculator/', methods=['GET', 'POST'])
+@wvectors.route(url + 'similar/', methods=['GET', 'POST'])
+@wvectors.route(url + 'visual/', methods=['GET', 'POST'])
 @wvectors.route(url, methods=['GET', 'POST'])
 def redirect_main():
     req = request.path.split('/')[-1]
