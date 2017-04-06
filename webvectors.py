@@ -18,6 +18,7 @@ from plotting import singularplot
 from plotting import embed
 from sparql import getdbpediaimage
 from timeout import timeout
+from simplegist import Simplegist
 
 import socket  # for sockets
 
@@ -27,6 +28,8 @@ import ConfigParser
 from strings_reader import language_dicts
 
 languages = '/'.join(language_dicts.keys()).upper()
+
+ghGist = Simplegist(username='YOUR_GITHUB_USERNAME', api_token='YOUR_GITHUB_API_TOKEN')
 
 config = ConfigParser.RawConfigParser()
 config.read('webvectors.cfg')
@@ -92,10 +95,10 @@ for line in open(root + modelsfile, 'r').readlines():
     if line.startswith("#"):
         continue
     res = line.strip().split('\t')
-    (identifier, description, path, string, default) = res
+    (id_string, description, path, string, default) = res
     if default == 'True':
-        defaultmodel = identifier
-    our_models[identifier] = string
+        defaultmodel = id_string
+    our_models[id_string] = string
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -159,6 +162,31 @@ def get_images(images):
         if image:
             images[w] = image
     return images
+
+
+def word2vec2tensor(alias, vectorlist, wordlist):
+    outfiletsv = alias + '_tensor.tsv'
+    outfiletsvmeta = alias + '_metadata.tsv'
+    tensortext = ''
+    metadatatext = ''
+    metadatatext += 'word' + '\t' + 'PoS' + '\n'
+    for word, vector in zip(wordlist, vectorlist):
+        (lemma, pos) = word.split('_')
+        metadatatext += lemma + '\t' + pos + '\n'
+        vector_row = '\t'.join(map(str, vector))
+        tensortext += vector_row + '\n'
+    a = ghGist.create(name=outfiletsv, description='Tensors', public=True, content=tensortext)
+    b = ghGist.create(name=outfiletsvmeta, description='Metadata', public=True, content=metadatatext)
+    datadic = {"embeddings": [{"tensorName": 'WebVectors', "tensorShape": [len(vectorlist[0]), len(wordlist)],
+                               "tensorPath": a['files'][outfiletsv]['raw_url'],
+                               "metadataPath": b['files'][outfiletsvmeta]['raw_url']}]}
+    c = ghGist.create(name=alias + '_config.json', description='WebVectors', public=True,
+                      content=json.dumps(datadic))
+    link2config = c['files'][alias + '_config.json']['raw_url']
+    outputfile = open(root + 'data/images/tsneplots/' + alias + '.url', 'w')
+    outputfile.write(link2config)
+    outputfile.close()
+    return link2config
 
 
 @wvectors.route(url + '<lang:lang>/', methods=['GET', 'POST'])
@@ -385,6 +413,7 @@ def visual_page(lang):
 
             unknown = {}
             models_row = {}
+            links_row = {}
             for model in model_value:
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages, url=url,
@@ -396,11 +425,13 @@ def visual_page(lang):
                 m.update(name)
                 fname = m.hexdigest()
                 plotfile = "%s_%s.png" % (model, fname)
+                identifier = plotfile[:-4]
                 models_row[model] = plotfile
                 labels = []
                 if not os.path.exists(root + 'data/images/tsneplots'):
                     os.makedirs(root + 'data/images/tsneplots')
-                if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK):
+                if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK) or not os.access(
+                                                root + 'data/images/tsneplots/' + identifier + '.url', os.F_OK):
                     print >> sys.stderr, 'No previous image found'
                     vectors = []
                     for w in words2vis:
@@ -421,11 +452,14 @@ def visual_page(lang):
                         fname = m.hexdigest()
                         plotfile = "%s_%s.png" % (model, fname)
                         models_row[model] = plotfile
+                        l2c = word2vec2tensor(identifier, vectors, labels)
+                        links_row[model] = l2c
                     else:
                         models_row[model] = "Too few words!"
-
+                else:
+                    links_row[model] = open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
             return render_template('visual.html', visual=models_row, words=querywords, number=len(model_value),
-                                   models=our_models, unknown=unknown, url=url, usermodels=model_value)
+                                   models=our_models, unknown=unknown, url=url, usermodels=model_value, l2c=links_row)
         else:
             error_value = "Incorrect query!"
             return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
