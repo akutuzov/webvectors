@@ -43,7 +43,7 @@
         <div class="col-md-4">
         <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
         {% if not 'Too few words' in visual[model] %}
-        <i><a target="_blank" href="http://projector.tensorflow.org/?config={{ l2c[model] }}">Visualize in TensorFlow Projector</a></i>
+        <i><a target="_blank" title="{{strings['visual23']}}" href="http://projector.tensorflow.org/?config={{ l2c[model] }}">{{strings['visual22']}}</a></i>
     <a href="{{ url }}data/images/tsneplots/{{ visual[model] }}" target="_blank"><img src = "{{ url }}data/images/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}" width="400"></a>
 	{% else %}
 	{{ visual[model] }}
