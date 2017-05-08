@@ -458,7 +458,7 @@ def visual_page(lang):
                         models_row[model] = "Too few words!"
                 else:
                     links_row[model] = open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
-            return render_template('visual.html', visual=models_row, words=querywords, number=len(model_value),
+            return render_template('visual.html', visual=models_row, languages=languages, words=querywords, number=len(model_value),
                                    models=our_models, unknown=unknown, url=url, usermodels=model_value, l2c=links_row)
         else:
             error_value = "Incorrect query!"
