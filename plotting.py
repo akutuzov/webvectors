@@ -10,7 +10,6 @@ import numpy as np
 from matplotlib import font_manager
 from tsne import tsne
 import hashlib
-
 import ConfigParser
 
 config = ConfigParser.RawConfigParser()
@@ -38,10 +37,23 @@ def embed(words, matrix, usermodel):
     perplexity = 5.0  # Should be smaller than the number of points!
     dimensionality = matrix.shape[1]
     y = tsne(matrix, 2, dimensionality, perplexity)
+
+    classes = [word.split('_')[-1] for word in words]
+    classet = [c for c in set(classes)]
+    colors = plot.cm.rainbow(np.linspace(0, 1, len(classet)))
+    pos2color = [colors[classet.index(w)] for w in classes]
+
     print >> sys.stderr, '2-d embedding finished'
-    plot.scatter(y[:, 0], y[:, 1], 20, marker='.')
-    for label, x, y in zip(words, y[:, 0], y[:, 1]):
-        plot.annotate(label.split('_')[0], xy=(x - 30, y), size='x-large', weight='bold', fontproperties=font)
+
+    xpositions = y[:, 0]
+    ypositions = y[:, 1]
+    for color, word, x, y in zip(pos2color, words, xpositions, ypositions):
+        lemma = word.split('_')[0]
+        mid = len(lemma) / 2
+        mid *= 8  # TODO Should really think about how to adapt this variable to the real plot size
+        plot.scatter(x, y, 20, marker='.', color=color)
+        plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font, color=color)
+
     m = hashlib.md5()
     name = '_'.join(words).encode('ascii', 'backslashreplace')
     m.update(name)
