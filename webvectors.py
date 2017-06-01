@@ -791,8 +791,8 @@ def similarity_api(model, wordpair):
     wordpair = wordpair.split('__')
     if not model.strip() in our_models:
         return 'The model ' + model.strip() + ' is unknown'
-    cleanword0 = ''.join([char for char in wordpair[0] if char.isalnum() or char == '_' or char == '::'])
-    cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::'])
+    cleanword0 = ''.join([char for char in wordpair[0] if char.isalnum() or char == '_' or char == '::' or char == '-'])
+    cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::' or char == '-'])
     cleanword0 = process_query(cleanword0)
     cleanword1 = process_query(cleanword1)
     message = "2;" + " ".join([cleanword0, cleanword1]) + ";" + model
