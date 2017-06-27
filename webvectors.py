@@ -142,7 +142,7 @@ def process_query(userquery):
     return query
 
 
-@timeout(3)
+@timeout(10)
 def get_images(images):
     imagecache = {}
     imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
@@ -164,15 +164,15 @@ def get_images(images):
     return images
 
 
-def word2vec2tensor(alias, vectorlist, wordlist):
+def word2vec2tensor(alias, vectorlist, wordlist, classes):
     outfiletsv = alias + '_tensor.tsv'
     outfiletsvmeta = alias + '_metadata.tsv'
     tensortext = ''
     metadatatext = ''
-    metadatatext += 'word' + '\t' + 'PoS' + '\n'
-    for word, vector in zip(wordlist, vectorlist):
+    metadatatext += 'word' + '\t' + 'Class' + '\n'
+    for word, vector, group in zip(wordlist, vectorlist, classes):
         (lemma, pos) = word.split('_')
-        metadatatext += lemma + '\t' + pos + '\n'
+        metadatatext += lemma + '\t' + str(group) + '\n'
         vector_row = '\t'.join(map(str, vector))
         tensortext += vector_row + '\n'
     a = ghGist.create(name=outfiletsv, description='Tensors', public=True, content=tensortext)
@@ -389,27 +389,38 @@ def visual_page(lang):
     g.strings = language_dicts[lang]
 
     if request.method == 'POST':
-        list_data = 'dummy'
-        try:
-            list_data = request.form['list_query']
-        except:
-            pass
-        if list_data != 'dummy':
-
+        list_data = request.form.getlist('list_query')
+        if list_data:
             model_value = request.form.getlist('model')
             if len(model_value) < 1:
                 model_value = [defaultmodel]
 
-            querywords = set([process_query(w) for w in list_data.split() if
-                              len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:30])
+            groups = []
+            for inputform in list_data:
+                group = set([process_query(w) for w in inputform.split(',') if len(w) > 1
+                             and w.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum()][:30])
+                groups.append(group)
+
+            querywords = [word for group in groups for word in group]
+            if len(set(querywords)) != len(querywords):
+                error_value = "Words must be unique!"
+                return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
+                                       languages=languages, url=url, usermodels=model_value)
             if len(querywords) < 7:
                 error_value = "Too few words!"
                 return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
                                        languages=languages, url=url, usermodels=model_value)
 
             if "Incorrect tag!" in querywords:
-                return render_template('visual.html', word=list_data, models=our_models, other_lang=other_lang,
+                error_value = "Incorrect tag!"
+                return render_template('visual.html', error=error_value, models=our_models, other_lang=other_lang,
                                        languages=languages, url=url, usermodels=model_value)
+
+            classes = []
+            for word in querywords:
+                for group in groups:
+                    if word in group:
+                        classes.append(groups.index(group))
 
             unknown = {}
             models_row = {}
@@ -421,7 +432,8 @@ def visual_page(lang):
                 unknown[model] = set()
                 words2vis = querywords
                 m = hashlib.md5()
-                name = '_'.join(words2vis).encode('ascii', 'backslashreplace')
+                name = ':::'.join(['__'.join(group) for group in groups])
+                name = name.encode('ascii', 'backslashreplace')
                 m.update(name)
                 fname = m.hexdigest()
                 plotfile = "%s_%s.png" % (model, fname)
@@ -443,23 +455,22 @@ def visual_page(lang):
                         vector = np.array(result.split(','))
                         vectors.append(vector)
                         labels.append(w)
-                    if len(vectors) > 1:
+                    if len(vectors) > 5:
+                        if len(list_data) == 1:
+                            classes = [word.split('_')[-1] for word in words2vis]
                         matrix2vis = np.vstack(([v for v in vectors]))
-                        embed(labels, matrix2vis.astype('float64'), model)
-                        m = hashlib.md5()
-                        name = '_'.join(labels).encode('ascii', 'backslashreplace')
-                        m.update(name)
-                        fname = m.hexdigest()
-                        plotfile = "%s_%s.png" % (model, fname)
+                        embed(labels, matrix2vis.astype('float64'), classes, model, fname)
                         models_row[model] = plotfile
-                        l2c = word2vec2tensor(identifier, vectors, labels)
+                        l2c = word2vec2tensor(identifier, vectors, labels, classes)
                         links_row[model] = l2c
                     else:
                         models_row[model] = "Too few words!"
                 else:
                     links_row[model] = open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
-            return render_template('visual.html', visual=models_row, languages=languages, words=querywords, number=len(model_value),
-                                   models=our_models, unknown=unknown, url=url, usermodels=model_value, l2c=links_row)
+            return render_template('visual.html', languages=languages, visual=models_row, words=groups,
+                                   number=len(model_value),
+                                   models=our_models, unknown=unknown, url=url, usermodels=model_value, l2c=links_row,
+                                   qwords=querywords)
         else:
             error_value = "Incorrect query!"
             return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,

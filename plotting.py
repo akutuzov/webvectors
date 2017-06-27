@@ -33,30 +33,34 @@ def singularplot(word, modelname, vector):
     plt.close()
 
 
-def embed(words, matrix, usermodel):
+def embed(words, matrix, classes, usermodel, fname):
     perplexity = 5.0  # Should be smaller than the number of points!
     dimensionality = matrix.shape[1]
     y = tsne(matrix, 2, dimensionality, perplexity)
 
-    classes = [word.split('_')[-1] for word in words]
-    classet = [c for c in set(classes)]
-    colors = plot.cm.rainbow(np.linspace(0, 1, len(classet)))
-    pos2color = [colors[classet.index(w)] for w in classes]
-
     print >> sys.stderr, '2-d embedding finished'
+
+    class_set = [c for c in set(classes)]
+    colors = plot.cm.rainbow(np.linspace(0, 1, len(class_set)))
+
+    class2color = [colors[class_set.index(w)] for w in classes]
 
     xpositions = y[:, 0]
     ypositions = y[:, 1]
-    for color, word, x, y in zip(pos2color, words, xpositions, ypositions):
-        lemma = word.split('_')[0]
+    seen = set()
+
+    for color, word, class_label, x, y in zip(class2color, words, classes, xpositions, ypositions):
+        plot.scatter(x, y, 20, marker='.', color=color, label=class_label if class_label not in seen else "")
+        seen.add(class_label)
+
+        lemma = word.split('_')[0].replace('::', ' ')
         mid = len(lemma) / 2
-        mid *= 8  # TODO Should really think about how to adapt this variable to the real plot size
-        plot.scatter(x, y, 20, marker='.', color=color)
+        mid *= 10  # TODO Should really think about how to adapt this variable to the real plot size
         plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font, color=color)
 
-    m = hashlib.md5()
-    name = '_'.join(words).encode('ascii', 'backslashreplace')
-    m.update(name)
-    fname = m.hexdigest()
+    plot.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+    plot.tick_params(axis='y', which='both', left='off', right='off', labelleft='off')
+    plot.legend(loc=4)
+
     plot.savefig(root + 'data/images/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
     plot.close()

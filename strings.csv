@@ -102,7 +102,7 @@ usermodel4,Ваша модель с идентификатором,Your model wi
 usermodel5,все еще обрабатывается. Приходите попозже.,is still being processed. Please come back later.
 usermodel6,"Извините, идентификатор не распознан.","Unknown identifier, sorry."
 visual1,Визуализация семантических связей между словами,Visualizing word inter-relations
-visual2,"Введите несколько слов через пробел. Мы построим карту их взаимного расположения в выбранной модели и отобразим двумерную проекцию этой карты (из векторного пространства высокой размерности). Чем больше слов вы введёте, тем более информативна будет визуализация. Оптимальное количество - от 7 до 20.","Enter a space-separated list of words. We will build a map of their inter-relations in the chosen model, and return 2-dimensional version of this map (projected from high-dimensional vector space). The more words you enter, the more informative visualization we produce. Optimal number is from 7 to 20."
+visual2,"Введите cлова через запятую. Мы построим карту их взаимного расположения в выбранной модели/моделях и отобразим двумерную проекцию этой карты (из векторного пространства высокой размерности).","Enter a comma-separated list of words. We will build a map of their inter-relations in the chosen model(s), and return 2-dimensional version of this map (projected from high-dimensional vector space)."
 visual3,Визуализация взаимного расположения слов при помощи t-SNE,Visual representation of word relations using t-SNE
 visual4,Следующие слова неизвестны модели:,The following words were unknown to the model:
 visual5,"- это алгоритм снижения размерности и визуализации высокоразмерных данных. Он разработан Лоренсом ван дер Маатеном и описан в этой статье:","is an algorithm for dimensionality reduction and visualization of high-dimensional datasets, developed by Laurens van der Maaten and described in this paper:"
@@ -116,4 +116,5 @@ visual20,Примеры больших семантических карт,Examp
 visual21,8 тысяч наиболее частотных существительных в новостном корпусе,8K most frequent nouns in the news corpus
 visual22,Визуализировать в TensorFlow Projector,Visualize in TensorFlow Projector
 visual23,Показать трёхмерную проекцию взаимного расположения выбранных слов в TensorFlow Projector от Google,Show 3D projection of the chosen words in Google's TensorFlow Projector
+visual24,"Вы можете добавлять новые группы слов кнопкой '+'; они отобразятся на визуализации разными цветами (если группа одна, цвета соответствуют частям речи). Оптимальное общее количество слов - от 7 до 20.","You can add new groups of words with the '+' button. They will be visualized with different colors (if there is only 1 group, the colors marks parts of speech). Optimal total number of words is from 7 to 20."
 
