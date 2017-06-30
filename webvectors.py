@@ -396,7 +396,7 @@ def visual_page(lang):
                 model_value = [defaultmodel]
 
             groups = []
-            for inputform in list_data:
+            for inputform in list_data[:10]:
                 group = set([process_query(w) for w in inputform.split(',') if len(w) > 1
                              and w.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum()][:30])
                 groups.append(group)
