@@ -37,7 +37,7 @@ Most important settings are:
 <li> `temp` - absolute path to your temporary files directory </li>
 <li> `font` - absolute path to a TTF font you want to use for plots (otherwise default system font will be used) </li>
 <li> `lemmatize` - whether to use automatic PoS-tagging and lemmatization </li>
-<li> `default_search` - URL of search engine to use on individual word pages (for example, http://go.mail.ru/search?q=) </li></ul>
+<li> `default_search` - URL of search engine to use on individual word pages (for example, https://duckduckgo.com/?q=) </li></ul>
 
 **Tags**
 
