@@ -457,7 +457,7 @@ def visual_page(lang):
                         labels.append(w)
                     if len(vectors) > 5:
                         if len(list_data) == 1:
-                            classes = [word.split('_')[-1] for word in words2vis]
+                            classes = [word.split('_')[-1] for word in labels]
                         matrix2vis = np.vstack(([v for v in vectors]))
                         embed(labels, matrix2vis.astype('float64'), classes, model, fname)
                         models_row[model] = plotfile
