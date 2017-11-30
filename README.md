@@ -103,7 +103,7 @@ In case of any problems, please feel free to contact us:
 <li> lizaku77@gmail.com (Elizaveta Kuzmenko) </li></ul>
 
 ## References
-1. https://www.academia.edu/24306935/WebVectors_a_Toolkit_for_Building_Web_Interfaces_for_Vector_Semantic_Models
+1. http://www.aclweb.org/anthology/E17-3025
 
 2. http://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf
 
