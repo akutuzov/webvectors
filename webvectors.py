@@ -450,7 +450,7 @@ def visual_page(lang):
                     os.makedirs(root + 'data/images/tsneplots')
                 if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK) or not os.access(
                                                 root + 'data/images/tsneplots/' + identifier + '.url', os.F_OK):
-                    print >> sys.stderr, 'No previous image found'
+                    print >> sys.stderr, 'No previous image found', root + 'data/images/tsneplots/' + plotfile
                     vectors = []
                     for w in words2vis:
                         message = "4;" + w + ";" + model
@@ -704,7 +704,7 @@ def raw_finder(lang, model, userquery):
                                    vector=vector, image=image, wordimages=images, vectorvis=fname, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, search=defaultsearchengine)
     else:
-        error_value = u'Incorrect query!'
+        error_value = 'Incorrect query!'
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
                                languages=languages, url=url)
 
