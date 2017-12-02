@@ -2,9 +2,7 @@
 # coding: utf-8
 import sys
 import matplotlib
-
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import pylab as plot
 import numpy as np
 from matplotlib import font_manager
@@ -22,15 +20,17 @@ font = font_manager.FontProperties(fname=path)
 
 def singularplot(word, modelname, vector):
     xlocations = np.array(range(len(vector)))
-    plt.bar(xlocations, vector)
+    plot.bar(xlocations, vector)
     plot_title = word.split('_')[0] + '\n' + modelname + u' model'
-    plt.title(plot_title, fontproperties=font)
+    plot.title(plot_title, fontproperties=font)
+    plot.xlabel('Vector components')
+    plot.ylabel('Components values')
     m = hashlib.md5()
     name = word.encode('ascii', 'backslashreplace')
     m.update(name)
     fname = m.hexdigest()
-    plt.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150, bbox_inches='tight')
-    plt.close()
+    plot.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plot.close()
 
 
 def embed(words, matrix, classes, usermodel, fname):
@@ -60,7 +60,7 @@ def embed(words, matrix, classes, usermodel, fname):
 
     plot.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
     plot.tick_params(axis='y', which='both', left='off', right='off', labelleft='off')
-    plot.legend(loc=4)
+    plot.legend(loc='best')
 
     plot.savefig(root + 'data/images/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
     plot.close()
