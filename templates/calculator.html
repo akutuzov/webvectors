@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {%- block title %}
-     <title>WebVectors: {{strings['calc1']}}</title>
+     <title>{{strings['base3']}}: {{strings['calc1']}}</title>
  {%- endblock title %}
 
 
@@ -30,12 +30,14 @@
                 <p>{{strings['calc4']}}
 		<div class = "row">
 		<div class = "col-md-5">
-        <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="mother"{% endif %} maxlength=50><img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="daughter"{% endif %} maxlength=50>
+        <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="{{strings['calc33']}}"{% endif %} maxlength=50>
+            <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
+		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="{{strings['calc34']}}"{% endif %} maxlength=50>
 		</div>
 		<div class = "col-md-5">
 
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} placeholder="father"{% endif %} maxlength=50><img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
+		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} placeholder="{{strings['calc35']}}"{% endif %} maxlength=50>
+            <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
 		<p style = "text-align:center;"><strong>???</strong></p>
 		</div>
 		</div>
@@ -49,32 +51,47 @@
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res and not 'No similar words' in res %}
+    	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'No similar words' in res %}
     		<li>
-    		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+
+                 {% if 'does not know' in res %}
+
+                {{strings['similar18']}} {{ res.split()[-1]}}
+
+                {% else %}
+
+                <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
     		{% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>
+		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+            </a>
 	        </div>
             {% endif %}
+
+                {% endif %}
             </li>
     	    {% endfor %}
         
     	    </ol></span>
         
-            {% for res in analogy_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect tag!" or 'does not know' in res or 'No results' in res or 'No similar words' in res %}    		<strong>{{ res.decode('utf-8') }}</strong>
-    	    {% endfor %}
         </div>
 	{% endfor %}
 	</div>
     {% endif %}
     
     {% if error %}
-    <p> <span style = "font-size:larger;"><strong>{{ error }}</strong></span></p>
+    <p> <span style = "font-size:larger;"><strong>
+    {% if 'Incorrect tag' in error%}
+        {{strings['similar22']}}
+    {% elif 'Incorrect query' in error %}
+        {{strings['similar21']}}
+        {% endif %}
+    </strong></span></p>
     {% endif %}
             </div>
               <div class="checkbox">
-                  <p><small><em>{{strings['calc6']}}</em></small></p>
+                  <p><small><em>{{strings['similar3']}}</em></small></p>
                   <fieldset>
                       <small>
                         {% for m in models %}
@@ -85,23 +102,26 @@
                       </small>
                   </fieldset>
               </div>
-                  <p><small><em>{{strings['calc12']}}</em></small></p>
+                  <p><small><em>{{strings['similar9']}}</em></small></p>
                   <div class="radio">
                       <small>
                           <label>
-                              <input type="radio" name="calcpos" value="NOUN"> {{strings['calc13']}}
+                              <input type="radio" name="calcpos" value="NOUN"> {{strings['similar10']}}
                           </label>
                           <label>
-                              <input type="radio" name="calcpos" value="VERB"> {{strings['calc14']}}
+                              <input type="radio" name="calcpos" value="PROPN"> {{strings['similar20']}}
                           </label>
                           <label>
-                              <input type="radio" name="calcpos" value="ADV"> {{strings['calc15']}}
+                              <input type="radio" name="calcpos" value="VERB"> {{strings['similar11']}}
                           </label>
                           <label>
-                              <input type="radio" name="calcpos" value="ADJ"> {{strings['calc16']}}
+                              <input type="radio" name="calcpos" value="ADV"> {{strings['similar12']}}
                           </label>
                           <label>
-                              <input type="radio" name="calcpos" value="ALL" checked> {{strings['calc17']}}
+                              <input type="radio" name="calcpos" value="ADJ"> {{strings['similar13']}}
+                          </label>
+                          <label>
+                              <input type="radio" name="calcpos" value="ALL" checked> {{strings['similar14']}}
                           </label>
                       </small>
                   </div>
@@ -115,11 +135,15 @@
                             <p>{{strings['calc32']}}</p>
                             <p>{{strings['calc3']}}</p>
                             {% if plist2 %}
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" value="{{ ' '.join(plist2) }}" maxlength=300>
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" value="{{ ' '.join(nlist2) }}" maxlength=300>
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
+                                <span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" value="{{ ' '.join(plist2) }}" maxlength=300>
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
+                                <span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" value="{{ ' '.join(nlist2) }}" maxlength=300>
                             {% else %}
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="computer linguistics" maxlength=300>
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong><span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" maxlength=300>
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
+                                <span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="{{strings['calc13']}}" maxlength=300>
+                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
+                                <span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" maxlength=300>
                             {% endif %}
                         </div>
         {% if calc_value %}
@@ -130,20 +154,27 @@
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'does not know' in res and not 'No similar words' in res %}
+    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and not 'No similar words' in res %}
     		<li style='margin: 10px 0;'>
+                {% if 'does not know' in res %}
+
+                     {{strings['similar18']}} {{ res.split()[-1]}}
+                {% else %}
     		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
     		{% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>
+		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+                <img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+            </a>
 	        </div>
             {% endif %}
+                {% endif %}
             </li>
     	    {% endfor %}
         
     	    </ol></span>
         
-    	    {% for res in calc_value[model] if "No similar words of this part of speech" in res or res  == "Incorrect tag!" or 'does not know' in res or 'No results' in res or 'No similar words' in res %}
+    	    {% for res in calc_value[model] if "No similar words of this part of speech" in res or 'No results' in res or 'No similar words' in res %}
     		<strong>{{ res.decode('utf-8') }}</strong>
     	    {% endfor %}
         </div>
@@ -152,10 +183,18 @@
     {% endif %}
     
                         {% if calc_error %}
-                        <p> <span style = "font-size:larger;"><strong>{{ calc_error }}</strong></span><p>
+                        <p> <span style = "font-size:larger;"><strong>
+
+                         {% if 'Incorrect tag' in calc_error %}
+                            {{strings['similar22']}}
+                            {% elif 'Incorrect query' in calc_error %}
+                            {{strings['similar21']}}
+                        {% endif %}
+
+                        </strong></span><p>
                         {% endif %}
                         <div class="checkbox">
-                  <p><small><em>{{strings['calc6']}}</em></small></p>
+                  <p><small><em>{{strings['similar3']}}</em></small></p>
                   <fieldset>
                       <small>
                         {% for m in models %}
@@ -166,23 +205,26 @@
                       </small>
                   </fieldset>
               </div>
-                        <p><small><em>{{strings['calc12']}}</em></small></p>
+                        <p><small><em>{{strings['similar9']}}</em></small></p>
                         <div class="radio">
                             <small>
                                 <label>
-                                    <input type="radio" name="calcpos" value="NOUN"> {{strings['calc13']}}
+                                    <input type="radio" name="calcpos" value="NOUN"> {{strings['similar10']}}
                                 </label>
                                 <label>
-                                    <input type="radio" name="calcpos" value="VERB"> {{strings['calc14']}}
+                                    <input type="radio" name="calcpos" value="PROPN"> {{strings['similar20']}}
                                 </label>
                                 <label>
-                                    <input type="radio" name="calcpos" value="ADV"> {{strings['calc15']}}
+                                    <input type="radio" name="calcpos" value="VERB"> {{strings['similar11']}}
                                 </label>
                                 <label>
-                                    <input type="radio" name="calcpos" value="ADJ"> {{strings['calc16']}}
+                                    <input type="radio" name="calcpos" value="ADV"> {{strings['similar12']}}
                                 </label>
                                 <label>
-                                    <input type="radio" name="calcpos" value="ALL" checked> {{strings['calc17']}}
+                                    <input type="radio" name="calcpos" value="ADJ"> {{strings['similar13']}}
+                                </label>
+                                <label>
+                                    <input type="radio" name="calcpos" value="ALL" checked> {{strings['similar14']}}
                                 </label>
                             </small>
                         </div>

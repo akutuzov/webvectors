@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {%- block title %}
-     <title>WebVectors: {{strings['similar1']}}</title>
+     <title>{{strings['base3']}}: {{strings['similar1']}}</title>
 {%- endblock title %}
          
 
@@ -16,7 +16,7 @@
                 {% if list_value %}
                 <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
                 {% else %}
-                <input type="text" class="typeahead" id="query" name="list_query" placeholder="computer_NOUN" maxlength=100>
+                <input type="text" class="typeahead" id="query" name="list_query" value="{{strings['home7']}}" maxlength=100>
                 {% endif %}
               </div>
               
@@ -38,6 +38,9 @@
                 <label>
                   <input type="radio" name="pos" value="NOUN"> {{strings['similar10']}}
                 </label>
+                <label>
+                   <input type="radio" name="pos" value="PROPN"> {{strings['similar20']}}
+                </label>
                   <label>
                   <input type="radio" name="pos" value="VERB"> {{strings['similar11']}}
                 </label>
@@ -56,7 +59,7 @@
                 </small>
                 </div>
                 
-           <button type="submit" class="btn btn-primary" id="send" name="list_query" value = "Produce a list of quazy-synonyms">{{strings['similar15']}}</button>
+           <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['similar15']}}</button>
             </form>
             </div>
  {% if list_value %}
@@ -75,7 +78,9 @@
         <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} in Wikipedia" title = "{{ res[0].split('_')[0]|capitalize }} in Wikipedia" width="30"></a>
+		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+            </a>
 	        </div>
             {% endif %}
         </li>
@@ -83,45 +88,40 @@
         </ol>
         </big>
         {% for res in list_value[model] if res == "No results"  %}
-        {% if res[0] == "No results" %}
-        <big><strong>{{ res[0] }}</strong></big>
-        {% else %}
-        <big><strong>{{ res }}</strong></big>
-        {% endif %}
+        <big><strong>{{strings['similar23']}}</strong></big>
         {% endfor %}
-
-        {% for res in list_value[model] if res == "Incorrect tag!"  %}
-        <big><strong>{{ res }}</strong></big>
-        {% endfor %}
-
         {% endif %}
         </div>
     {% endfor %}
         </div>
 {% endif %}
         
-        
-        
          {% if error %}
-         <big><strong>
-         <p>{{ error }}</p>
-         </strong></big>
-         
+        <p> <span style = "font-size:larger;"><strong>
+          {% if 'Incorrect tag' in error %}
+                   {{strings['similar22']}}
+             {% elif 'Incorrect query' in error %}
+                   {{strings['similar21']}}
+            {% else %}
+            {{strings['similar18']}} {{ query }}
+          {% endif %}
+          </strong></span><p>
          {% endif %}
          </div>
+
       <div class="col-md-5">
                   <form method=post>
               <div class="form-group">
-                <h2>{{strings['calc19']}}</h2>
-                <p>{{strings['calc20']}}</p>
+                <h2>{{strings['similar24']}}</h2>
+                <p>{{strings['similar25']}}</p>
                 {% if query %}
                     <input type="text" class="form-control" name="query" value="{{','.join(query)}}" maxlength=300>
                 {% else %}
-                <input type="text" class="form-control" name="query" placeholder="movie film, city town" maxlength=300>
+                <input type="text" class="form-control" name="query" placeholder="{{strings['similar26']}}" maxlength=300>
                 {% endif %}
               </div>
               <div class="radio">
-                  <p><small><em>{{strings['calc22']}}</em></small></p>
+                  <p><small><em>{{strings['similar3']}}</em></small></p>
                   <small>
                   {% for m in models %}
 		    <label>
@@ -132,23 +132,34 @@
               </div>
 
 
-              <button type="submit" class="btn btn-primary" name="query" value = "{{strings['calc28']}}">{{strings['calc28']}}</button>
+              <button type="submit" class="btn btn-primary" name="query">{{strings['similar27']}}</button>
             </form>
           {% if value %}
             <span style = "font-size:larger;">
             <table class="table"><tr>
-            <td><strong>{{strings['calc29']}}</strong></td><td><strong>{{strings['calc30']}}</strong><br/>(<a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
-            {% for res in value if not "unknown to the model" in res and not "Incorrect tag!" in res  %}
-            <tr><td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0].replace('::', ' ')}}</a></em> <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.3f} ".format(res[2]) }}</td></tr>
+            <td><strong>{{strings['similar28']}}</strong></td><td><strong>{{strings['similar29']}}</strong><br/>
+                (<a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
+            {% for res in value  %}
+            <tr><td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split("_")[0].replace('::', ' ')}}</a></em>
+                <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[1]}}/">{{res[1].split("_")[0]}}</a></em></td> <td>{{ "{:.3f} ".format(res[2]) }}</td></tr>
             {% endfor %}
-            {% for res in value if "unknown to the model" in res or "Incorrect tag!" in res  %}
-            <tr><td style="vertical-align:top"><em>{{res}}</em></td> <td></td></tr>
-            {% endfor %}
+
             </table>
             </span>
             {% endif %}
-            {% if error_sim %}
-            <p> <span style = "font-size:larger;"><strong>{{ error_sim.decode('utf-8') }}</strong></span><p>
+
+
+          {% if error_sim %}
+          <p> <span style = "font-size:larger;"><strong>
+          {% if 'Incorrect tag' in error %}
+                   {{strings['similar22']}}
+          {% elif 'Incorrect query' in error %}
+                   {{strings['similar21']}}
+          {% else %}
+            {{strings['similar18']}} {{ query }}
+          {% endif %}
+
+          </strong></span><p>
             {% endif %}
               </div>
                 </div>

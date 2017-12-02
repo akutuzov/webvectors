@@ -22,31 +22,25 @@
         </script>
         <div class="row">
         <div class="col-md-7">
-        <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}">"{{word.split('_')[0].replace('::', ' ')}}"</a></strong></span> {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}"> {{ model }}</a>?</h2>
+        <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}">"{{word.split('_')[0].replace('::', ' ')}}"</a></strong></span>
+            {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}"> {{ model }}</a>?</h2>
         <ol>
-        {% for res in list_value if res[0] != "No results" and not "unknown to the model" in res %}
+        {% for res in list_value %}
         <li style='margin: 10px 0;'>
        <div style = "font-size:larger;">
         <a href="{{ url }}{{lang}}/{{ model }}/{{ res[0] }}">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.4f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank"><img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30"></a>
+		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+                <img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+            </a>
 	        </div>
             {% endif %}
        </div>
         </li>
         {% endfor %}
         </ol>
-        {% for res in list_value if "unknown to the model" in res or res[0] == "No results" or res == "Incorrect tag!" %}
-        {% if res[0] == "No results" %}
-        <span style = "font-size:larger;"><strong>{{ res[0] }}</strong></span>
-        {% else %}
-        <span style = "font-size:larger;"><strong>{{ res }}</strong></span>
-        {% endif %}
-        {% endfor %}
-        {% for res in list_value if res == "Incorrect tag!"  %}
-        <span style = "font-size:larger;"><strong>{{ res }}</strong></span>
-        {% endfor %}
+
 	<span style = "font-size:larger;">
         <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} "{{word.split('_')[0].replace('::', ' ')}}" {{strings['synraw5']}} {{ model }}:</a>
         </span>
@@ -56,14 +50,24 @@
         </div>
         <div class="col-md-5">
         <h2>{{strings['synraw9']}}</h2>
-        <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank"><img src = '{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}" title = "{{word}} {{strings['synraw10']}}" class="img-responsive"></a>	<hr/>
+        <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank">
+            <img src = '{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}" title = "{{word}} {{strings['synraw10']}}" class="img-responsive">
+        </a>	<hr/>
       <ul>
-          <li><span style = "font-size:larger;"><a target="_blank" href="https://duckduckgo.com/?q={{ word.split('_')[0].replace('::', ' ') }}">{{strings['synraw6']}} "{{ word.split('_')[0].replace('::', ' ') }}" {{strings['synraw7']}}</a></span></li>
-          <li><span style = "font-size:larger;"><a target="_blank" href="https://en.wiktionary.org/wiki/{{ word.split('_')[0].replace('::', ' ') }}">"{{ word.split('_')[0].replace('::', ' ') }}" {{strings['synraw8']}}</a></span></li>
+          <li><span style = "font-size:larger;">
+              <a target="_blank" href="{{ search }}{{ word.split('_')[0].replace('::', ' ') }}">
+              {{strings['synraw6']}} "{{ word.split('_')[0].replace('::', ' ') }}" {{strings['synraw7']}}
+              </a></span></li>
+          <li><span style = "font-size:larger;">
+              <a target="_blank" href="https://en.wiktionary.org/wiki/{{ word.split('_')[0].replace('::', ' ') }}">
+                  "{{ word.split('_')[0].replace('::', ' ') }}" {{strings['synraw8']}}
+              </a></span></li>
     </ul>
     <hr/>
     {% if image %}
-    <a href="https://en.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank"><img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive"></a>
+    <a href="https://en.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank">
+        <img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive">
+    </a>
     {% endif %}
 
             </div>
@@ -71,6 +75,16 @@
 
         {% endif %}
         {% if error %}
-        <p> <span style = "font-size:larger;"><strong>{{ error }}</strong></span><p>
+        <p> <span style = "font-size:larger;"><strong>
+
+          {% if 'Incorrect tag' in error %}
+                   {{strings['similar22']}}
+          {% elif 'Incorrect query' in error %}
+                   {{strings['similar21']}}
+          {% else %}
+            {{strings['similar18']}} {{ word }}
+          {% endif %}
+
+          </strong></span><p>
         {% endif %}
 {% endblock %}
