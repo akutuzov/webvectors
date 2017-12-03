@@ -818,7 +818,7 @@ def similarity_api(model, wordpair):
     message = "2;" + " ".join([cleanword0, cleanword1]) + ";" + model
 
     result = serverquery(message)
-    if 'does not know the word' in result:
+    if 'is unknown' in result:
         return 'Unknown'
     w = result.split("#")
     return str(w[2]) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
