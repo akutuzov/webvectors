@@ -60,7 +60,7 @@
 
                 {% else %}
 
-                <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+                <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
     		{% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
 		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
