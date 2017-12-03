@@ -51,13 +51,13 @@
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in analogy_value[model] if res != "No similar words of this part of speech." and res != "Incorrect tag!" and not 'No similar words' in res %}
-    		<li>
+    	    {% for res in analogy_value[model] if res != "Incorrect tag!" %}
+    		<li style='margin: 10px 0;'>
 
-                 {% if 'does not know' in res %}
-
-                {{strings['similar18']}} {{ res.split()[-1]}}
-
+                {% if 'is unknown' in res %}
+                    {{strings['similar18']}}
+                {% elif 'No similar words' in res %}
+                    {{strings['similar30']}}
                 {% else %}
 
                 <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
@@ -68,8 +68,7 @@
             </a>
 	        </div>
             {% endif %}
-
-                {% endif %}
+          {% endif %}
             </li>
     	    {% endfor %}
         
@@ -174,8 +173,14 @@
         
     	    </ol></span>
         
-    	    {% for res in calc_value[model] if "No similar words of this part of speech" in res or 'No results' in res or 'No similar words' in res %}
-    		<strong>{{ res.decode('utf-8') }}</strong>
+    	    {% for res in calc_value[model] if 'No results' in res or 'No similar words' in res or 'is unknown' in res %}
+                {% if 'is unknown' in res %}
+                    <strong> {{strings['similar18']}}</strong>
+                {% elif 'No similar words' in res %}
+                    <strong> {{strings['similar30']}}</strong>
+                {% else %}
+    		        <strong>{{ res.decode('utf-8') }}</strong>
+                {% endif %}
     	    {% endfor %}
         </div>
 	{% endfor %}

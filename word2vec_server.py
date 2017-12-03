@@ -167,7 +167,8 @@ def scalculator(query):
                     noresults = False
                     break
             if noresults:
-                return ["The model does not know the word %s" % word]
+                results.append(word + " is unknown to the model")
+                return results
             else:
                 plist.append(q)
     for word in negative_list:
@@ -193,7 +194,8 @@ def scalculator(query):
                     noresults = False
                     break
             if noresults:
-                return ["The model does not know the word %s" % word]
+                results.append(word + " is unknown to the model")
+                return results
             else:
                 nlist.append(q)
     if pos == "ALL":

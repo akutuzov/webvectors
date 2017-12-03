@@ -560,7 +560,7 @@ def finder(lang):
                     results.append("No similar words with this tag.")
                     models_row[model] = results
                     continue
-                if "does not know" in result:
+                if "is unknown" in result:
                     results.append(result)
                     models_row[model] = results
                     continue
@@ -619,7 +619,7 @@ def finder(lang):
                     results.append("No similar words with this tag.")
                     models_row[model] = results
                     continue
-                if "does not know" in result:
+                if "is unknown" in result:
                     results.append(result)
                     models_row[model] = results
                     continue
@@ -639,7 +639,7 @@ def finder(lang):
 
         else:
             error_value = "Incorrect query!"
-            return render_template("calculator.html", calc_error=error_value, models=our_models, tags=tags,
+            return render_template("calculator.html", error=error_value, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
     return render_template("calculator.html", models=our_models, tags=tags, other_lang=other_lang,
                            languages=languages, url=url, usermodels=[defaultmodel])

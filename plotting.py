@@ -20,6 +20,7 @@ font = font_manager.FontProperties(fname=path)
 
 def singularplot(word, modelname, vector):
     xlocations = np.array(range(len(vector)))
+    plot.clf()
     plot.bar(xlocations, vector)
     plot_title = word.split('_')[0] + '\n' + modelname + u' model'
     plot.title(plot_title, fontproperties=font)
@@ -31,6 +32,7 @@ def singularplot(word, modelname, vector):
     fname = m.hexdigest()
     plot.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150, bbox_inches='tight')
     plot.close()
+    plot.clf()
 
 
 def embed(words, matrix, classes, usermodel, fname):
@@ -49,6 +51,8 @@ def embed(words, matrix, classes, usermodel, fname):
     ypositions = y[:, 1]
     seen = set()
 
+    plot.clf()
+
     for color, word, class_label, x, y in zip(class2color, words, classes, xpositions, ypositions):
         plot.scatter(x, y, 20, marker='.', color=color, label=class_label if class_label not in seen else "")
         seen.add(class_label)
@@ -64,3 +68,4 @@ def embed(words, matrix, classes, usermodel, fname):
 
     plot.savefig(root + 'data/images/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
     plot.close()
+    plot.clf()
