@@ -4,7 +4,7 @@ from webvectors import *
 import ConfigParser
 
 config = ConfigParser.RawConfigParser()
-config.read('webvectors.cfg')
+config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
 url = config.get('Other', 'url')
 
 

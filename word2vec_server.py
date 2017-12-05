@@ -11,7 +11,7 @@ import logging
 import ConfigParser
 
 config = ConfigParser.RawConfigParser()
-config.read('webvectors.cfg')
+config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 HOST = config.get('Sockets', 'host')  # Symbolic name meaning all available interfaces

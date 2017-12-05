@@ -32,7 +32,7 @@ languages = '/'.join(language_dicts.keys()).upper()
 ghGist = Simplegist(username='YOUR_GITHUB_USERNAME', api_token='YOUR_GITHUB_API_TOKEN')
 
 config = ConfigParser.RawConfigParser()
-config.read('webvectors.cfg')
+config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')

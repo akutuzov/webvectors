@@ -11,7 +11,7 @@ import hashlib
 import ConfigParser
 
 config = ConfigParser.RawConfigParser()
-config.read('webvectors.cfg')
+config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 path = config.get('Files and directories', 'font')
