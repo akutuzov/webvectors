@@ -1,2 +1,2 @@
-ruscorpora	Russian National Corpus	models/ruscorpora_mean_hs.model.bin.gz	similar4	False
-news	News corpus	models/news.model.bin.gz	similar8	True
+ruscorpora	Russian National Corpus	models/ruscorpora_1_300_10.bin.gz	similar4	False
+news	News corpus	models/news_0_300_2.bin.gz	similar8	True
