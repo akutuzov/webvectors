@@ -39,7 +39,6 @@ root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')
 cachefile = config.get('Files and directories', 'image_cache')
 temp = config.get('Files and directories', 'temp')
-#tags = config.getboolean('Tags', 'use_tags')
 
 url = config.get('Other', 'url')
 
