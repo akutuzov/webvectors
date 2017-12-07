@@ -7,6 +7,7 @@ from thread import *
 import sys
 import gensim
 import logging
+import json
 
 import ConfigParser
 
@@ -44,7 +45,10 @@ for m in our_models:
 # Vector functions
 
 def find_synonyms(query):
-    (q, pos, usermodel) = query
+    q = query['query']
+    pos = query['pos']
+    usermodel = query['model']
+    #(q, pos, usermodel) = query
     results = []
     qf = q
     model = models_dic[usermodel]
@@ -87,7 +91,9 @@ def find_synonyms(query):
 
 
 def find_similarity(query):
-    (q, usermodel) = query
+    q = query['query']
+    usermodel = query['model']
+    #(q, usermodel) = query
     model = models_dic[usermodel]
     results = []
     for pair in q.split(','):
@@ -139,7 +145,10 @@ def find_similarity(query):
 
 
 def scalculator(query):
-    (q, pos, usermodel) = query
+    q = query['query']
+    pos = query['pos']
+    usermodel = query['model']
+    #(q, pos, usermodel) = query
     model = models_dic[usermodel]
     results = []
     positive_list = q.split("&")[0].split(',')
@@ -213,7 +222,9 @@ def scalculator(query):
 
 
 def vector(query):
-    (q, usermodel) = query
+    q = query['query']
+    usermodel = query['model']
+    #(q, usermodel) = query
     qf = q
     model = models_dic[usermodel]
     if q not in model:
@@ -269,19 +280,20 @@ def clientthread(connect, addres):
     while True:
         # Receiving from client
         data = connect.recv(1024)
-        data = data.decode("utf-8")
-        query = data.split(";")
-        output = operations[query[0]]((query[1:]))
         if not data:
             break
+        query = json.loads(data)
+        #data = data.decode("utf-8")
+        #query = data.split(";")
+        output = operations[query['operation']](query)
         now = datetime.datetime.now()
         print >> sys.stderr, now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data
-        if query[0] == "1" and 'unknown to the' not in output[0] and "No results" not in output[0]:
+        if query['operation'] == "1" and 'unknown to the' not in output[0] and "No results" not in output[0]:
             reply = ' '.join(output[:-1])
             raw_vector = output[-1].tolist()
             str_vector = ','.join([str(e) for e in raw_vector])
             connect.sendall(reply.encode('utf-8') + "&&&" + str_vector)
-        elif query[0] == "4":
+        elif query['operation'] == "4":
             reply = output
             connect.sendall(reply.encode('utf-8'))
         else:

@@ -10,6 +10,7 @@ import json
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
 import numpy as np
+import json
 
 from flask import g
 from collections import OrderedDict
@@ -38,6 +39,7 @@ root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')
 cachefile = config.get('Files and directories', 'image_cache')
 temp = config.get('Files and directories', 'temp')
+tags = config.getboolean('Tags', 'use_tags')
 
 url = config.get('Other', 'url')
 
@@ -74,7 +76,7 @@ def serverquery(message):
 
     # Send some data to remote server
     try:
-        s.sendall(message.encode('utf-8'))
+        s.sendall(json.dumps(message))
     except socket.error:
         # Send failed
         print >> sys.stderr, 'Send failed'
@@ -231,7 +233,8 @@ def home(lang):
             else:
                 model = model_value[0]
             images = {query.split('_')[0]: None}
-            message = "1;" + query + ";" + 'ALL' + ";" + model
+            message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
+            #message = "1;" + query + ";" + 'ALL' + ";" + model
             result = serverquery(message)
             associates_list = []
             if "unknown to the" in result:
@@ -367,9 +370,11 @@ def similar_page(lang):
                     return render_template('home.html', other_lang=other_lang, languages=languages, url=url,
                                            usermodels=model_value)
                 if tags:
-                    message = "1;" + query + ";" + pos + ";" + model
+                    message = {'operation': '1', 'query': query, 'pos': pos, 'model': model}
+                    #message = "1;" + query + ";" + pos + ";" + model
                 else:
-                    message = "1;" + query + ";" + 'ALL' + ";" + model
+                    message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
+                    #message = "1;" + query + ";" + 'ALL' + ";" + model
                 result = serverquery(message)
                 associates_list = []
                 if "unknown to the" in result:
@@ -471,7 +476,8 @@ def visual_page(lang):
                     print >> sys.stderr, 'No previous image found', root + 'data/images/tsneplots/' + plotfile
                     vectors = []
                     for w in words2vis:
-                        message = "4;" + w + ";" + model
+                        message = {'operation': '4', 'query': w, 'model': model}
+                        #message = "4;" + w + ";" + model
                         result = serverquery(message)
                         if 'is unknown' in result:
                             unknown[model].add(w)
@@ -572,9 +578,11 @@ def finder(lang):
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
                 if tags:
-                    message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
+                    message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list), 'pos': pos, 'model': model}
+                    #message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
                 else:
-                    message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + 'ALL' + ";" + model
+                    message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list), 'pos': 'ALL', 'model': model}
+                    #message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + 'ALL' + ";" + model
                 result = serverquery(message)
                 results = []
                 if len(result) == 0 or 'No results' in result:
@@ -640,7 +648,8 @@ def finder(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
-                message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
+                message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list), 'pos': pos, 'model': model}
+                #message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
                 result = serverquery(message)
                 results = []
                 if len(result) == 0 or "No results" in result:
@@ -699,7 +708,8 @@ def raw_finder(lang, model, userquery):
             pos_tag = 'ALL'
         images = {query.split('_')[0]: None}
         image = None
-        message = "1;" + query + ";" + pos_tag + ";" + model
+        message = {'operation': '1', 'query': query, 'pos': pos_tag, 'model': model}
+        #message = "1;" + query + ";" + pos_tag + ";" + model
         result = serverquery(message)
         associates_list = []
         if "unknown to the" in result or "No results" in result:
@@ -772,7 +782,8 @@ def generate(word, model, api_format):
             yield query.strip() + '\t' + model.strip() + '\t' + 'Model error!'
         else:
             # form the query and get the result from the server
-            message = "1;" + query + ";" + 'ALL' + ";" + model
+            message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
+            #message = "1;" + query + ";" + 'ALL' + ";" + model
             result = serverquery(message)
             associates_list = []
 
@@ -846,7 +857,8 @@ def similarity_api(model, wordpair):
     cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::' or char == '-'])
     cleanword0 = process_query(cleanword0)
     cleanword1 = process_query(cleanword1)
-    message = "2;" + " ".join([cleanword0, cleanword1]) + ";" + model
+    message = {'operation': '2', 'query': " ".join([cleanword0, cleanword1]), 'model': model}
+    #message = "2;" + " ".join([cleanword0, cleanword1]) + ";" + model
 
     result = serverquery(message)
     if 'is unknown' in result:
