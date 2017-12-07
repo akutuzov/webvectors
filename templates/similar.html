@@ -32,33 +32,26 @@
                 </small>
                 </fieldset>
               </div>
+               {% if tags %}
+
                 <p><small><em>{{strings['similar9']}}</em></small></p>
                 <div class="radio">
                 <small>
-                <label>
-                  <input type="radio" name="pos" value="NOUN"> {{strings['similar10']}}
+                {% for tag in tags2show %}
+                     <label>
+                        <input type="radio" name="pos" {% if tag in userpos %}checked{% endif %}  value="{{ tag }}"> {{strings[tags2show[tag]]}}
+                     </label>
+                {% endfor %}
+                 <label>
+                  <input type="radio" name="pos" {% if not userpos %} checked {% endif %} value="ALL"> {{strings['similar14']}}
                 </label>
                 <label>
-                   <input type="radio" name="pos" value="PROPN"> {{strings['similar20']}}
-                </label>
-                  <label>
-                  <input type="radio" name="pos" value="VERB"> {{strings['similar11']}}
-                </label>
-                  <label>
-                  <input type="radio" name="pos" value="ADV"> {{strings['similar12']}}
-                </label>
-                  <label>
-                  <input type="radio" name="pos" value="ADJ"> {{strings['similar13']}}
-                </label>
-                  <label>
-                  <input type="radio" name="pos" value="ALL" checked> {{strings['similar14']}}
-                </label>
-                <label>
-                  <input type="radio" name="pos" value="Q"> {{strings['similar19']}}
+                   <input type="radio" name="pos" {% if 'Q' in userpos %} checked {% endif %} value="Q"> {{strings['similar19']}}
                 </label>
                 </small>
                 </div>
-                
+                {% endif %}
+
            <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['similar15']}}</button>
             </form>
             </div>

@@ -38,7 +38,6 @@ root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')
 cachefile = config.get('Files and directories', 'image_cache')
 temp = config.get('Files and directories', 'temp')
-tags = config.getboolean('Tags', 'use_tags')
 
 url = config.get('Other', 'url')
 
@@ -87,8 +86,20 @@ def serverquery(message):
     return reply
 
 
+tags = config.getboolean('Tags', 'use_tags')
 taglist = set(config.get('Tags', 'tags_list').split())
-defaulttag = config.get('Tags', 'default_tag')
+exposed_tag_file = config.get('Tags', 'exposed_tags_list')
+
+exposed_tags = {}
+
+for line in open(root + exposed_tag_file, 'r').readlines():
+    if line.startswith("#"):
+        continue
+    res = line.strip().split('\t')
+    (tag, string, default) = res
+    if default == 'True':
+        defaulttag = tag
+    exposed_tags[tag] = string
 
 defaultsearchengine = config.get('Other', 'default_search')
 
@@ -293,30 +304,31 @@ def similar_page(lang):
                                 error_value = "Incorrect tag!"
                                 return render_template('similar.html', error_sim=error_value, models=our_models,
                                                        other_lang=other_lang, languages=languages, url=url,
-                                                       usermodels=model_value)
+                                                       usermodels=model_value, tags2show=exposed_tags)
                             words.append(w.strip())
                     if len(words) == 2:
                         cleared_data.append(words[0].strip() + " " + words[1].strip())
                 if len(cleared_data) == 0:
                     error_value = "Incorrect query!"
                     return render_template("similar.html", error_sim=error_value, other_lang=other_lang,
-                                           languages=languages, url=url, usermodels=model_value)
+                                           languages=languages, url=url, usermodels=model_value, tags2show=exposed_tags)
                 message = "2;" + ",".join(cleared_data) + ";" + model
                 results = []
                 result = serverquery(message)
                 if "unknown to the" in result or 'does not know the word' in result:
                     return render_template("similar.html", error_sim=result.strip(), other_lang=other_lang,
-                                           languages=languages, models=our_models,
+                                           languages=languages, models=our_models, tags2show=exposed_tags,
                                            tags=tags, query=cleared_data, url=url, usermodels=model_value)
                 for word in result.split():
                     w = word.split("#")
                     results.append((w[0].decode('utf-8'), w[1].decode('utf-8'), float(w[-1])))
                 return render_template('similar.html', value=results, model=model, query=cleared_data,
-                                       models=our_models, tags=tags, other_lang=other_lang,
+                                       models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
                                        languages=languages, url=url, usermodels=model_value)
             else:
                 error_value = "Incorrect query!"
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
+                                       tags2show=exposed_tags,
                                        other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
 
         # Nearest associates queries
@@ -332,15 +344,21 @@ def similar_page(lang):
             if query == "Incorrect tag!":
                 error_value = "Incorrect tag!"
                 return render_template('similar.html', error=error_value, word=list_data, models=our_models,
+                                       tags2show=exposed_tags,
                                        other_lang=other_lang, languages=languages, url=url, usermodels=model_value)
+            userpos = []
             if tags:
                 pos_value = request.form.getlist('pos')
-                if len(pos_value) < 1 or pos_value[0] == 'Q':
+                if len(pos_value) < 1:
                     pos = query.split('_')[-1]
                 else:
                     pos = pos_value[0]
+                if pos != 'ALL':
+                    userpos.append(pos)
+                if pos == 'Q':
+                    pos = query.split('_')[-1]
             else:
-                pos = 'All PoS'
+                pos = 'ALL'
 
             images = {query.split('_')[0]: None}
             models_row = {}
@@ -374,15 +392,15 @@ def similar_page(lang):
                             images = get_images(images)
                         except:
                             pass
-            return render_template('similar.html', list_value=models_row, word=query, pos=pos,
+            return render_template('similar.html', list_value=models_row, word=query, pos=pos, userpos=userpos,
                                    number=len(model_value), wordimages=images, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages,
+                                   other_lang=other_lang, languages=languages, tags2show=exposed_tags,
                                    url=url, usermodels=model_value)
         else:
             error_value = "Incorrect query!"
             return render_template("similar.html", error=error_value, models=our_models, tags=tags, url=url,
-                                   usermodels=[defaultmodel])
-    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang,
+                                   usermodels=[defaultmodel], tags2show=exposed_tags)
+    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
                            languages=languages, url=url, usermodels=[defaultmodel])
 
 
@@ -530,19 +548,22 @@ def finder(lang):
             if len(positive_list) < 2 or len(negative_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", error=error_value, models=our_models, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=calcmodel_value)
+                                       languages=languages, url=url, usermodels=calcmodel_value, tags2show=exposed_tags)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 error_value = "Incorrect tag!"
-                return render_template('calculator.html', error=error_value, models=our_models,
+                return render_template('calculator.html', error=error_value, models=our_models, tags2show=exposed_tags,
                                        other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
+            userpos = []
             if tags:
-                calcpos_value = request.form.getlist('calcpos')
+                calcpos_value = request.form.getlist('pos')
                 if len(calcpos_value) < 1:
                     pos = defaulttag
                 else:
                     pos = calcpos_value[0]
+                if pos != 'ALL':
+                    userpos.append(pos)
             else:
-                pos = 'All PoS'
+                pos = 'ALL'
 
             models_row = {}
             images = {}
@@ -575,8 +596,10 @@ def finder(lang):
                     except:
                         pass
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
+                                   userpos=userpos,
                                    nlist=negative_list, wordimages=images, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
+                                   other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value,
+                                   tags2show=exposed_tags)
 
         # Calculator
         if positive1_data != '':
@@ -592,17 +615,22 @@ def finder(lang):
             if len(positive_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", calc_error=error_value, other_lang=other_lang,
+                                       tags2show=exposed_tags,
                                        languages=languages, models=our_models, url=url, usermodels=calcmodel_value)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 error_value = "Incorrect tag!"
                 return render_template('calculator.html', calc_error=error_value, other_lang=other_lang,
+                                       tags2show=exposed_tags,
                                        languages=languages, models=our_models, url=url, usermodels=calcmodel_value)
+            userpos = []
             if tags:
                 calcpos_value = request.form.getlist('calcpos')
                 if len(calcpos_value) < 1:
                     pos = defaulttag
                 else:
                     pos = calcpos_value[0]
+                if pos != 'ALL':
+                    userpos.append(pos)
             else:
                 pos = 'ALL'
 
@@ -634,15 +662,18 @@ def finder(lang):
                     except:
                         pass
             return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
+                                   tags2show=exposed_tags,
                                    nlist2=negative_list, wordimages=images, models=our_models, tags=tags,
+                                   userpos=userpos,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
 
         else:
             error_value = "Incorrect query!"
             return render_template("calculator.html", error=error_value, models=our_models, tags=tags,
+                                   tags2show=exposed_tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
     return render_template("calculator.html", models=our_models, tags=tags, other_lang=other_lang,
-                           languages=languages, url=url, usermodels=[defaultmodel])
+                           languages=languages, url=url, usermodels=[defaultmodel], tags2show=exposed_tags)
 
 
 @wvectors.route(url + '<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
