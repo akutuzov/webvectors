@@ -107,7 +107,7 @@
                       <small>
                         {% for tag in tags2show %}
                            <label>
-                                <input type="radio" name="pos" value="{{ tag }} {% if tag in userpos %}checked{% endif %} "> {{strings[tags2show[tag]]}}
+                                <input type="radio" name="pos" value="{{ tag }}" {% if tag in userpos %}checked{% endif %}> {{strings[tags2show[tag]]}}
                           </label>
                         {% endfor %}
                         <label>
@@ -208,7 +208,7 @@
                       <small>
                         {% for tag in tags2show %}
                            <label>
-                                <input type="radio" name="calcpos" value="{{ tag }} {% if tag in userpos %}checked{% endif %} "> {{strings[tags2show[tag]]}}
+                                <input type="radio" name="calcpos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
                           </label>
                         {% endfor %}
                         <label>
