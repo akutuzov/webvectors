@@ -310,7 +310,7 @@ def similar_page(lang):
                     error_value = "Incorrect query!"
                     return render_template("similar.html", error_sim=error_value, other_lang=other_lang,
                                            languages=languages, url=url, usermodels=model_value, tags2show=exposed_tags)
-                message = "2;" + ",".join(cleared_data) + ";" + model
+                message = {'operation': '2', 'query': ",".join(cleared_data), 'model': model}
                 results = []
                 result = serverquery(message)
                 if "unknown to the" in result or 'does not know the word' in result:
