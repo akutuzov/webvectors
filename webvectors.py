@@ -70,9 +70,9 @@ def serverquery(message):
     initial_reply = s.recv(1024)
 
     # Send some data to remote server
-    message = json.dumps(message, ensure_ascii=False)
+    d_message = json.dumps(message, ensure_ascii=False)
     try:
-        s.sendall(message.encode('utf-8'))
+        s.sendall(d_message.encode('utf-8'))
     except socket.error:
         # Send failed
         print >> sys.stderr, 'Send failed'
@@ -725,7 +725,7 @@ def raw_finder(lang, model, userquery):
             if not os.access(plotfile, os.F_OK):
                 vector2 = output[1].split(',')
                 vector2 = [float(a) for a in vector2]
-                singularplot(query, model, vector2)
+                singularplot(query, model, vector2, fname)
             if dbpedia:
                 try:
                     images = get_images(images)
