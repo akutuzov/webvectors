@@ -22,8 +22,8 @@
         </script>
         <div class="row">
         <div class="col-md-7">
-        <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}">"{{word.split('_')[0].replace('::', ' ')}}"</a></strong></span>
-            {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}"> {{ model }}</a>?</h2>
+       <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}">&laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
+               {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}">&laquo;{{ strings[models[model]] }}&raquo;</a>?</h2>
         <ol>
         {% for res in list_value %}
         <li style='margin: 10px 0;'>
@@ -41,8 +41,18 @@
         {% endfor %}
         </ol>
 
+            <h3>{{strings['synraw12']}}</h3>
+          <ul>
+          {% for m in models if m != model %}
+            <li>
+      	             <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}">{{ strings[models[m]] }}</a>
+            </li>
+           {% endfor %}
+           </ul>
+
+
 	<span style = "font-size:larger;">
-        <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} "{{word.split('_')[0].replace('::', ' ')}}" {{strings['synraw5']}} {{ model }}:</a>
+        <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo; {{strings['synraw5']}} {{ model }}:</a>
         </span>
         <div class="vector" id="HiddenDiv" style="DISPLAY: none" >
         {{ vector }}
@@ -56,11 +66,11 @@
       <ul>
           <li><span style = "font-size:larger;">
               <a target="_blank" href="{{ search }}{{ word.split('_')[0].replace('::', ' ') }}">
-              {{strings['synraw6']}} "{{ word.split('_')[0].replace('::', ' ') }}" {{strings['synraw7']}}
+             {{strings['synraw6']}} &laquo;{{ word.split('_')[0].replace('::', ' ') }}&raquo; {{strings['synraw7']}}
               </a></span></li>
           <li><span style = "font-size:larger;">
               <a target="_blank" href="https://en.wiktionary.org/wiki/{{ word.split('_')[0].replace('::', ' ') }}">
-                  "{{ word.split('_')[0].replace('::', ' ') }}" {{strings['synraw8']}}
+                  &laquo;{{ word.split('_')[0].replace('::', ' ') }}&raquo; {{strings['synraw8']}}
               </a></span></li>
     </ul>
     <hr/>
@@ -82,9 +92,17 @@
           {% elif 'Incorrect query' in error %}
                    {{strings['similar21']}}
           {% else %}
-            {{strings['similar18']}} {{ word }}
+            {{strings['similar18']}} {{ word }} ({{ model }})
           {% endif %}
-
           </strong></span><p>
+    <h3>{{strings['synraw12']}}</h3>
+          <ul>
+           {% for m in models if m != model %}
+          <li>
+                <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}">{{ strings[models[m]] }}</a>
+          </li>
+         {% endfor %}
+      </ul>
+
         {% endif %}
 {% endblock %}

@@ -705,7 +705,7 @@ def raw_finder(lang, model, userquery):
         associates_list = []
         if "unknown to the" in result or "No results" in result:
             return render_template('wordpage.html', error=result.decode('utf-8'), other_lang=other_lang,
-                                   languages=languages, url=url, word=query)
+                                   languages=languages, url=url, word=query, models=our_models, model=model)
         else:
             output = result.split('&&&')
             associates = output[0]
@@ -734,7 +734,8 @@ def raw_finder(lang, model, userquery):
                     pass
             return render_template('wordpage.html', list_value=associates_list, word=query, model=model, pos=pos_tag,
                                    vector=vector, image=image, wordimages=images, vectorvis=fname, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url, search=defaultsearchengine)
+                                   other_lang=other_lang, languages=languages, url=url, search=defaultsearchengine,
+                                   models=our_models)
     else:
         error_value = 'Incorrect query!'
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
