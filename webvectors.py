@@ -26,8 +26,6 @@ from timeout import timeout
 
 languages = '/'.join(language_dicts.keys()).upper()
 
-ghGist = Simplegist(username='YOUR_GITHUB_USERNAME', api_token='YOUR_GITHUB_API_TOKEN')
-
 config = ConfigParser.RawConfigParser()
 config.read('webvectors.cfg')
 
@@ -38,12 +36,18 @@ temp = config.get('Files and directories', 'temp')
 
 url = config.get('Other', 'url')
 
-lemmatize = config.getboolean('Other', 'lemmatize')
+lemmatize = config.getboolean('Tags', 'lemmatize')
 dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
 
 if lemmatize:
     from lemmatizer import tagword
+
+tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
+if tensorflow_integration:
+    git_username = config.get('Other', 'git_username')
+    git_token = config.get('Other', 'git_token')
+    ghGist = Simplegist(username=git_username, api_token=git_token)
 
 # Establishing connection to model server
 host = config.get('Sockets', 'host')
@@ -447,8 +451,7 @@ def visual_page(lang):
                 labels = []
                 if not os.path.exists(root + 'data/images/tsneplots'):
                     os.makedirs(root + 'data/images/tsneplots')
-                if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK) or not os.access(
-                                                root + 'data/images/tsneplots/' + identifier + '.url', os.F_OK):
+                if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK):
                     print >> sys.stderr, 'No previous image found', root + 'data/images/tsneplots/' + plotfile
                     vectors = []
                     for w in words2vis:
@@ -467,16 +470,21 @@ def visual_page(lang):
                         matrix2vis = np.vstack(([v for v in vectors]))
                         embed(labels, matrix2vis.astype('float64'), classes, model, fname)
                         models_row[model] = plotfile
-                        l2c = word2vec2tensor(identifier, vectors, labels, classes)
+                        if tensorflow_integration:
+                            l2c = word2vec2tensor(identifier, vectors, labels, classes)
+                        else:
+                            l2c = None
                         links_row[model] = l2c
                     else:
                         models_row[model] = "Too few words!"
                 else:
-                    links_row[model] = open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
+                    if tensorflow_integration:
+                        links_row[model] = open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
+                    else:
+                        links_row[model] = None
             return render_template('visual.html', languages=languages, visual=models_row, words=groups,
-                                   number=len(model_value),
-                                   models=our_models, unknown=unknown, url=url, usermodels=model_value, l2c=links_row,
-                                   qwords=querywords)
+                                   number=len(model_value), models=our_models, unknown=unknown, url=url,
+                                   usermodels=model_value, l2c=links_row, qwords=querywords)
         else:
             error_value = "Incorrect query!"
             return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
