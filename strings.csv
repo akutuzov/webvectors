@@ -77,6 +77,7 @@ similar27,Вычислить семантическую близость!,Comput
 similar28,Пары слов,Word pairs
 similar29,Косинусная близость,Cosine similarity
 similar30,Нет близких слов с&nbsp;такой частью речи,No&nbsp;similar words with this tag
+similar31,История запросов близости,Similarity queries history
 synraw1,"Слова, семантически связанные&nbsp;с",Semantically related words for
 synraw2,Какие слова близки к&nbsp;слову,What words are related&nbsp;to
 synraw3,в,in&nbsp;the
