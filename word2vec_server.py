@@ -48,7 +48,6 @@ def find_synonyms(query):
     q = query['query']
     pos = query['pos']
     usermodel = query['model']
-    #(q, pos, usermodel) = query
     results = []
     qf = q
     model = models_dic[usermodel]
@@ -73,31 +72,30 @@ def find_synonyms(query):
             return results
     if pos == 'ALL':
         for i in model.most_similar(positive=qf, topn=10):
-            results.append(i[0] + "#" + str(i[1]))
+            results.append(i)
     else:
         counter = 0
         for i in model.most_similar(positive=qf, topn=20):
             if counter == 10:
                 break
             if i[0].split('_')[-1] == pos:
-                results.append(i[0] + "#" + str(i[1]))
+                results.append(i)
                 counter += 1
     if len(results) == 0:
         results.append('No results')
         return results
     raw_vector = model[qf]
-    results.append(raw_vector)
+    results.append(raw_vector.tolist())
     return results
 
 
 def find_similarity(query):
     q = query['query']
     usermodel = query['model']
-    #(q, usermodel) = query
     model = models_dic[usermodel]
     results = []
-    for pair in q.split(','):
-        (q1, q2) = pair.split()
+    for pair in q:
+        (q1, q2) = pair
         qf1 = q1
         qf2 = q2
         if q1 not in model:
@@ -140,7 +138,7 @@ def find_similarity(query):
                 return results
         pair2 = (qf1, qf2)
         result = model.similarity(qf1, qf2)
-        results.append('#'.join(pair2) + "#" + str(result))
+        results.append((pair2, result))
     return results
 
 
@@ -148,11 +146,10 @@ def scalculator(query):
     q = query['query']
     pos = query['pos']
     usermodel = query['model']
-    #(q, pos, usermodel) = query
     model = models_dic[usermodel]
     results = []
-    positive_list = q.split("&")[0].split(',')
-    negative_list = q.split("&")[1].split(',')
+    positive_list = q[0]
+    negative_list = q[1]
     plist = []
     nlist = []
     for word in positive_list:
@@ -209,11 +206,11 @@ def scalculator(query):
                 nlist.append(q)
     if pos == "ALL":
         for w in model.most_similar(positive=plist, negative=nlist, topn=5):
-            results.append(w[0] + "#" + str(w[1]))
+            results.append(w)
     else:
         for w in model.most_similar(positive=plist, negative=nlist, topn=30):
             if w[0].split('_')[-1] == pos:
-                results.append(w[0] + "#" + str(w[1]))
+                results.append(w)
             if len(results) == 5:
                 break
     if len(results) == 0:
@@ -224,7 +221,6 @@ def scalculator(query):
 def vector(query):
     q = query['query']
     usermodel = query['model']
-    #(q, usermodel) = query
     qf = q
     model = models_dic[usermodel]
     if q not in model:
@@ -244,11 +240,10 @@ def vector(query):
                 noresults = False
                 break
         if noresults:
-            return q + " is unknown to the model"
+            return [q + " is unknown to the model"]
     raw_vector = model[qf]
     raw_vector = raw_vector.tolist()
-    str_vector = ','.join([str(e) for e in raw_vector])
-    return str_vector
+    return raw_vector
 
 
 operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': vector}
@@ -261,7 +256,7 @@ print >> sys.stderr, 'Socket created'
 try:
     s.bind((HOST, PORT))
 except socket.error, msg:
-    print >> sys.stderr, 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+    print >> sys.stderr, 'Bind failed. Message ' + str(msg)
     sys.exit()
 
 print >> sys.stderr, 'Socket bind complete'
@@ -286,17 +281,8 @@ def clientthread(connect, addres):
         output = operations[query['operation']](query)
         now = datetime.datetime.now()
         print >> sys.stderr, now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data
-        if query['operation'] == "1" and 'unknown to the' not in output[0] and "No results" not in output[0]:
-            reply = ' '.join(output[:-1])
-            raw_vector = output[-1].tolist()
-            str_vector = ','.join([str(e) for e in raw_vector])
-            connect.sendall(reply.encode('utf-8') + "&&&" + str_vector)
-        elif query['operation'] == "4":
-            reply = output
-            connect.sendall(reply.encode('utf-8'))
-        else:
-            reply = ' '.join(output)
-            connect.sendall(reply.encode('utf-8'))
+        reply = json.dumps(output, ensure_ascii=False)
+        connect.sendall(reply.encode('utf-8'))
         break
 
     # came out of loop
@@ -310,5 +296,3 @@ while 1:
 
     # start new thread takes 1st argument as a function name to be run, 2nd is the tuple of arguments to the function.
     start_new_thread(clientthread, (conn, addr))
-
-s.close()

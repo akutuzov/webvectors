@@ -230,24 +230,19 @@ def home(lang):
                 model = model_value[0]
             images = {query.split('_')[0]: None}
             message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
-            result = serverquery(message)
-            associates_list = []
-            if "unknown to the" in result:
-                return render_template('home.html', error=result.decode('utf-8'), other_lang=other_lang,
+            result = json.loads(serverquery(message).decode('utf-8'))
+            if "unknown to the" in result[0]:
+                return render_template('home.html', error=result[0], other_lang=other_lang,
                                        languages=languages, url=url, word=query)
             else:
-                output = result.split('&&&')
-                associates = output[0]
-                for word in associates.split():
-                    w = word.split("#")
-                    associates_list.append((w[0].decode('utf-8'), float(w[-1])))
-                    images[w[0].split('_')[0].decode('utf-8')] = None
+                for word in result[:-1]:
+                    images[word[0].split('_')[0]] = None
                 if dbpedia:
                     try:
                         images = get_images(images)
                     except:
                         pass
-                return render_template('home.html', list_value=associates_list, word=query, wordimages=images,
+                return render_template('home.html', list_value=result[:-1], word=query, wordimages=images,
                                        model=model, tags=tags, other_lang=other_lang, languages=languages, url=url)
         else:
             error_value = "Incorrect query!"
@@ -305,22 +300,19 @@ def similar_page(lang):
                                                        usermodels=model_value, tags2show=exposed_tags)
                             words.append(w.strip())
                     if len(words) == 2:
-                        cleared_data.append(words[0].strip() + " " + words[1].strip())
+                        cleared_data.append((words[0].strip(), words[1].strip()))
                 if len(cleared_data) == 0:
                     error_value = "Incorrect query!"
                     return render_template("similar.html", error_sim=error_value, other_lang=other_lang,
                                            languages=languages, url=url, usermodels=model_value, tags2show=exposed_tags)
-                message = {'operation': '2', 'query': ",".join(cleared_data), 'model': model}
-                results = []
-                result = serverquery(message)
-                if "unknown to the" in result or 'does not know the word' in result:
-                    return render_template("similar.html", error_sim=result.strip(), other_lang=other_lang,
+                message = {'operation': '2', 'query': cleared_data, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                cleared_data = [' '.join(el) for el in cleared_data]
+                if "unknown to the" in result[0]:
+                    return render_template("similar.html", error_sim=result[0], other_lang=other_lang,
                                            languages=languages, models=our_models, tags2show=exposed_tags,
                                            tags=tags, query=cleared_data, url=url, usermodels=model_value)
-                for word in result.split():
-                    w = word.split("#")
-                    results.append((w[0].decode('utf-8'), w[1].decode('utf-8'), float(w[-1])))
-                return render_template('similar.html', value=results, model=model, query=cleared_data,
+                return render_template('similar.html', value=result, model=model, query=cleared_data,
                                        models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
                                        languages=languages, url=url, usermodels=model_value)
             else:
@@ -364,27 +356,18 @@ def similar_page(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages, url=url,
                                            usermodels=model_value)
-                if tags:
-                    message = {'operation': '1', 'query': query, 'pos': pos, 'model': model}
-                else:
-                    message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
-                result = serverquery(message)
-                associates_list = []
-                if "unknown to the" in result:
+                message = {'operation': '1', 'query': query, 'pos': pos, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                if "unknown to the" in result[0]:
                     models_row[model] = "Unknown!"
                     continue
-                elif "No results" in result:
-                    associates_list.append(result)
-                    models_row[model] = associates_list
+                elif "No results" in result[0]:
+                    models_row[model] = 'No results!'
                     continue
                 else:
-                    output = result.split('&&&')
-                    associates = output[0]
-                    for word in associates.split():
-                        w = word.split("#")
-                        associates_list.append((w[0].decode('utf-8'), float(w[1])))
-                        images[w[0].split('_')[0].decode('utf-8')] = None
-                    models_row[model] = associates_list
+                    for word in result[:-1]:
+                        images[word[0].split('_')[0]] = None
+                    models_row[model] = result[:-1]
                     if dbpedia:
                         try:
                             images = get_images(images)
@@ -470,11 +453,12 @@ def visual_page(lang):
                     vectors = []
                     for w in words2vis:
                         message = {'operation': '4', 'query': w, 'model': model}
-                        result = serverquery(message)
-                        if 'is unknown' in result:
-                            unknown[model].add(w)
-                            continue
-                        vector = np.array(result.split(','))
+                        result = json.loads(serverquery(message).decode('utf-8'))
+                        if len(result) == 1:
+                            if 'is unknown' in result[0]:
+                                unknown[model].add(w)
+                                continue
+                        vector = np.array(result)
                         vectors.append(vector)
                         labels.append(w)
                     if len(vectors) > 5:
@@ -569,37 +553,26 @@ def finder(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
-                if tags:
-                    message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list),
-                               'pos': pos, 'model': model}
-                else:
-                    message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list),
-                               'pos': 'ALL', 'model': model}
-                result = serverquery(message)
-                results = []
-                if len(result) == 0 or 'No results' in result:
-                    results.append("No similar words with this tag.")
-                    models_row[model] = results
+                message = {'operation': '3', 'query': [positive_list, negative_list], 'pos': pos, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                if len(result) == 0 or 'No results' in result[0]:
+                    models_row[model] = ["No similar words with this tag."]
                     continue
-                if "is unknown" in result:
-                    results.append(result)
-                    models_row[model] = results
+                if "is unknown" in result[0]:
+                    models_row[model] = result[0]
                     continue
-                for word in result.split():
-                    w = word.split("#")
-                    results.append((w[0].decode('utf-8'), float(w[1])))
-                    images[w[0].split('_')[0].decode('utf-8')] = None
-                models_row[model] = results
+                for word in result:
+                    images[word[0].split('_')[0]] = None
+                models_row[model] = result
                 if dbpedia:
                     try:
                         images = get_images(images)
                     except:
                         pass
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
-                                   userpos=userpos,
-                                   nlist=negative_list, wordimages=images, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value,
-                                   tags2show=exposed_tags)
+                                   userpos=userpos, nlist=negative_list, wordimages=images, models=our_models,
+                                   tags=tags, other_lang=other_lang, languages=languages, url=url,
+                                   usermodels=calcmodel_value, tags2show=exposed_tags)
 
         # Calculator
         if positive1_data != '':
@@ -640,33 +613,26 @@ def finder(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
-                message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list),
-                           'pos': pos, 'model': model}
-                result = serverquery(message)
-                results = []
-                if len(result) == 0 or "No results" in result:
-                    results.append("No similar words with this tag.")
-                    models_row[model] = results
+                message = {'operation': '3', 'query': [positive_list, negative_list], 'pos': pos, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                if len(result) == 0 or "No results" in result[0]:
+                    models_row[model] = ["No similar words with this tag."]
                     continue
-                if "is unknown" in result:
-                    results.append(result)
-                    models_row[model] = results
+                if "is unknown" in result[0]:
+                    models_row[model] = result[0]
                     continue
-                for word in result.split():
-                    w = word.split("#")
-                    results.append((w[0].decode('utf-8'), float(w[1])))
-                    images[w[0].split('_')[0].decode('utf-8')] = None
-                models_row[model] = results
+                for word in result:
+                    images[word[0].split('_')[0]] = None
+                models_row[model] = result
                 if dbpedia:
                     try:
                         images = get_images(images)
                     except:
                         pass
             return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
-                                   tags2show=exposed_tags,
-                                   nlist2=negative_list, wordimages=images, models=our_models, tags=tags,
-                                   userpos=userpos,
-                                   other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
+                                   tags2show=exposed_tags, nlist2=negative_list, wordimages=images, models=our_models,
+                                   tags=tags, userpos=userpos, other_lang=other_lang, languages=languages, url=url,
+                                   usermodels=calcmodel_value)
 
         else:
             error_value = "Incorrect query!"
@@ -701,38 +667,28 @@ def raw_finder(lang, model, userquery):
         images = {query.split('_')[0]: None}
         image = None
         message = {'operation': '1', 'query': query, 'pos': pos_tag, 'model': model}
-        result = serverquery(message)
-        associates_list = []
-        if "unknown to the" in result or "No results" in result:
-            return render_template('wordpage.html', error=result.decode('utf-8'), other_lang=other_lang,
+        result = json.loads(serverquery(message).decode('utf-8'))
+        if "unknown to the" in result[0] or "No results" in result[0]:
+            return render_template('wordpage.html', error=result[0], other_lang=other_lang,
                                    languages=languages, url=url, word=query, models=our_models, model=model)
         else:
-            output = result.split('&&&')
-            associates = output[0]
-            if len(associates) > 1:
-                vector = ','.join(output[1:])
-            else:
-                vector = ''
-            for word in associates.split():
-                w = word.split("#")
-                associates_list.append((w[0].decode('utf-8'), float(w[1])))
-                images[w[0].split('_')[0].decode('utf-8')] = None
+            vector = result[-1]
+            for word in result[:-1]:
+                images[word[0].split('_')[0]] = None
             m = hashlib.md5()
             name = query.encode('ascii', 'backslashreplace')
             m.update(name)
             fname = m.hexdigest()
             plotfile = root + 'data/images/singleplots/' + model + '_' + fname + '.png'
             if not os.access(plotfile, os.F_OK):
-                vector2 = output[1].split(',')
-                vector2 = [float(a) for a in vector2]
-                singularplot(query, model, vector2, fname)
+                singularplot(query, model, vector, fname)
             if dbpedia:
                 try:
                     images = get_images(images)
                     image = images[query.split('_')[0]]
                 except:
                     pass
-            return render_template('wordpage.html', list_value=associates_list, word=query, model=model, pos=pos_tag,
+            return render_template('wordpage.html', list_value=result[:-1], word=query, model=model, pos=pos_tag,
                                    vector=vector, image=image, wordimages=images, vectorvis=fname, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url, search=defaultsearchengine,
                                    models=our_models)
@@ -775,33 +731,24 @@ def generate(word, model, api_format):
         else:
             # form the query and get the result from the server
             message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
-            result = serverquery(message)
-            associates_list = []
+            result = json.loads(serverquery(message).decode('utf-8'))
 
             # handle cases when the server returned that the word is unknown to the model,
             # or for some other reason the associates list is empty
-            if "unknown to the" in result or "No results" in result:
-                yield query + '\t' + result.decode('utf-8')
+            if "unknown to the" in result[0] or "No results" in result[0]:
+                yield query + '\t' + result[0]
             else:
-                output = result.split('&&&')
-                associates = output[0]
-
-                # take the associates and their similarity measures
-                for word in associates.split():
-                    w = word.split("#")
-                    associates_list.append((w[0].decode('utf-8'), float(w[1])))
-
                 # return result in csv
                 if api_format == 'csv':
                     yield model + '\n'
                     yield query + '\n'
-                    for associate in associates_list:
+                    for associate in result[:-1]:
                         yield "%s\t%s\n" % (associate[0], str(associate[1]))
 
                 # return result in json
                 elif api_format == 'json':
                     associates = OrderedDict()
-                    for associate in associates_list:
+                    for associate in result[:-1]:
                         associates[associate[0]] = associate[1]
                     result = {model: {query: associates}}
                     yield json.dumps(result, ensure_ascii=False)
@@ -848,13 +795,12 @@ def similarity_api(model, wordpair):
     cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::' or char == '-'])
     cleanword0 = process_query(cleanword0)
     cleanword1 = process_query(cleanword1)
-    message = {'operation': '2', 'query': " ".join([cleanword0, cleanword1]), 'model': model}
-
-    result = serverquery(message)
-    if 'is unknown' in result:
+    message = {'operation': '2', 'query': [[cleanword0, cleanword1]], 'model': model}
+    result = json.loads(serverquery(message).decode('utf-8'))
+    if 'is unknown' in result[0]:
         return 'Unknown'
-    w = result.split("#")
-    return str(w[2]) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
+    sim = result[0][-1]
+    return str(sim) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
 
 
 @wvectors.route(url + '<lang:lang>/models/')
