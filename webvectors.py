@@ -281,6 +281,13 @@ def similar_page(lang):
                 if input_data.endswith(','):
                     input_data = input_data[:-1]
                 cleared_data = []
+
+                sim_history = request.form['sim_history']
+                if not sim_history.strip():
+                    sim_history = []
+                else:
+                    sim_history = eval(sim_history)
+
                 model_value = request.form.getlist('simmodel')
                 if len(model_value) < 1:
                     model = defaultmodel
@@ -316,9 +323,12 @@ def similar_page(lang):
                     return render_template("similar.html", error_sim=result[0], other_lang=other_lang,
                                            languages=languages, models=our_models, tags2show=exposed_tags,
                                            tags=tags, query=cleared_data, url=url, usermodels=model_value)
+                sim_history.append(result)
+                if len(sim_history) > 10:
+                    sim_history = sim_history[-10:]
                 return render_template('similar.html', value=result, model=model, query=cleared_data,
                                        models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
-                                       languages=languages, url=url, usermodels=model_value)
+                                       languages=languages, url=url, usermodels=model_value, sim_hist=sim_history)
             else:
                 error_value = "Incorrect query!"
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
