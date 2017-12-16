@@ -22,13 +22,13 @@
         </script>
         <div class="row">
         <div class="col-md-7">
-       <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}">&laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
+       <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/">&laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
                {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}">&laquo;{{ strings[models[model]] }}&raquo;</a>?</h2>
         <ol>
         {% for res in list_value %}
         <li style='margin: 10px 0;'>
        <div style = "font-size:larger;">
-        <a href="{{ url }}{{lang}}/{{ model }}/{{ res[0] }}">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.4f} ".format(res[1]) }}
+        <a href="{{ url }}{{lang}}/{{ model }}/{{ res[0] }}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.4f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
 		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
@@ -45,7 +45,7 @@
           <ul>
           {% for m in models if m != model %}
             <li>
-      	             <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}">{{ strings[models[m]] }}</a>
+      	             <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}/">{{ strings[models[m]] }}</a>
             </li>
            {% endfor %}
            </ul>
