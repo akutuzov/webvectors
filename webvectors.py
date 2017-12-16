@@ -89,19 +89,19 @@ def serverquery(message):
 
 
 tags = config.getboolean('Tags', 'use_tags')
-taglist = set(config.get('Tags', 'tags_list').split())
-exposed_tag_file = config.get('Tags', 'exposed_tags_list')
+if tags:
+    taglist = set(config.get('Tags', 'tags_list').split())
+    exposed_tag_file = config.get('Tags', 'exposed_tags_list')
+    exposed_tags = {}
 
-exposed_tags = {}
-
-for line in open(root + exposed_tag_file, 'r').readlines():
-    if line.startswith("#"):
-        continue
-    res = line.strip().split('\t')
-    (tag, string, default) = res
-    if default == 'True':
-        defaulttag = tag
-    exposed_tags[tag] = string
+    for line in open(root + exposed_tag_file, 'r').readlines():
+        if line.startswith("#"):
+            continue
+        res = line.strip().split('\t')
+        (tag, string, default) = res
+        if default == 'True':
+            defaulttag = tag
+        exposed_tags[tag] = string
 
 defaultsearchengine = config.get('Other', 'default_search')
 
