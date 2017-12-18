@@ -329,7 +329,8 @@ def similar_page(lang):
                 str_sim_history = (json.dumps(sim_history, ensure_ascii=False))
                 return render_template('similar.html', value=result, model=model, query=cleared_data,
                                        models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
-                                       languages=languages, url=url, usermodels=model_value, sim_hist=str_sim_history)
+                                       languages=languages, url=url, usermodels=model_value, sim_hist=sim_history,
+                                       str_sim_history=str_sim_history)
             else:
                 error_value = "Incorrect query!"
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,

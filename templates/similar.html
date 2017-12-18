@@ -111,7 +111,7 @@
                 {% else %}
                 <input type="text" class="form-control" name="query" placeholder="{{strings['similar26']}}" maxlength=300>
                 {% endif %}
-                  <input id="sim_history" name="sim_history" type="hidden" value="{% if value %} {{ sim_hist }} {% endif %}">
+                  <input id="sim_history" name="sim_history" type="hidden" value="{% if value %} {{ str_sim_history }} {% endif %}">
               </div>
               <div class="radio">
                   <p><small><em>{{strings['similar3']}}</em></small></p>
