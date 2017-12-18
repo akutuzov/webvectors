@@ -286,7 +286,7 @@ def similar_page(lang):
                 if not sim_history.strip():
                     sim_history = []
                 else:
-                    sim_history = eval(sim_history)
+                    sim_history = json.loads(sim_history)
 
                 model_value = request.form.getlist('simmodel')
                 if len(model_value) < 1:
@@ -326,9 +326,10 @@ def similar_page(lang):
                 sim_history.append(result)
                 if len(sim_history) > 10:
                     sim_history = sim_history[-10:]
+                str_sim_history = (json.dumps(sim_history, ensure_ascii=False))
                 return render_template('similar.html', value=result, model=model, query=cleared_data,
                                        models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
-                                       languages=languages, url=url, usermodels=model_value, sim_hist=sim_history)
+                                       languages=languages, url=url, usermodels=model_value, sim_hist=str_sim_history)
             else:
                 error_value = "Incorrect query!"
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
