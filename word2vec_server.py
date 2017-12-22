@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
 
+from __future__ import print_function
 import socket
 import datetime
 from thread import *
@@ -39,7 +40,7 @@ for m in our_models:
     else:
         models_dic[m] = gensim.models.Word2Vec.load(our_models[m])
     models_dic[m].init_sims(replace=True)
-    print >> sys.stderr, "Model", m, "from file", our_models[m], "loaded successfully."
+    print("Model", m, "from file", our_models[m], "loaded successfully.", file=sys.stderr)
 
 
 # Vector functions
@@ -251,19 +252,19 @@ operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': v
 # Bind socket to local host and port
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print >> sys.stderr, 'Socket created'
+print('Socket created', file=sys.stderr)
 
 try:
     s.bind((HOST, PORT))
-except socket.error, msg:
-    print >> sys.stderr, 'Bind failed. Message ' + str(msg)
+except socket.error as msg:
+    print('Bind failed. Message ' + str(msg), file=sys.stderr)
     sys.exit()
 
-print >> sys.stderr, 'Socket bind complete'
+print('Socket bind complete', file=sys.stderr)
 
 # Start listening on socket
 s.listen(100)
-print >> sys.stderr, 'Socket now listening on port', PORT
+print('Socket now listening on port', PORT, file=sys.stderr)
 
 
 # Function for handling connections. This will be used to create threads
@@ -280,7 +281,7 @@ def clientthread(connect, addres):
         query = json.loads(data)
         output = operations[query['operation']](query)
         now = datetime.datetime.now()
-        print >> sys.stderr, now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data
+        print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data, file=sys.stderr)
         reply = json.dumps(output, ensure_ascii=False)
         connect.sendall(reply.encode('utf-8'))
         break

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
 
+from __future__ import print_function
 import ConfigParser
 import codecs
 import hashlib
@@ -56,7 +57,7 @@ try:
     remote_ip = socket.gethostbyname(host)
 except socket.gaierror:
     # could not resolve
-    print >> sys.stderr, 'Hostname could not be resolved. Exiting'
+    print('Hostname could not be resolved. Exiting', file=sys.stderr)
     sys.exit()
 
 
@@ -65,7 +66,7 @@ def serverquery(message):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     except socket.error:
-        print >> sys.stderr, 'Failed to create socket'
+        print('Failed to create socket', file=sys.stderr)
         return None
 
     # Connect to remote server
@@ -79,7 +80,7 @@ def serverquery(message):
         s.sendall(d_message.encode('utf-8'))
     except socket.error:
         # Send failed
-        print >> sys.stderr, 'Send failed'
+        print('Send failed', file=sys.stderr)
         s.close()
         return None
     # Now receive data
@@ -464,7 +465,7 @@ def visual_page(lang):
                 if not os.path.exists(root + 'data/images/tsneplots'):
                     os.makedirs(root + 'data/images/tsneplots')
                 if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK):
-                    print >> sys.stderr, 'No previous image found', root + 'data/images/tsneplots/' + plotfile
+                    print('No previous image found', root + 'data/images/tsneplots/' + plotfile, file=sys.stderr)
                     vectors = []
                     for w in words2vis:
                         message = {'operation': '4', 'query': w, 'model': model}

@@ -27,7 +27,7 @@ acrobat = csv.reader(csvfile, dialect='excel', delimiter=',')
 # initialize a dictionary for each language:
 language_dicts = {}
 langnames = config.get('Languages', 'interface_languages').split(',')
-header = acrobat.next()
+header = next(acrobat)
 included_columns = []
 for langname in langnames:
     language_dicts[langname] = {}
@@ -35,6 +35,6 @@ for langname in langnames:
 
 # read the csvfile, populate language_dicts:
 for row in acrobat:
-    for i in included_columns:  #range(1, len(row)):
+    for i in included_columns:  # range(1, len(row)):
         # Markup() is used to prevent autoescaping in templates
         language_dicts[header[i]][row[0]] = Markup(row[i].decode(encoding))

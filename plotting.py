@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # coding: utf-8
+from __future__ import print_function
 import sys
 import matplotlib
 matplotlib.use('Agg')
@@ -37,7 +38,7 @@ def embed(words, matrix, classes, usermodel, fname):
     embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500, init='pca')
     y = embedding.fit_transform(matrix)
 
-    print >> sys.stderr, '2-d embedding finished'
+    print('2-d embedding finished', file=sys.stderr)
 
     class_set = [c for c in set(classes)]
     colors = plot.cm.rainbow(np.linspace(0, 1, len(class_set)))
