@@ -280,7 +280,7 @@ def clientthread(connect, addres):
         data = connect.recv(1024)
         if not data:
             break
-        query = json.loads(data.decode())
+        query = json.loads(data.decode('utf-8'))
         output = operations[query['operation']](query)
         now = datetime.datetime.now()
         print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data, file=sys.stderr)
