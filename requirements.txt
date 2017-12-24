@@ -1,4 +1,5 @@
 flask
+future
 requests
 gensim >=3.2.0
 matplotlib >= 2.0.0

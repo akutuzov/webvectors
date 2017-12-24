@@ -2,17 +2,19 @@
 # coding: utf-8
 
 from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import socket
 import datetime
-from thread import *
+from _thread import *
 import sys
 import gensim
 import logging
 import json
+import configparser
 
-import ConfigParser
-
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
@@ -270,7 +272,7 @@ print('Socket now listening on port', PORT, file=sys.stderr)
 # Function for handling connections. This will be used to create threads
 def clientthread(connect, addres):
     # Sending message to connected client
-    connect.send('word2vec model server')  # send only takes string
+    connect.send(bytes(b'word2vec model server'))
 
     # infinite loop so that function do not terminate and thread do not end.
     while True:
@@ -278,7 +280,7 @@ def clientthread(connect, addres):
         data = connect.recv(1024)
         if not data:
             break
-        query = json.loads(data)
+        query = json.loads(data.decode())
         output = operations[query['operation']](query)
         now = datetime.datetime.now()
         print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data, file=sys.stderr)
