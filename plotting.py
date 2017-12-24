@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # coding: utf-8
 from __future__ import print_function
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import range
 import sys
 import matplotlib
 matplotlib.use('Agg')
@@ -9,9 +14,9 @@ import pylab as plot
 import numpy as np
 from matplotlib import font_manager
 from sklearn.manifold import TSNE
-import ConfigParser
+import configparser
 
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
@@ -20,7 +25,7 @@ font = font_manager.FontProperties(fname=path)
 
 
 def singularplot(word, modelname, vector, fname):
-    xlocations = np.array(range(len(vector)))
+    xlocations = np.array(list(range(len(vector))))
     plot.clf()
     plot.bar(xlocations, vector)
     plot_title = word.split('_')[0].replace('::', ' ') + '\n' + modelname + u' model'

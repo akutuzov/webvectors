@@ -2,7 +2,13 @@
 # coding: utf-8
 
 from __future__ import print_function
-import ConfigParser
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import map
+from builtins import str
+
+import configparser
 import codecs
 import hashlib
 import json
@@ -16,7 +22,6 @@ import numpy as np
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
-from simplegist import Simplegist
 
 from plotting import embed
 from plotting import singularplot
@@ -25,9 +30,9 @@ from sparql import getdbpediaimage
 from strings_reader import language_dicts
 from timeout import timeout
 
-languages = '/'.join(language_dicts.keys()).upper()
+languages = '/'.join(list(language_dicts.keys())).upper()
 
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
@@ -46,6 +51,7 @@ if lemmatize:
 
 tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
 if tensorflow_integration:
+    from simplegist import Simplegist
     git_username = config.get('Other', 'git_username')
     git_token = config.get('Other', 'git_token')
     ghGist = Simplegist(username=git_username, api_token=git_token)

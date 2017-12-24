@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # coding: utf-8
+
 import subprocess
 import requests
 import json
@@ -10,11 +11,12 @@ import json
 # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer --port 9999
 port = 9999
 
+
 def tagword(word):
     corenlp = requests.post(
         'http://localhost:%s/?properties={"annotators": "tokenize, pos, lemma", "outputFormat": "json"}' % port,
         data=word.encode('utf-8')).content
-    tagged = json.loads(corenlp, strict=False)
+    tagged = json.loads(corenlp.decode('utf-8'), strict=False)
     if len(tagged["sentences"]) < 1:
         return 'Error!'
     poses = []
@@ -22,6 +24,7 @@ def tagword(word):
         pos = el["pos"]
         poses.append(ptb2upos[pos])
     return poses
+
 
 # Freeling tagging for Russian
 # Queries Freeling service at localhost port 50006
@@ -43,6 +46,7 @@ def freeling_lemmatizer(word):
             universal_pos = 'X'
         poses.append(universal_pos)
     return poses
+
 
 # Mappings from Penn Treebank tagset to Universal PoS tags
 ptb2upos = {"!": "PUNCT",

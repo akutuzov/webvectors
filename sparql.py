@@ -1,12 +1,13 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 # coding: utf-8
 
+from future import standard_library
+standard_library.install_aliases()
 from SPARQLWrapper import SPARQLWrapper, JSON
 import codecs
+import configparser
 
-import ConfigParser
-
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')

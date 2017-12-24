@@ -1,18 +1,24 @@
+#!/usr/bin/python
+# coding: utf-8
+
+from future import standard_library
+
+standard_library.install_aliases()
 from flask import Flask, url_for, send_from_directory
 from lang_converter import LangConverter
 from webvectors import *
-import ConfigParser
+import configparser
 
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
 url = config.get('Other', 'url')
 
-
 app_syn = Flask(__name__, static_url_path='/data/')
 
-@app_syn.route(url+'data/<path:path>')
-def send_js(path):
-    return send_from_directory('data/', path)
+
+@app_syn.route(url + 'data/<path:query>')
+def send_js(query):
+    return send_from_directory('data/', query)
 
 
 app_syn.url_map.converters['lang'] = LangConverter
@@ -34,4 +40,3 @@ app_syn.jinja_env.globals['url_for_other_page'] = url_for_other_page
 
 if __name__ == '__main__':
     app_syn.run()
-
