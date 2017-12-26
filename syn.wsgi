@@ -1,7 +1,9 @@
+from future import standard_library
+standard_library.install_aliases()
 import sys
 
-import ConfigParser
-config = ConfigParser.RawConfigParser()
+import configparser
+config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
 root = config.get('Files and directories', 'root')
 
