@@ -13,6 +13,7 @@ base11,Команда WebVectors,Language Tecnhology Group
 base12,Лицензия Creative Commons,Creative Commons License
 base13,Визуализации,Visualizations
 base16,Switch language,Сменить язык
+base17,Различные операции,Miscelaneous
 calc1,Семантический калькулятор,Semantic Calculator
 calc2,Алгебраические операции,Algebraic operations
 calc3,"Введите в&nbsp;&laquo;<strong>положительную</strong>&raquo; и&nbsp;&laquo;<strong>отрицательную</strong>&raquo; формы не&nbsp;более 10&nbsp;слов через пробел. <i>WebVectors</i> сложит вектора положительных слов и&nbsp;вычтет из&nbsp;них отрицательные. Затем он&nbsp;выдаст слова, наиболее близкие к&nbsp;получившемуся вектору. Если вы&nbsp;оставите отрицательное поле пустым, <i>WebVectors</i> просто найдет центр лексического кластера, образованного положительными словами.","Enter not more than 10&nbsp;space-separated words into <strong>positive</strong> and <strong>negative</strong> forms. <i>WebVectors</i> will sum up&nbsp;vectors for the positive words and subtract vectors from the negative ones. Then it&nbsp;will output the word closest to&nbsp;the resulting vector. If&nbsp;you leave negative form empty, <i>WebVectors</i> will simply find the center of&nbsp;word cluster formed by&nbsp;your positive words."

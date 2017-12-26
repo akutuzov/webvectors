@@ -96,10 +96,10 @@ def serverquery(message):
 
 
 tags = config.getboolean('Tags', 'use_tags')
+exposed_tags = {}
 if tags:
     taglist = set(config.get('Tags', 'tags_list').split())
     exposed_tag_file = config.get('Tags', 'exposed_tags_list')
-    exposed_tags = {}
 
     for line in open(root + exposed_tag_file, 'r').readlines():
         if line.startswith("#"):
@@ -262,26 +262,21 @@ def home(lang):
                                    languages=languages, url=url)
     return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
-
-@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
-def similar_page(lang):
+@wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
+def misc_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
-
+    
     if request.method == 'POST':
         input_data = 'dummy'
-        list_data = 'dummy'
         try:
             input_data = request.form['query']
         except:
             pass
-        try:
-            list_data = request.form['list_query']
-        except:
-            pass
+        
         # Similarity queries
         if input_data != 'dummy':
             if ' ' in input_data.strip():
@@ -344,7 +339,26 @@ def similar_page(lang):
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
                                        tags2show=exposed_tags,
                                        other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
+    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
+                           languages=languages, url=url, usermodels=[defaultmodel])
 
+
+
+@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
+def similar_page(lang):
+    g.lang = lang
+    s = set()
+    s.add(lang)
+    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
+    g.strings = language_dicts[lang]
+
+    if request.method == 'POST':
+        list_data = 'dummy'
+        try:
+            list_data = request.form['list_query']
+        except:
+            pass
+        
         # Nearest associates queries
         if list_data != 'dummy' and \
                 list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
@@ -397,15 +411,15 @@ def similar_page(lang):
                             images = get_images(images)
                         except:
                             pass
-            return render_template('similar.html', list_value=models_row, word=query, pos=pos, userpos=userpos,
+            return render_template('associates.html', list_value=models_row, word=query, pos=pos, userpos=userpos,
                                    number=len(model_value), wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, tags2show=exposed_tags,
                                    url=url, usermodels=model_value)
         else:
             error_value = "Incorrect query!"
-            return render_template("similar.html", error=error_value, models=our_models, tags=tags, url=url,
+            return render_template("asociates.html", error=error_value, models=our_models, tags=tags, url=url,
                                    usermodels=[defaultmodel], tags2show=exposed_tags)
-    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
+    return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
                            languages=languages, url=url, usermodels=[defaultmodel])
 
 
