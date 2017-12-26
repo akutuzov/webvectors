@@ -16,15 +16,7 @@ import logging
 import os
 import socket  # for sockets
 import sys
-<<<<<<< HEAD
-import json
-from flask import render_template, Blueprint, redirect, Response
-from flask import request
-import numpy as np
-import json
-=======
 from collections import OrderedDict
->>>>>>> origin/master
 
 import numpy as np
 from flask import g
@@ -40,13 +32,8 @@ from timeout import timeout
 
 languages = '/'.join(list(language_dicts.keys())).upper()
 
-<<<<<<< HEAD
-config = ConfigParser.RawConfigParser()
-config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
-=======
 config = configparser.RawConfigParser()
-config.read('webvectors.cfg')
->>>>>>> origin/master
+config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')
@@ -96,11 +83,7 @@ def serverquery(message):
     # Send some data to remote server
     d_message = json.dumps(message, ensure_ascii=False)
     try:
-<<<<<<< HEAD
-        s.sendall(json.dumps(message))
-=======
         s.sendall(d_message.encode('utf-8'))
->>>>>>> origin/master
     except socket.error:
         # Send failed
         print('Send failed', file=sys.stderr)
@@ -113,10 +96,10 @@ def serverquery(message):
 
 
 tags = config.getboolean('Tags', 'use_tags')
+exposed_tags = {}
 if tags:
     taglist = set(config.get('Tags', 'tags_list').split())
     exposed_tag_file = config.get('Tags', 'exposed_tags_list')
-    exposed_tags = {}
 
     for line in open(root + exposed_tag_file, 'r').readlines():
         if line.startswith("#"):
@@ -258,17 +241,9 @@ def home(lang):
                 model = model_value[0]
             images = {query.split('_')[0]: None}
             message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
-<<<<<<< HEAD
-            #message = "1;" + query + ";" + 'ALL' + ";" + model
-            result = serverquery(message)
-            associates_list = []
-            if "unknown to the" in result:
-                return render_template('home.html', error=result.decode('utf-8'), other_lang=other_lang,
-=======
             result = json.loads(serverquery(message).decode('utf-8'))
             if "unknown to the" in result[0]:
                 return render_template('home.html', error=result[0], other_lang=other_lang,
->>>>>>> origin/master
                                        languages=languages, url=url, word=query)
             else:
                 for word in result[:-1]:
@@ -286,26 +261,21 @@ def home(lang):
                                    languages=languages, url=url)
     return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
-
-@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
-def similar_page(lang):
+@wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
+def misc_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
-
+    
     if request.method == 'POST':
         input_data = 'dummy'
-        list_data = 'dummy'
         try:
             input_data = request.form['query']
         except:
             pass
-        try:
-            list_data = request.form['list_query']
-        except:
-            pass
+        
         # Similarity queries
         if input_data != 'dummy':
             if ' ' in input_data.strip():
@@ -347,16 +317,6 @@ def similar_page(lang):
                 if len(cleared_data) == 0:
                     error_value = "Incorrect query!"
                     return render_template("similar.html", error_sim=error_value, other_lang=other_lang,
-<<<<<<< HEAD
-                                           languages=languages, url=url, usermodels=model_value)
-                message = {'operation': '2', 'query': ",".join(cleared_data), 'model': model}
-                #message = "2;" + ",".join(cleared_data) + ";" + model
-                results = []
-                result = serverquery(message)
-                if "unknown to the" in result or 'does not know the word' in result:
-                    return render_template("similar.html", error_sim=result.strip(), other_lang=other_lang,
-                                           languages=languages, models=our_models,
-=======
                                            languages=languages, url=url, usermodels=model_value, tags2show=exposed_tags)
                 message = {'operation': '2', 'query': cleared_data, 'model': model}
                 result = json.loads(serverquery(message).decode('utf-8'))
@@ -364,7 +324,6 @@ def similar_page(lang):
                 if "unknown to the" in result[0]:
                     return render_template("similar.html", error_sim=result[0], other_lang=other_lang,
                                            languages=languages, models=our_models, tags2show=exposed_tags,
->>>>>>> origin/master
                                            tags=tags, query=cleared_data, url=url, usermodels=model_value)
                 sim_history.append(result)
                 if len(sim_history) > 10:
@@ -379,7 +338,26 @@ def similar_page(lang):
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
                                        tags2show=exposed_tags,
                                        other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
+    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
+                           languages=languages, url=url, usermodels=[defaultmodel])
 
+
+
+@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
+def similar_page(lang):
+    g.lang = lang
+    s = set()
+    s.add(lang)
+    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
+    g.strings = language_dicts[lang]
+
+    if request.method == 'POST':
+        list_data = 'dummy'
+        try:
+            list_data = request.form['list_query']
+        except:
+            pass
+        
         # Nearest associates queries
         if list_data != 'dummy' and \
                 list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
@@ -415,21 +393,9 @@ def similar_page(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages, url=url,
                                            usermodels=model_value)
-<<<<<<< HEAD
-                if tags:
-                    message = {'operation': '1', 'query': query, 'pos': pos, 'model': model}
-                    #message = "1;" + query + ";" + pos + ";" + model
-                else:
-                    message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
-                    #message = "1;" + query + ";" + 'ALL' + ";" + model
-                result = serverquery(message)
-                associates_list = []
-                if "unknown to the" in result:
-=======
                 message = {'operation': '1', 'query': query, 'pos': pos, 'model': model}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 if "unknown to the" in result[0]:
->>>>>>> origin/master
                     models_row[model] = "Unknown!"
                     continue
                 elif "No results" in result[0]:
@@ -444,15 +410,15 @@ def similar_page(lang):
                             images = get_images(images)
                         except:
                             pass
-            return render_template('similar.html', list_value=models_row, word=query, pos=pos, userpos=userpos,
+            return render_template('associates.html', list_value=models_row, word=query, pos=pos, userpos=userpos,
                                    number=len(model_value), wordimages=images, models=our_models, tags=tags,
                                    other_lang=other_lang, languages=languages, tags2show=exposed_tags,
                                    url=url, usermodels=model_value)
         else:
             error_value = "Incorrect query!"
-            return render_template("similar.html", error=error_value, models=our_models, tags=tags, url=url,
+            return render_template("asociates.html", error=error_value, models=our_models, tags=tags, url=url,
                                    usermodels=[defaultmodel], tags2show=exposed_tags)
-    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
+    return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
                            languages=languages, url=url, usermodels=[defaultmodel])
 
 
@@ -523,21 +489,12 @@ def visual_page(lang):
                     vectors = []
                     for w in words2vis:
                         message = {'operation': '4', 'query': w, 'model': model}
-<<<<<<< HEAD
-                        #message = "4;" + w + ";" + model
-                        result = serverquery(message)
-                        if 'is unknown' in result:
-                            unknown[model].add(w)
-                            continue
-                        vector = np.array(result.split(','))
-=======
                         result = json.loads(serverquery(message).decode('utf-8'))
                         if len(result) == 1:
                             if 'is unknown' in result[0]:
                                 unknown[model].add(w)
                                 continue
                         vector = np.array(result)
->>>>>>> origin/master
                         vectors.append(vector)
                         labels.append(w)
                     if len(vectors) > 5:
@@ -637,24 +594,10 @@ def finder(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
-<<<<<<< HEAD
-                if tags:
-                    message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list), 'pos': pos, 'model': model}
-                    #message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
-                else:
-                    message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list), 'pos': 'ALL', 'model': model}
-                    #message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + 'ALL' + ";" + model
-                result = serverquery(message)
-                results = []
-                if len(result) == 0 or 'No results' in result:
-                    results.append("No similar words with this tag.")
-                    models_row[model] = results
-=======
                 message = {'operation': '3', 'query': [positive_list, negative_list], 'pos': pos, 'model': model}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 if len(result) == 0 or 'No results' in result[0]:
                     models_row[model] = ["No similar words with this tag."]
->>>>>>> origin/master
                     continue
                 if "is unknown" in result[0]:
                     models_row[model] = result[0]
@@ -711,20 +654,10 @@ def finder(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
-<<<<<<< HEAD
-                message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list), 'pos': pos, 'model': model}
-                #message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
-                result = serverquery(message)
-                results = []
-                if len(result) == 0 or "No results" in result:
-                    results.append("No similar words with this tag.")
-                    models_row[model] = results
-=======
                 message = {'operation': '3', 'query': [positive_list, negative_list], 'pos': pos, 'model': model}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 if len(result) == 0 or "No results" in result[0]:
                     models_row[model] = ["No similar words with this tag."]
->>>>>>> origin/master
                     continue
                 if "is unknown" in result[0]:
                     models_row[model] = result[0]
@@ -775,19 +708,10 @@ def raw_finder(lang, model, userquery):
         images = {query.split('_')[0]: None}
         image = None
         message = {'operation': '1', 'query': query, 'pos': pos_tag, 'model': model}
-<<<<<<< HEAD
-        #message = "1;" + query + ";" + pos_tag + ";" + model
-        result = serverquery(message)
-        associates_list = []
-        if "unknown to the" in result or "No results" in result:
-            return render_template('wordpage.html', error=result.decode('utf-8'), other_lang=other_lang,
-                                   languages=languages, url=url, word=query)
-=======
         result = json.loads(serverquery(message).decode('utf-8'))
         if "unknown to the" in result[0] or "No results" in result[0]:
             return render_template('wordpage.html', error=result[0], other_lang=other_lang,
                                    languages=languages, url=url, word=query, models=our_models, model=model)
->>>>>>> origin/master
         else:
             vector = result[-1]
             for word in result[:-1]:
@@ -848,13 +772,7 @@ def generate(word, model, api_format):
         else:
             # form the query and get the result from the server
             message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
-<<<<<<< HEAD
-            #message = "1;" + query + ";" + 'ALL' + ";" + model
-            result = serverquery(message)
-            associates_list = []
-=======
             result = json.loads(serverquery(message).decode('utf-8'))
->>>>>>> origin/master
 
             # handle cases when the server returned that the word is unknown to the model,
             # or for some other reason the associates list is empty
@@ -918,17 +836,9 @@ def similarity_api(model, wordpair):
     cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::' or char == '-'])
     cleanword0 = process_query(cleanword0)
     cleanword1 = process_query(cleanword1)
-<<<<<<< HEAD
-    message = {'operation': '2', 'query': " ".join([cleanword0, cleanword1]), 'model': model}
-    #message = "2;" + " ".join([cleanword0, cleanword1]) + ";" + model
-
-    result = serverquery(message)
-    if 'is unknown' in result:
-=======
     message = {'operation': '2', 'query': [[cleanword0, cleanword1]], 'model': model}
     result = json.loads(serverquery(message).decode('utf-8'))
     if 'is unknown' in result[0]:
->>>>>>> origin/master
         return 'Unknown'
     sim = result[0][-1]
     return str(sim) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
