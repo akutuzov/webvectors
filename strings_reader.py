@@ -14,7 +14,7 @@ from flask import Markup
 import configparser
 
 config = configparser.RawConfigParser()
-config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
+config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 l10nfile = config.get('Files and directories', 'l10n')

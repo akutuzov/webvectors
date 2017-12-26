@@ -33,7 +33,7 @@ from timeout import timeout
 languages = '/'.join(list(language_dicts.keys())).upper()
 
 config = configparser.RawConfigParser()
-config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
+config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')

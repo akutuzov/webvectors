@@ -17,7 +17,7 @@ from sklearn.manifold import TSNE
 import configparser
 
 config = configparser.RawConfigParser()
-config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
+config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 path = config.get('Files and directories', 'font')

@@ -8,7 +8,7 @@ import codecs
 import configparser
 
 config = configparser.RawConfigParser()
-config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
+config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 cachefile = config.get('Files and directories', 'image_cache')
