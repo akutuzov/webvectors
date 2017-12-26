@@ -10,7 +10,7 @@ from webvectors import *
 import configparser
 
 config = configparser.RawConfigParser()
-config.read('webvectors.cfg')
+config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
 url = config.get('Other', 'url')
 
 app_syn = Flask(__name__, static_url_path='/data/')
