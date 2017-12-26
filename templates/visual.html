@@ -60,7 +60,9 @@
         <div class="col-md-5">
         <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
         {% if not 'Too few words' in visual[model] %}
-            <i><a target="_blank" title="{{strings['visual23']}}" href="http://projector.tensorflow.org/?config={{ l2c[model] }}">{{strings['visual22']}}</a></i>
+            {% if l2c[model] %}
+                <i><a target="_blank" title="{{strings['visual23']}}" href="http://projector.tensorflow.org/?config={{ l2c[model] }}">{{strings['visual22']}}</a></i>
+            {% endif %}
             <a href="{{ url }}data/images/tsneplots/{{ visual[model] }}" target="_blank">
                 <img class="img-responsive" src = "{{ url }}data/images/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}">
             </a>
@@ -109,6 +111,4 @@
 	<p><small><i>* <a href="https://lvdmaaten.github.io/tsne/"><b>t-SNE</b></a> {{strings['visual5']}}</i></small></p>
 	<p><small><i>L.J.P. van der Maaten and G.E. Hinton. <a href="https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf">Visualizing High-Dimensional Data Using t-SNE</a>.
         Journal of Machine Learning Research 9(Nov):2579-2605, 2008</i></small></p>
-
-	
 {% endblock %}

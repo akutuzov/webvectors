@@ -101,29 +101,21 @@
                       </small>
                   </fieldset>
               </div>
-                  <p><small><em>{{strings['similar9']}}</em></small></p>
+                {% if tags %}
+                <p><small><em>{{strings['similar9']}}</em></small></p>
                   <div class="radio">
                       <small>
-                          <label>
-                              <input type="radio" name="calcpos" value="NOUN"> {{strings['similar10']}}
+                        {% for tag in tags2show %}
+                           <label>
+                                <input type="radio" name="pos" value="{{ tag }}" {% if tag in userpos %}checked{% endif %}> {{strings[tags2show[tag]]}}
                           </label>
-                          <label>
-                              <input type="radio" name="calcpos" value="PROPN"> {{strings['similar20']}}
-                          </label>
-                          <label>
-                              <input type="radio" name="calcpos" value="VERB"> {{strings['similar11']}}
-                          </label>
-                          <label>
-                              <input type="radio" name="calcpos" value="ADV"> {{strings['similar12']}}
-                          </label>
-                          <label>
-                              <input type="radio" name="calcpos" value="ADJ"> {{strings['similar13']}}
-                          </label>
-                          <label>
-                              <input type="radio" name="calcpos" value="ALL" checked> {{strings['similar14']}}
-                          </label>
+                        {% endfor %}
+                        <label>
+                            <input type="radio" name="pos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
+                        </label>
                       </small>
                   </div>
+                {% endif %}
 
               <button type="submit"  id="send_calc_query" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
             </form>
@@ -210,29 +202,21 @@
                       </small>
                   </fieldset>
               </div>
-                        <p><small><em>{{strings['similar9']}}</em></small></p>
-                        <div class="radio">
-                            <small>
-                                <label>
-                                    <input type="radio" name="calcpos" value="NOUN"> {{strings['similar10']}}
-                                </label>
-                                <label>
-                                    <input type="radio" name="calcpos" value="PROPN"> {{strings['similar20']}}
-                                </label>
-                                <label>
-                                    <input type="radio" name="calcpos" value="VERB"> {{strings['similar11']}}
-                                </label>
-                                <label>
-                                    <input type="radio" name="calcpos" value="ADV"> {{strings['similar12']}}
-                                </label>
-                                <label>
-                                    <input type="radio" name="calcpos" value="ADJ"> {{strings['similar13']}}
-                                </label>
-                                <label>
-                                    <input type="radio" name="calcpos" value="ALL" checked> {{strings['similar14']}}
-                                </label>
-                            </small>
-                        </div>
+                {% if tags %}
+                    <p><small><em>{{strings['similar9']}}</em></small></p>
+                    <div class="radio">
+                      <small>
+                        {% for tag in tags2show %}
+                           <label>
+                                <input type="radio" name="calcpos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
+                          </label>
+                        {% endfor %}
+                        <label>
+                            <input type="radio" name="calcpos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
+                        </label>
+                      </small>
+                  </div>
+                {% endif %}
                         <button type="submit" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
                     </form>
                 </div>

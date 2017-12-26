@@ -5,20 +5,19 @@
 this module reads strings.csv, which contains all
 the strings, and lets the main app use it 
 """
-
+from future import standard_library
+standard_library.install_aliases()
+from builtins import next
+import sys
 import csv
 from flask import Markup
+import configparser
 
-import ConfigParser
-
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
 l10nfile = config.get('Files and directories', 'l10n')
-
-# the encoding to use
-encoding = 'utf8'
 
 # open the strings database:
 csvfile = open(root + l10nfile, 'rU')
@@ -27,7 +26,7 @@ acrobat = csv.reader(csvfile, dialect='excel', delimiter=',')
 # initialize a dictionary for each language:
 language_dicts = {}
 langnames = config.get('Languages', 'interface_languages').split(',')
-header = acrobat.next()
+header = next(acrobat)
 included_columns = []
 for langname in langnames:
     language_dicts[langname] = {}
@@ -35,6 +34,9 @@ for langname in langnames:
 
 # read the csvfile, populate language_dicts:
 for row in acrobat:
-    for i in included_columns:  #range(1, len(row)):
+    for i in included_columns:  # range(1, len(row)):
         # Markup() is used to prevent autoescaping in templates
-        language_dicts[header[i]][row[0]] = Markup(row[i].decode(encoding))
+        if sys.version_info[0] < 3:
+            language_dicts[header[i]][row[0]] = Markup(row[i].decode('utf-8'))
+        else:
+            language_dicts[header[i]][row[0]] = Markup(row[i])

@@ -1,54 +1,73 @@
 #!/usr/bin/python
 # coding: utf-8
 
-import logging
-import hashlib
-import os
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import map
+from builtins import str
+
+import configparser
 import codecs
+import hashlib
+import json
+import logging
+import os
+import socket  # for sockets
 import sys
+<<<<<<< HEAD
 import json
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
 import numpy as np
 import json
-
-from flask import g
+=======
 from collections import OrderedDict
+>>>>>>> origin/master
 
-from plotting import singularplot
+import numpy as np
+from flask import g
+from flask import render_template, Blueprint, redirect, Response
+from flask import request
+
 from plotting import embed
+from plotting import singularplot
 from sparql import getdbpediaimage
-from timeout import timeout
-from simplegist import Simplegist
-
-import socket  # for sockets
-
-import ConfigParser
-
 # import strings data from respective module
 from strings_reader import language_dicts
+from timeout import timeout
 
-languages = '/'.join(language_dicts.keys()).upper()
+languages = '/'.join(list(language_dicts.keys())).upper()
 
-ghGist = Simplegist(username='YOUR_GITHUB_USERNAME', api_token='YOUR_GITHUB_API_TOKEN')
-
+<<<<<<< HEAD
 config = ConfigParser.RawConfigParser()
 config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
+=======
+config = configparser.RawConfigParser()
+config.read('webvectors.cfg')
+>>>>>>> origin/master
 
 root = config.get('Files and directories', 'root')
 modelsfile = config.get('Files and directories', 'models')
 cachefile = config.get('Files and directories', 'image_cache')
 temp = config.get('Files and directories', 'temp')
-tags = config.getboolean('Tags', 'use_tags')
 
 url = config.get('Other', 'url')
 
-lemmatize = config.getboolean('Other', 'lemmatize')
+lemmatize = config.getboolean('Tags', 'lemmatize')
 dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
 
 if lemmatize:
     from lemmatizer import tagword
+
+tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
+if tensorflow_integration:
+    from simplegist import Simplegist
+    git_username = config.get('Other', 'git_username')
+    git_token = config.get('Other', 'git_token')
+    ghGist = Simplegist(username=git_username, api_token=git_token)
 
 # Establishing connection to model server
 host = config.get('Sockets', 'host')
@@ -57,7 +76,7 @@ try:
     remote_ip = socket.gethostbyname(host)
 except socket.gaierror:
     # could not resolve
-    print >> sys.stderr, 'Hostname could not be resolved. Exiting'
+    print('Hostname could not be resolved. Exiting', file=sys.stderr)
     sys.exit()
 
 
@@ -66,7 +85,7 @@ def serverquery(message):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     except socket.error:
-        print >> sys.stderr, 'Failed to create socket'
+        print('Failed to create socket', file=sys.stderr)
         return None
 
     # Connect to remote server
@@ -75,11 +94,16 @@ def serverquery(message):
     initial_reply = s.recv(1024)
 
     # Send some data to remote server
+    d_message = json.dumps(message, ensure_ascii=False)
     try:
+<<<<<<< HEAD
         s.sendall(json.dumps(message))
+=======
+        s.sendall(d_message.encode('utf-8'))
+>>>>>>> origin/master
     except socket.error:
         # Send failed
-        print >> sys.stderr, 'Send failed'
+        print('Send failed', file=sys.stderr)
         s.close()
         return None
     # Now receive data
@@ -88,8 +112,20 @@ def serverquery(message):
     return reply
 
 
-taglist = set(config.get('Tags', 'tags_list').split())
-defaulttag = config.get('Tags', 'default_tag')
+tags = config.getboolean('Tags', 'use_tags')
+if tags:
+    taglist = set(config.get('Tags', 'tags_list').split())
+    exposed_tag_file = config.get('Tags', 'exposed_tags_list')
+    exposed_tags = {}
+
+    for line in open(root + exposed_tag_file, 'r').readlines():
+        if line.startswith("#"):
+            continue
+        res = line.strip().split('\t')
+        (tag, string, default) = res
+        if default == 'True':
+            defaulttag = tag
+        exposed_tags[tag] = string
 
 defaultsearchengine = config.get('Other', 'default_search')
 
@@ -222,25 +258,27 @@ def home(lang):
                 model = model_value[0]
             images = {query.split('_')[0]: None}
             message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
+<<<<<<< HEAD
             #message = "1;" + query + ";" + 'ALL' + ";" + model
             result = serverquery(message)
             associates_list = []
             if "unknown to the" in result:
                 return render_template('home.html', error=result.decode('utf-8'), other_lang=other_lang,
+=======
+            result = json.loads(serverquery(message).decode('utf-8'))
+            if "unknown to the" in result[0]:
+                return render_template('home.html', error=result[0], other_lang=other_lang,
+>>>>>>> origin/master
                                        languages=languages, url=url, word=query)
             else:
-                output = result.split('&&&')
-                associates = output[0]
-                for word in associates.split():
-                    w = word.split("#")
-                    associates_list.append((w[0].decode('utf-8'), float(w[-1])))
-                    images[w[0].split('_')[0].decode('utf-8')] = None
+                for word in result[:-1]:
+                    images[word[0].split('_')[0]] = None
                 if dbpedia:
                     try:
                         images = get_images(images)
                     except:
                         pass
-                return render_template('home.html', list_value=associates_list, word=query, wordimages=images,
+                return render_template('home.html', list_value=result[:-1], word=query, wordimages=images,
                                        model=model, tags=tags, other_lang=other_lang, languages=languages, url=url)
         else:
             error_value = "Incorrect query!"
@@ -275,6 +313,13 @@ def similar_page(lang):
                 if input_data.endswith(','):
                     input_data = input_data[:-1]
                 cleared_data = []
+
+                sim_history = request.form['sim_history']
+                if not sim_history.strip():
+                    sim_history = []
+                else:
+                    sim_history = json.loads(sim_history)
+
                 model_value = request.form.getlist('simmodel')
                 if len(model_value) < 1:
                     model = defaultmodel
@@ -295,13 +340,14 @@ def similar_page(lang):
                                 error_value = "Incorrect tag!"
                                 return render_template('similar.html', error_sim=error_value, models=our_models,
                                                        other_lang=other_lang, languages=languages, url=url,
-                                                       usermodels=model_value)
+                                                       usermodels=model_value, tags2show=exposed_tags)
                             words.append(w.strip())
                     if len(words) == 2:
-                        cleared_data.append(words[0].strip() + " " + words[1].strip())
+                        cleared_data.append((words[0].strip(), words[1].strip()))
                 if len(cleared_data) == 0:
                     error_value = "Incorrect query!"
                     return render_template("similar.html", error_sim=error_value, other_lang=other_lang,
+<<<<<<< HEAD
                                            languages=languages, url=url, usermodels=model_value)
                 message = {'operation': '2', 'query': ",".join(cleared_data), 'model': model}
                 #message = "2;" + ",".join(cleared_data) + ";" + model
@@ -310,16 +356,28 @@ def similar_page(lang):
                 if "unknown to the" in result or 'does not know the word' in result:
                     return render_template("similar.html", error_sim=result.strip(), other_lang=other_lang,
                                            languages=languages, models=our_models,
+=======
+                                           languages=languages, url=url, usermodels=model_value, tags2show=exposed_tags)
+                message = {'operation': '2', 'query': cleared_data, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                cleared_data = [' '.join(el) for el in cleared_data]
+                if "unknown to the" in result[0]:
+                    return render_template("similar.html", error_sim=result[0], other_lang=other_lang,
+                                           languages=languages, models=our_models, tags2show=exposed_tags,
+>>>>>>> origin/master
                                            tags=tags, query=cleared_data, url=url, usermodels=model_value)
-                for word in result.split():
-                    w = word.split("#")
-                    results.append((w[0].decode('utf-8'), w[1].decode('utf-8'), float(w[-1])))
-                return render_template('similar.html', value=results, model=model, query=cleared_data,
-                                       models=our_models, tags=tags, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=model_value)
+                sim_history.append(result)
+                if len(sim_history) > 10:
+                    sim_history = sim_history[-10:]
+                str_sim_history = (json.dumps(sim_history, ensure_ascii=False))
+                return render_template('similar.html', value=result, model=model, query=cleared_data,
+                                       models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
+                                       languages=languages, url=url, usermodels=model_value, sim_hist=sim_history,
+                                       str_sim_history=str_sim_history)
             else:
                 error_value = "Incorrect query!"
                 return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
+                                       tags2show=exposed_tags,
                                        other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
 
         # Nearest associates queries
@@ -335,15 +393,21 @@ def similar_page(lang):
             if query == "Incorrect tag!":
                 error_value = "Incorrect tag!"
                 return render_template('similar.html', error=error_value, word=list_data, models=our_models,
+                                       tags2show=exposed_tags,
                                        other_lang=other_lang, languages=languages, url=url, usermodels=model_value)
+            userpos = []
             if tags:
                 pos_value = request.form.getlist('pos')
-                if len(pos_value) < 1 or pos_value[0] == 'Q':
+                if len(pos_value) < 1:
                     pos = query.split('_')[-1]
                 else:
                     pos = pos_value[0]
+                if pos != 'ALL':
+                    userpos.append(pos)
+                if pos == 'Q':
+                    pos = query.split('_')[-1]
             else:
-                pos = 'All PoS'
+                pos = 'ALL'
 
             images = {query.split('_')[0]: None}
             models_row = {}
@@ -351,6 +415,7 @@ def similar_page(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages, url=url,
                                            usermodels=model_value)
+<<<<<<< HEAD
                 if tags:
                     message = {'operation': '1', 'query': query, 'pos': pos, 'model': model}
                     #message = "1;" + query + ";" + pos + ";" + model
@@ -360,34 +425,34 @@ def similar_page(lang):
                 result = serverquery(message)
                 associates_list = []
                 if "unknown to the" in result:
+=======
+                message = {'operation': '1', 'query': query, 'pos': pos, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                if "unknown to the" in result[0]:
+>>>>>>> origin/master
                     models_row[model] = "Unknown!"
                     continue
-                elif "No results" in result:
-                    associates_list.append(result)
-                    models_row[model] = associates_list
+                elif "No results" in result[0]:
+                    models_row[model] = 'No results!'
                     continue
                 else:
-                    output = result.split('&&&')
-                    associates = output[0]
-                    for word in associates.split():
-                        w = word.split("#")
-                        associates_list.append((w[0].decode('utf-8'), float(w[1])))
-                        images[w[0].split('_')[0].decode('utf-8')] = None
-                    models_row[model] = associates_list
+                    for word in result[:-1]:
+                        images[word[0].split('_')[0]] = None
+                    models_row[model] = result[:-1]
                     if dbpedia:
                         try:
                             images = get_images(images)
                         except:
                             pass
-            return render_template('similar.html', list_value=models_row, word=query, pos=pos,
+            return render_template('similar.html', list_value=models_row, word=query, pos=pos, userpos=userpos,
                                    number=len(model_value), wordimages=images, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages,
+                                   other_lang=other_lang, languages=languages, tags2show=exposed_tags,
                                    url=url, usermodels=model_value)
         else:
             error_value = "Incorrect query!"
             return render_template("similar.html", error=error_value, models=our_models, tags=tags, url=url,
-                                   usermodels=[defaultmodel])
-    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang,
+                                   usermodels=[defaultmodel], tags2show=exposed_tags)
+    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
                            languages=languages, url=url, usermodels=[defaultmodel])
 
 
@@ -453,18 +518,26 @@ def visual_page(lang):
                 labels = []
                 if not os.path.exists(root + 'data/images/tsneplots'):
                     os.makedirs(root + 'data/images/tsneplots')
-                if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK) or not os.access(
-                                                root + 'data/images/tsneplots/' + identifier + '.url', os.F_OK):
-                    print >> sys.stderr, 'No previous image found', root + 'data/images/tsneplots/' + plotfile
+                if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK):
+                    print('No previous image found', root + 'data/images/tsneplots/' + plotfile, file=sys.stderr)
                     vectors = []
                     for w in words2vis:
                         message = {'operation': '4', 'query': w, 'model': model}
+<<<<<<< HEAD
                         #message = "4;" + w + ";" + model
                         result = serverquery(message)
                         if 'is unknown' in result:
                             unknown[model].add(w)
                             continue
                         vector = np.array(result.split(','))
+=======
+                        result = json.loads(serverquery(message).decode('utf-8'))
+                        if len(result) == 1:
+                            if 'is unknown' in result[0]:
+                                unknown[model].add(w)
+                                continue
+                        vector = np.array(result)
+>>>>>>> origin/master
                         vectors.append(vector)
                         labels.append(w)
                     if len(vectors) > 5:
@@ -473,16 +546,21 @@ def visual_page(lang):
                         matrix2vis = np.vstack(([v for v in vectors]))
                         embed(labels, matrix2vis.astype('float64'), classes, model, fname)
                         models_row[model] = plotfile
-                        l2c = word2vec2tensor(identifier, vectors, labels, classes)
+                        if tensorflow_integration:
+                            l2c = word2vec2tensor(identifier, vectors, labels, classes)
+                        else:
+                            l2c = None
                         links_row[model] = l2c
                     else:
                         models_row[model] = "Too few words!"
                 else:
-                    links_row[model] = open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
+                    if tensorflow_integration:
+                        links_row[model] = open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
+                    else:
+                        links_row[model] = None
             return render_template('visual.html', languages=languages, visual=models_row, words=groups,
-                                   number=len(model_value),
-                                   models=our_models, unknown=unknown, url=url, usermodels=model_value, l2c=links_row,
-                                   qwords=querywords)
+                                   number=len(model_value), models=our_models, unknown=unknown, url=url,
+                                   usermodels=model_value, l2c=links_row, qwords=querywords)
         else:
             error_value = "Incorrect query!"
             return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
@@ -536,19 +614,22 @@ def finder(lang):
             if len(positive_list) < 2 or len(negative_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", error=error_value, models=our_models, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=calcmodel_value)
+                                       languages=languages, url=url, usermodels=calcmodel_value, tags2show=exposed_tags)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 error_value = "Incorrect tag!"
-                return render_template('calculator.html', error=error_value, models=our_models,
+                return render_template('calculator.html', error=error_value, models=our_models, tags2show=exposed_tags,
                                        other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
+            userpos = []
             if tags:
-                calcpos_value = request.form.getlist('calcpos')
+                calcpos_value = request.form.getlist('pos')
                 if len(calcpos_value) < 1:
                     pos = defaulttag
                 else:
                     pos = calcpos_value[0]
+                if pos != 'ALL':
+                    userpos.append(pos)
             else:
-                pos = 'All PoS'
+                pos = 'ALL'
 
             models_row = {}
             images = {}
@@ -556,6 +637,7 @@ def finder(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
+<<<<<<< HEAD
                 if tags:
                     message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list), 'pos': pos, 'model': model}
                     #message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
@@ -567,24 +649,28 @@ def finder(lang):
                 if len(result) == 0 or 'No results' in result:
                     results.append("No similar words with this tag.")
                     models_row[model] = results
+=======
+                message = {'operation': '3', 'query': [positive_list, negative_list], 'pos': pos, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                if len(result) == 0 or 'No results' in result[0]:
+                    models_row[model] = ["No similar words with this tag."]
+>>>>>>> origin/master
                     continue
-                if "is unknown" in result:
-                    results.append(result)
-                    models_row[model] = results
+                if "is unknown" in result[0]:
+                    models_row[model] = result[0]
                     continue
-                for word in result.split():
-                    w = word.split("#")
-                    results.append((w[0].decode('utf-8'), float(w[1])))
-                    images[w[0].split('_')[0].decode('utf-8')] = None
-                models_row[model] = results
+                for word in result:
+                    images[word[0].split('_')[0]] = None
+                models_row[model] = result
                 if dbpedia:
                     try:
                         images = get_images(images)
                     except:
                         pass
             return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
-                                   nlist=negative_list, wordimages=images, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
+                                   userpos=userpos, nlist=negative_list, wordimages=images, models=our_models,
+                                   tags=tags, other_lang=other_lang, languages=languages, url=url,
+                                   usermodels=calcmodel_value, tags2show=exposed_tags)
 
         # Calculator
         if positive1_data != '':
@@ -600,17 +686,22 @@ def finder(lang):
             if len(positive_list) == 0:
                 error_value = "Incorrect query!"
                 return render_template("calculator.html", calc_error=error_value, other_lang=other_lang,
+                                       tags2show=exposed_tags,
                                        languages=languages, models=our_models, url=url, usermodels=calcmodel_value)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 error_value = "Incorrect tag!"
                 return render_template('calculator.html', calc_error=error_value, other_lang=other_lang,
+                                       tags2show=exposed_tags,
                                        languages=languages, models=our_models, url=url, usermodels=calcmodel_value)
+            userpos = []
             if tags:
                 calcpos_value = request.form.getlist('calcpos')
                 if len(calcpos_value) < 1:
                     pos = defaulttag
                 else:
                     pos = calcpos_value[0]
+                if pos != 'ALL':
+                    userpos.append(pos)
             else:
                 pos = 'ALL'
 
@@ -620,6 +711,7 @@ def finder(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
+<<<<<<< HEAD
                 message = {'operation': '3', 'query': ",".join(positive_list) + "&" + ','.join(negative_list), 'pos': pos, 'model': model}
                 #message = "3;" + ",".join(positive_list) + "&" + ','.join(negative_list) + ";" + pos + ";" + model
                 result = serverquery(message)
@@ -627,31 +719,36 @@ def finder(lang):
                 if len(result) == 0 or "No results" in result:
                     results.append("No similar words with this tag.")
                     models_row[model] = results
+=======
+                message = {'operation': '3', 'query': [positive_list, negative_list], 'pos': pos, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                if len(result) == 0 or "No results" in result[0]:
+                    models_row[model] = ["No similar words with this tag."]
+>>>>>>> origin/master
                     continue
-                if "is unknown" in result:
-                    results.append(result)
-                    models_row[model] = results
+                if "is unknown" in result[0]:
+                    models_row[model] = result[0]
                     continue
-                for word in result.split():
-                    w = word.split("#")
-                    results.append((w[0].decode('utf-8'), float(w[1])))
-                    images[w[0].split('_')[0].decode('utf-8')] = None
-                models_row[model] = results
+                for word in result:
+                    images[word[0].split('_')[0]] = None
+                models_row[model] = result
                 if dbpedia:
                     try:
                         images = get_images(images)
                     except:
                         pass
             return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
-                                   nlist2=negative_list, wordimages=images, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
+                                   tags2show=exposed_tags, nlist2=negative_list, wordimages=images, models=our_models,
+                                   tags=tags, userpos=userpos, other_lang=other_lang, languages=languages, url=url,
+                                   usermodels=calcmodel_value)
 
         else:
             error_value = "Incorrect query!"
             return render_template("calculator.html", error=error_value, models=our_models, tags=tags,
+                                   tags2show=exposed_tags,
                                    other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
     return render_template("calculator.html", models=our_models, tags=tags, other_lang=other_lang,
-                           languages=languages, url=url, usermodels=[defaultmodel])
+                           languages=languages, url=url, usermodels=[defaultmodel], tags2show=exposed_tags)
 
 
 @wvectors.route(url + '<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
@@ -678,41 +775,40 @@ def raw_finder(lang, model, userquery):
         images = {query.split('_')[0]: None}
         image = None
         message = {'operation': '1', 'query': query, 'pos': pos_tag, 'model': model}
+<<<<<<< HEAD
         #message = "1;" + query + ";" + pos_tag + ";" + model
         result = serverquery(message)
         associates_list = []
         if "unknown to the" in result or "No results" in result:
             return render_template('wordpage.html', error=result.decode('utf-8'), other_lang=other_lang,
                                    languages=languages, url=url, word=query)
+=======
+        result = json.loads(serverquery(message).decode('utf-8'))
+        if "unknown to the" in result[0] or "No results" in result[0]:
+            return render_template('wordpage.html', error=result[0], other_lang=other_lang,
+                                   languages=languages, url=url, word=query, models=our_models, model=model)
+>>>>>>> origin/master
         else:
-            output = result.split('&&&')
-            associates = output[0]
-            if len(associates) > 1:
-                vector = ','.join(output[1:])
-            else:
-                vector = ''
-            for word in associates.split():
-                w = word.split("#")
-                associates_list.append((w[0].decode('utf-8'), float(w[1])))
-                images[w[0].split('_')[0].decode('utf-8')] = None
+            vector = result[-1]
+            for word in result[:-1]:
+                images[word[0].split('_')[0]] = None
             m = hashlib.md5()
             name = query.encode('ascii', 'backslashreplace')
             m.update(name)
             fname = m.hexdigest()
             plotfile = root + 'data/images/singleplots/' + model + '_' + fname + '.png'
             if not os.access(plotfile, os.F_OK):
-                vector2 = output[1].split(',')
-                vector2 = [float(a) for a in vector2]
-                singularplot(query, model, vector2)
+                singularplot(query, model, vector, fname)
             if dbpedia:
                 try:
                     images = get_images(images)
                     image = images[query.split('_')[0]]
                 except:
                     pass
-            return render_template('wordpage.html', list_value=associates_list, word=query, model=model, pos=pos_tag,
+            return render_template('wordpage.html', list_value=result[:-1], word=query, model=model, pos=pos_tag,
                                    vector=vector, image=image, wordimages=images, vectorvis=fname, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url, search=defaultsearchengine)
+                                   other_lang=other_lang, languages=languages, url=url, search=defaultsearchengine,
+                                   models=our_models)
     else:
         error_value = 'Incorrect query!'
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
@@ -752,34 +848,30 @@ def generate(word, model, api_format):
         else:
             # form the query and get the result from the server
             message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
+<<<<<<< HEAD
             #message = "1;" + query + ";" + 'ALL' + ";" + model
             result = serverquery(message)
             associates_list = []
+=======
+            result = json.loads(serverquery(message).decode('utf-8'))
+>>>>>>> origin/master
 
             # handle cases when the server returned that the word is unknown to the model,
             # or for some other reason the associates list is empty
-            if "unknown to the" in result or "No results" in result:
-                yield query + '\t' + result.decode('utf-8')
+            if "unknown to the" in result[0] or "No results" in result[0]:
+                yield query + '\t' + result[0]
             else:
-                output = result.split('&&&')
-                associates = output[0]
-
-                # take the associates and their similarity measures
-                for word in associates.split():
-                    w = word.split("#")
-                    associates_list.append((w[0].decode('utf-8'), float(w[1])))
-
                 # return result in csv
                 if api_format == 'csv':
                     yield model + '\n'
                     yield query + '\n'
-                    for associate in associates_list:
+                    for associate in result[:-1]:
                         yield "%s\t%s\n" % (associate[0], str(associate[1]))
 
                 # return result in json
                 elif api_format == 'json':
                     associates = OrderedDict()
-                    for associate in associates_list:
+                    for associate in result[:-1]:
                         associates[associate[0]] = associate[1]
                     result = {model: {query: associates}}
                     yield json.dumps(result, ensure_ascii=False)
@@ -826,14 +918,20 @@ def similarity_api(model, wordpair):
     cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::' or char == '-'])
     cleanword0 = process_query(cleanword0)
     cleanword1 = process_query(cleanword1)
+<<<<<<< HEAD
     message = {'operation': '2', 'query': " ".join([cleanword0, cleanword1]), 'model': model}
     #message = "2;" + " ".join([cleanword0, cleanword1]) + ";" + model
 
     result = serverquery(message)
     if 'is unknown' in result:
+=======
+    message = {'operation': '2', 'query': [[cleanword0, cleanword1]], 'model': model}
+    result = json.loads(serverquery(message).decode('utf-8'))
+    if 'is unknown' in result[0]:
+>>>>>>> origin/master
         return 'Unknown'
-    w = result.split("#")
-    return str(w[2]) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
+    sim = result[0][-1]
+    return str(sim) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
 
 
 @wvectors.route(url + '<lang:lang>/models/')

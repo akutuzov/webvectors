@@ -1,16 +1,22 @@
 #!/usr/bin/python
 # coding: utf-8
+from __future__ import print_function
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import range
 import sys
 import matplotlib
 matplotlib.use('Agg')
+
 import pylab as plot
 import numpy as np
 from matplotlib import font_manager
-from tsne import tsne
-import hashlib
-import ConfigParser
+from sklearn.manifold import TSNE
+import configparser
 
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read('/home/lizaku/PycharmProjects/webvectors/webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
@@ -18,29 +24,26 @@ path = config.get('Files and directories', 'font')
 font = font_manager.FontProperties(fname=path)
 
 
-def singularplot(word, modelname, vector):
-    xlocations = np.array(range(len(vector)))
+def singularplot(word, modelname, vector, fname):
+    xlocations = np.array(list(range(len(vector))))
     plot.clf()
     plot.bar(xlocations, vector)
-    plot_title = word.split('_')[0] + '\n' + modelname + u' model'
+    plot_title = word.split('_')[0].replace('::', ' ') + '\n' + modelname + u' model'
     plot.title(plot_title, fontproperties=font)
     plot.xlabel('Vector components')
     plot.ylabel('Components values')
-    m = hashlib.md5()
-    name = word.encode('ascii', 'backslashreplace')
-    m.update(name)
-    fname = m.hexdigest()
     plot.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150, bbox_inches='tight')
     plot.close()
     plot.clf()
 
 
 def embed(words, matrix, classes, usermodel, fname):
-    perplexity = 5.0  # Should be smaller than the number of points!
-    dimensionality = matrix.shape[1]
-    y = tsne(matrix, 2, dimensionality, perplexity)
+    perplexity = 6.0  # Should be smaller than the number of points!
 
-    print >> sys.stderr, '2-d embedding finished'
+    embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500, init='pca')
+    y = embedding.fit_transform(matrix)
+
+    print('2-d embedding finished', file=sys.stderr)
 
     class_set = [c for c in set(classes)]
     colors = plot.cm.rainbow(np.linspace(0, 1, len(class_set)))
@@ -59,7 +62,7 @@ def embed(words, matrix, classes, usermodel, fname):
 
         lemma = word.split('_')[0].replace('::', ' ')
         mid = len(lemma) / 2
-        mid *= 10  # TODO Should really think about how to adapt this variable to the real plot size
+        mid *= 6  # TODO Should really think about how to adapt this variable to the real plot size
         plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font, color=color)
 
     plot.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
