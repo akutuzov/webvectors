@@ -254,7 +254,8 @@ def home(lang):
                     except:
                         pass
                 return render_template('home.html', list_value=result[:-1], word=query, wordimages=images,
-                                       model=model, tags=tags, other_lang=other_lang, languages=languages, url=url)
+                                       models=our_models, model=model, tags=tags, other_lang=other_lang,
+                                       languages=languages, url=url)
         else:
             error_value = "Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,

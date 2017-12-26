@@ -19,7 +19,7 @@
      </div>
       {% if list_value %}
         <h3><strong>{{strings['home4']}} <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/">{{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}}
-            <a href="{{ url }}{{lang}}/models#{{model}}">{{ model}}</a>)</strong></h3>
+            <a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a>)</strong></h3>
         <div style="width:300px;">
         <big>
         <ol>
