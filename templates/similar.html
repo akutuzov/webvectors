@@ -47,7 +47,7 @@
             </span>
       {% if sim_hist|length > 1 %}
           <hr/>
-          <h3>{{strings['similar31']}}<</h3>
+          <h3>{{strings['similar31']}}</h3>
           <table class="table">
           {% for el in sim_hist[:-1] %}
                 <tr><td style="vertical-align:top"> <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][0]}}/">{{el[0][0][0].split("_")[0].replace('::', ' ')}}</a></em>

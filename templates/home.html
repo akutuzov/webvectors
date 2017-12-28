@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <h1>{{strings['home1']}}</h1>
-          <p class="lead">{{strings['home6']}}</p>
+        <h1 style="text-align:center">{{strings['home1']}}</h1>
+          <p style="text-align:center" class="lead">{{strings['home6']}}</p>
 
-	<p>{{strings['home2']}}</p>
+	<p style="text-align:center">{{strings['home2']}}</p>
             <div id="queryform">
-            <form id="inputform" action="#" method=post>
+            <form id="inputform" style="text-align:center" action="#" method=post>
               <div class="form-group">
         {% if word %}
         <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
@@ -51,7 +51,62 @@
           {% endif %}
 
           </strong></span><p>
-    {% endif %}
+    
+    {% else %}
+    <span><br><br><br></span>
         
+        
+         <div class="container">
+      <div class="starter-template">
+        
+        <div class="row" style="text-align:center;max-width:900px;margin:auto">
+        <div class="col-md-6">
+          <div class="avatarlarge" style="clear:both;">
+		    <a href="{{ url }}{{lang}}/similar/">
+                <div class="tint">
+                <img class="img-responsive" src = "{{ url }}data/images/associates_new.png" alt = "{{strings['base6']}}" title = "{{strings['base6']}}">
+                </div>
+                    <div class="centered">Similar words</div>
+            </a>
+          </div>
+      </div>
+      <div class="col-md-6">
+          <div class="avatarlarge" style="clear:both;">
+		    <a href="{{ url }}{{lang}}/visual/">
+                <div class="tint">
+                <img class="img-responsive" src = "{{ url }}data/images/visual_new.png" alt = "{{strings['base13']}}" title = "{{strings['base13']}}">
+                </div>
+                <div class="centered">Visualizations</div>
+            </a>
+          </div>
+      </div>
+        </div>
+        <!--span><br><br></span-->
+        <div class="row" style="text-align:center;max-width:900px;margin:auto">
+      <div class="col-md-6">
+          <div class="avatarlarge" style="clear:both;">
+		    <a href="{{ url }}{{lang}}/calculator/">
+                <div class="tint">
+                <img src = "{{ url }}data/images/calculator_new.png" alt = "{{strings['base5']}}" title = "{{strings['base5']}}">
+                </div>
+                    <div class="centered">Calculator</div>
+            </a>
+          </div>
+      </div>
+      <div class="col-md-6">
+          <div class="avatarlarge" style="clear:both;">
+		    <a href="{{ url }}{{lang}}/misc/">
+                <div class="tint">
+                <img src = "{{ url }}data/images/misc_new.png" alt = "{{strings['base17']}}" title = "{{strings['base17']}}">
+                </div>
+                    <div class="centered">Miscelaneous</div>
+            </a>
+          </div>
+      </div>
+        </div>
+        </div>
+        </div>
+        
+        {% endif %}
      
 {% endblock %}
