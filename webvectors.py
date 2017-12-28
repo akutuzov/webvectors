@@ -3,7 +3,6 @@
 
 from __future__ import print_function
 from future import standard_library
-
 standard_library.install_aliases()
 from builtins import zip
 from builtins import map
@@ -53,7 +52,6 @@ if lemmatize:
 tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
 if tensorflow_integration:
     from simplegist import Simplegist
-
     git_username = config.get('Other', 'git_username')
     git_token = config.get('Other', 'git_token')
     ghGist = Simplegist(username=git_username, api_token=git_token)
