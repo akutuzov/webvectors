@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import zip
 from builtins import map
@@ -52,6 +53,7 @@ if lemmatize:
 tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
 if tensorflow_integration:
     from simplegist import Simplegist
+
     git_username = config.get('Other', 'git_username')
     git_token = config.get('Other', 'git_token')
     ghGist = Simplegist(username=git_username, api_token=git_token)
@@ -262,6 +264,7 @@ def home(lang):
                                    languages=languages, url=url)
     return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
+
 @wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
 def misc_page(lang):
     g.lang = lang
@@ -269,14 +272,14 @@ def misc_page(lang):
     s.add(lang)
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
-    
+
     if request.method == 'POST':
         input_data = 'dummy'
         try:
             input_data = request.form['query']
         except:
             pass
-        
+
         # Similarity queries
         if input_data != 'dummy':
             if ' ' in input_data.strip():
@@ -343,7 +346,6 @@ def misc_page(lang):
                            languages=languages, url=url, usermodels=[defaultmodel])
 
 
-
 @wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
 def similar_page(lang):
     g.lang = lang
@@ -358,7 +360,7 @@ def similar_page(lang):
             list_data = request.form['list_query']
         except:
             pass
-        
+
         # Nearest associates queries
         if list_data != 'dummy' and \
                 list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
@@ -419,8 +421,8 @@ def similar_page(lang):
             error_value = "Incorrect query!"
             return render_template("asociates.html", error=error_value, models=our_models, tags=tags, url=url,
                                    usermodels=[defaultmodel], tags2show=exposed_tags)
-    return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
-                           languages=languages, url=url, usermodels=[defaultmodel])
+    return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang,
+                           tags2show=exposed_tags, languages=languages, url=url, usermodels=[defaultmodel])
 
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
