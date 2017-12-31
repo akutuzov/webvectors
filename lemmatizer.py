@@ -8,7 +8,7 @@ import json
 # Stanford CoreNLP tagging for English (and other languages)
 # Demands Stanford Core NLP server running on a defined port
 # Start server with something like:
-# java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer --port 9000
+# java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer --port 9999
 port = 9999
 
 

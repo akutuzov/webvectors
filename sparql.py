@@ -30,7 +30,7 @@ def getdbpediaimage(query, cache):
         sparql.setQuery("""
         SELECT DISTINCT ?e ?pic
         WHERE {
-            ?e rdfs:label "%s"@ru .
+            ?e rdfs:label "%s"@en .
             ?e <http://dbpedia.org/ontology/thumbnail> ?pic .
                 }
         """ % query)

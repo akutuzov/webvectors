@@ -44,7 +44,7 @@ dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
 
 if lemmatize:
-    from lemmatizer import freeling_lemmatizer
+    from lemmatizer import tagword
 
 tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
 if tensorflow_integration:
@@ -153,12 +153,12 @@ def process_query(userquery):
                 return 'Incorrect tag!'
         else:
             if lemmatize:
-                poses = freeling_lemmatizer(userquery)
+                poses = tagword(userquery)
                 if len(poses) == 1:
                     pos_tag = poses[0]
                 else:
                     pos_tag = poses[-1]
-                query = userquery.lower().replace(' ', '::') + '_' + pos_tag
+                query = userquery.  replace(' ', '::') + '_' + pos_tag
             else:
                 return 'Incorrect tag!'
     return query
@@ -913,36 +913,6 @@ def models_page(lang):
     return render_template('%s/models.html' % lang, other_lang=other_lang, languages=languages, url=url)
 
 
-@wvectors.route(url + '<lang:lang>/contacts/')
-def contacts_page(lang):
-    g.lang = lang
-    s = set()
-    s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
-    g.strings = language_dicts[lang]
-    return render_template('%s/contacts.html' % lang, other_lang=other_lang, languages=languages, url=url)
-
-
-@wvectors.route(url + '<lang:lang>/christmas/')
-def christmas_page(lang):
-    g.lang = lang
-    s = set()
-    s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
-    g.strings = language_dicts[lang]
-    return render_template('%s/christmas.html' % lang, other_lang=other_lang, languages=languages, url=url)
-
-
-@wvectors.route(url + '<lang:lang>/rusvectores3/')
-def rusvectores3(lang):
-    g.lang = lang
-    s = set()
-    s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
-    g.strings = language_dicts[lang]
-    return render_template('%s/rusvectores3.html' % lang, other_lang=other_lang, languages=languages, url=url)
-
-
 @wvectors.route(url + '<lang:lang>/about/')
 def about_page(lang):
     g.lang = lang
@@ -961,29 +931,11 @@ def about_page(lang):
 @wvectors.route(url + 'visual/', methods=['GET', 'POST'])
 @wvectors.route(url, methods=['GET', 'POST'])
 def redirect_main():
-    return redirect(request.script_root + '/ru/' + request.path.split('/')[-2])
+    req = request.path.split('/')[-1]
+    if len(req) == 0:
+        req = '/'
+    else:
+        if req[-1] != '/':
+            req += '/'
+        return redirect(url + 'en' + req)
 
-
-@wvectors.route('/misc/<path:path>', methods=['GET'])
-def misc(path):
-    return redirect('/data/misc/' + path)
-
-
-@wvectors.route('/ruambient/', methods=['GET'])
-def ruambient():
-    return redirect('/data/ruambient/index.html')
-
-
-@wvectors.route('/semanticweb/', methods=['GET'])
-def semweb():
-    return redirect('/data/semanticweb/index.html')
-
-
-@wvectors.route('/stats/<path:path>', methods=['GET'])
-def stats(path):
-    return redirect('/data/stats/' + path)
-
-
-@wvectors.route('/robots.txt', methods=['GET'])
-def robots():
-    return redirect('/data/robots.txt', code=301)

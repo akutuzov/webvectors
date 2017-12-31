@@ -72,10 +72,10 @@ similar1,Вычисление семантических ассоциатов,Co
 similar2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). Вы&nbsp;можете приписать к&nbsp;слову знак подчеркивания &laquo;_&raquo; и&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" target=""_blank"">тэг части речи</a> (<i>&laquo;река_NOUN&raquo;</i>). Если вы&nbsp;этого не&nbsp;сделаете, <i>WebVectors</i> определит часть речи автоматически.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates (quazy-synonyms). You can optionally end the word with an&nbsp;underscore and a&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" target=""_blank"">PoS tag</a> (<i>&laquo;река_NOUN&raquo;</i>). Otherwise, <i>WebVectors</i> will detect&nbsp;it."
 similar3,Выберите модель:,Choose the model:
 similar4,НКРЯ,Ruscorpora
-similar5,Araneum Maximum,Araneum Maximum
-similar6,НКРЯ и Wikipedia,Ruscorpora and Wikipedia
-similar7,Веб-корпус,Web corpus
-similar8,Новостной корпус,News corpus
+similar5,Английская Wikipedia,English Wikipedia
+similar6,Британский Национальный Корпус,British National Corpus
+similar7,Норвежский новостной корпус,Norsk Aviskorpus
+similar8,Английский Gigaword,English Gigaword
 similar9,Показывать только:,Show only:
 similar10,Существительные,Nouns
 similar11,Глаголы,Verbs
@@ -85,7 +85,7 @@ similar14,Все части речи,All of&nbsp;them
 similar15,Найти похожие слова!,Find similar words!
 similar16,Cемантические аналоги для,Semantic associates for
 similar17,вычислено на&nbsp;модели,computed on&nbsp;data from
-similar18,Модели неизвестно слово,The model does not know
+similar18,Модели неизвестно слово,The model does not know the word
 similar19,Часть речи запроса,Query part of&nbsp;speech
 similar20,Имена собственные,Proper names
 similar21,Некорректный запрос,Incorrect query
@@ -93,7 +93,7 @@ similar22,Некорректный тэг,Incorrect tag
 similar23,Нет подходящих результатов,No&nbsp;results
 similar24,Вычисление семантической близости,Computing similarity
 similar25,"Введите через пробел 2&nbsp;слова, чтобы вычислить их&nbsp;семантическое сходство. Можно также ввести несколько пар, разделяя их&nbsp;запятыми, как в&nbsp;примере.","Enter 2&nbsp;space-separated words to&nbsp;calculate their similarity. It&nbsp;is&nbsp;also possible to&nbsp;enter several pairs separating them with commas, as&nbsp;in&nbsp;the placeholder."
-similar26,"цветок роза, цветок камень","цветок роза, цветок камень"
+similar26,"movie film, city town","movie film, city town"
 similar27,Вычислить семантическую близость!,Compute semantic similarity!
 similar28,Пары слов,Word pairs
 similar29,Косинусная близость,Cosine similarity
@@ -140,7 +140,7 @@ visual3,Визуализация взаимного расположения с�
 visual4,Следующие слова неизвестны модели:,The following words were unknown to&nbsp;the model:
 visual5,&#8212;&nbsp;это алгоритм снижения размерности и&nbsp;визуализации высокоразмерных данных. Он&nbsp;разработан Лоренсом ван дер Маатеном и&nbsp;описан в&nbsp;этой статье:,"is&nbsp;an&nbsp;algorithm for dimensionality reduction and visualization of&nbsp;high-dimensional datasets, developed by&nbsp;Laurens van der Maaten and described in&nbsp;this paper:"
 visual6,Визуализация отношений между словами; по&nbsp;клику доступна полноразмерная версия,Plot for word relations; click for full-size image
-visual7,"машина,мотоцикл,транспорт,компьютер,клавиатура,мышь,москва,париж,лондон,новый,чистый,быстрый","машина,мотоцикл,транспорт,компьютер,клавиатура,мышь,москва,париж,лондон,новый,чистый,быстрый"
+visual7,"car,tank,transport,computer,mouse,Moscow,Paris,London,Russia,France,Britain,clean,fast,new","car,tank,transport,computer,mouse,Moscow,Paris,London,Russia,France,Britain,clean,fast,new"
 visual8,Слишком мало слов,Too few words
 visual9,Слова не&nbsp;должны повторяться,Words must be&nbsp;unique
 visual15,Визуализировать,Visualize

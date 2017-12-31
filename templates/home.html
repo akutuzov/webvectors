@@ -34,7 +34,7 @@
 		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
-		    <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
                 <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
             </a>
 	        </div>
