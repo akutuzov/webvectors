@@ -3,9 +3,11 @@
 
 """
 this module reads strings.csv, which contains all
-the strings, and lets the main app use it 
+the strings, and lets the main app use it
 """
+
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import next
 import sys

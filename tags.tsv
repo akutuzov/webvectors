@@ -1,3 +1,4 @@
+tag	string	default
 NOUN	similar10	True
 PROPN	similar20	False
 VERB	similar11	False

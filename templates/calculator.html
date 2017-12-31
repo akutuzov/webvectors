@@ -23,20 +23,20 @@
 
         <h1>{{strings['calc1']}}</h1>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-7">
               <form id="inputform" action="#" method=post>
               <div id="queryform">
               <div class="form-group">
                 <p>{{strings['calc4']}}
 		<div class = "row">
 		<div class = "col-md-5">
-        <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} placeholder="{{strings['calc33']}}"{% endif %} maxlength=50>
+        <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} value="{{strings['calc33']}}"{% endif %} maxlength=50>
             <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} placeholder="{{strings['calc34']}}"{% endif %} maxlength=50>
+		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} value="{{strings['calc34']}}"{% endif %} maxlength=50>
 		</div>
 		<div class = "col-md-5">
 
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} placeholder="{{strings['calc35']}}"{% endif %} maxlength=50>
+		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} value="{{strings['calc35']}}"{% endif %} maxlength=50>
             <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
 		<p style = "text-align:center;"><strong>???</strong></p>
 		</div>
@@ -51,24 +51,29 @@
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in analogy_value[model] if res != "Incorrect tag!" %}
+    	    {% for res in analogy_value[model] if res != "Incorrect tag!"  %}
     		<li style='margin: 10px 0;'>
 
-                {% if 'is unknown' in res %}
-                    {{strings['similar18']}}
-                {% elif 'No similar words' in res %}
-                    {{strings['similar30']}}
+             {% if 'is unknown' in res %}
+
+                {{strings['similar18']}}
+            {% elif 'No similar words' in res %}
+
+                {{strings['similar30']}}
+
                 {% else %}
 
-                <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
+		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}" {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
     		{% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+		    <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
                 <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
             </a>
 	        </div>
             {% endif %}
-          {% endif %}
+            {% endif %}
+
             </li>
     	    {% endfor %}
         
@@ -101,26 +106,25 @@
                       </small>
                   </fieldset>
               </div>
-                {% if tags %}
-                <p><small><em>{{strings['similar9']}}</em></small></p>
+                  {% if tags %}
+                  <p><small><em>{{strings['similar9']}}</em></small></p>
                   <div class="radio">
                       <small>
-                        {% for tag in tags2show %}
+                         {% for tag in tags2show %}
                            <label>
-                                <input type="radio" name="pos" value="{{ tag }}" {% if tag in userpos %}checked{% endif %}> {{strings[tags2show[tag]]}}
-                          </label>
+                                <input type="radio" name="pos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
+                           </label>
                         {% endfor %}
-                        <label>
+                          <label>
                             <input type="radio" name="pos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
-                        </label>
+                          </label>
                       </small>
                   </div>
-                {% endif %}
-
+                  {% endif %}
               <button type="submit"  id="send_calc_query" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
             </form>
                     </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <form method=post>
                         <div class="form-group">
                             <p>{{strings['calc32']}}</p>
@@ -145,34 +149,31 @@
     	    <span style = "font-size:larger;">
     	    <ol>
         
-    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and not 'No similar words' in res %}
+    	    {% for res in calc_value[model] if res != "No similar words of this part of speech." and not 'No similar words' in res and not 'is unknown' in res %}
     		<li style='margin: 10px 0;'>
-                {% if 'does not know' in res %}
-
-                     {{strings['similar18']}} {{ res.split()[-1]}}
-                {% else %}
-    		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
-    		{% if wordimages[res[0].split('_')[0]]  %}
+                
+<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0] }}" {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+    	    {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+		    <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
                 <img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
-            </a>
+        	    </a>
 	        </div>
             {% endif %}
-                {% endif %}
             </li>
     	    {% endfor %}
         
     	    </ol></span>
         
     	    {% for res in calc_value[model] if 'No results' in res or 'No similar words' in res or 'is unknown' in res %}
-                {% if 'is unknown' in res %}
-                    <strong> {{strings['similar18']}}</strong>
-                {% elif 'No similar words' in res %}
-                    <strong> {{strings['similar30']}}</strong>
-                {% else %}
-    		        <strong>{{ res.decode('utf-8') }}</strong>
-                {% endif %}
+    	    {% if 'is unknown' in res %}
+                <strong> {{strings['similar18']}}</strong>
+            {% elif 'No similar words' in res %}
+                <strong> {{strings['similar30']}}</strong>
+            {% else %}
+    		<strong>{{ res.decode('utf-8') }}</strong>
+    	     {% endif %}
     	    {% endfor %}
         </div>
 	{% endfor %}

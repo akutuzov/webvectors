@@ -2,6 +2,7 @@
 # coding: utf-8
 
 from future import standard_library
+
 standard_library.install_aliases()
 from SPARQLWrapper import SPARQLWrapper, JSON
 import codecs
@@ -24,11 +25,12 @@ def getdbpediaimage(query, cache):
     if query in cache:
         return cache[query]
     else:
+        # return None
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
         sparql.setQuery("""
         SELECT DISTINCT ?e ?pic
         WHERE {
-            ?e rdfs:label "%s"@en .
+            ?e rdfs:label "%s"@ru .
             ?e <http://dbpedia.org/ontology/thumbnail> ?pic .
                 }
         """ % query)

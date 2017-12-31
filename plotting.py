@@ -9,12 +9,12 @@ from builtins import range
 import sys
 import matplotlib
 matplotlib.use('Agg')
-
 import pylab as plot
 import numpy as np
 from matplotlib import font_manager
 from sklearn.manifold import TSNE
 import configparser
+
 
 config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
@@ -39,7 +39,6 @@ def singularplot(word, modelname, vector, fname):
 
 def embed(words, matrix, classes, usermodel, fname):
     perplexity = 6.0  # Should be smaller than the number of points!
-
     embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500, init='pca')
     y = embedding.fit_transform(matrix)
 
@@ -61,8 +60,8 @@ def embed(words, matrix, classes, usermodel, fname):
         seen.add(class_label)
 
         lemma = word.split('_')[0].replace('::', ' ')
-        mid = len(lemma) / 2
-        mid *= 6  # TODO Should really think about how to adapt this variable to the real plot size
+        mid = len(lemma)/2
+        mid *= 6
         plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font, color=color)
 
     plot.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')

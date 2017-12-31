@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# coding: utf-8
+
 from werkzeug.routing import BaseConverter, ValidationError
 from strings_reader import language_dicts
 

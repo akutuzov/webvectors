@@ -53,16 +53,21 @@
       {% if visual %}
 	<h3>{{strings['visual3']}}<sup>*</sup></h3>
 	{% for word in qwords %}
-	<a href="{{ url }}{{lang}}/{{ visual.keys()[0] }}/{{word}}/">{{ word.split('_')[0].replace('::', ' ') }}</a>
+	<a href="{{ url }}{{lang}}/{{ visual.keys()[0] }}/{{word}}/" 
+		{% if word in frequencies[visual.keys()[0]] %}
+		title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[visual.keys()[0]][word][0]}}" {% if frequencies[visual.keys()[0]][word][1] == 'high'%} style="color: green;"  {% elif frequencies[visual.keys()[0]][word][1] == 'low' %} style="color: red;"  {% endif %}
+		{% endif %}
+		>
+	{{ word.split('_')[0].replace('::', ' ') }}</a>
 	{% endfor %}
         <div class="row">
         {% for model in visual %}
         <div class="col-md-5">
         <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
         {% if not 'Too few words' in visual[model] %}
-            {% if l2c[model] %}
-                <i><a target="_blank" title="{{strings['visual23']}}" href="http://projector.tensorflow.org/?config={{ l2c[model] }}">{{strings['visual22']}}</a></i>
-            {% endif %}
+	  {% if l2c[model] %}
+	  <i><a target="_blank" title="{{strings['visual23']}}" href="http://projector.tensorflow.org/?config={{ l2c[model] }}">{{strings['visual22']}}</a></i>
+	  {% endif %}
             <a href="{{ url }}data/images/tsneplots/{{ visual[model] }}" target="_blank">
                 <img class="img-responsive" src = "{{ url }}data/images/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}">
             </a>
@@ -97,18 +102,12 @@
           {% endif %}
 
           </strong></span><p>
-    
-    {% else %}
-        <div class="row">
-            <div class="col-md-6">
-            </div>
-            <div class="col-md-6">
-	</div>
-    </div>
     {% endif %}
 
 	<hr/>
 	<p><small><i>* <a href="https://lvdmaaten.github.io/tsne/"><b>t-SNE</b></a> {{strings['visual5']}}</i></small></p>
 	<p><small><i>L.J.P. van der Maaten and G.E. Hinton. <a href="https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf">Visualizing High-Dimensional Data Using t-SNE</a>.
         Journal of Machine Learning Research 9(Nov):2579-2605, 2008</i></small></p>
+
+	
 {% endblock %}

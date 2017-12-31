@@ -7,7 +7,7 @@
 
 {% block content %}
         <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-10">
         <h2>{{strings['similar1']}}</h2>
          <div id="queryform">
          <form id="inputform" action="#" method=post>
@@ -32,8 +32,7 @@
                 </small>
                 </fieldset>
               </div>
-               {% if tags %}
-
+              {% if tags %}
                 <p><small><em>{{strings['similar9']}}</em></small></p>
                 <div class="radio">
                 <small>
@@ -43,37 +42,43 @@
                      </label>
                 {% endfor %}
                  <label>
-                  <input type="radio" name="pos" {% if not userpos %} checked {% endif %} value="ALL"> {{strings['similar14']}}
-                </label>
+                    <input type="radio" name="pos" {% if not userpos %} checked {% endif %} value="ALL"> {{strings['similar14']}}
+                 </label>
                 <label>
-                   <input type="radio" name="pos" {% if 'Q' in userpos %} checked {% endif %} value="Q"> {{strings['similar19']}}
+                   <input type="radio" name="pos" {% if 'Q' in userpos %} checked {% endif %} value="Q"> {{strings['similar19']}} 
                 </label>
                 </small>
                 </div>
-                {% endif %}
-
+            {% endif %}
            <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['similar15']}}</button>
             </form>
             </div>
  {% if list_value %}
-      <h3><strong>{{strings['similar16']}} <a href="{{ url }}{{lang}}/{{ usermodels[0] }}/{{word}}"><i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></strong> ({{ pos }})</h3>
+ <h3><strong>{{strings['similar16']}} <a href="{{ url }}{{lang}}/{{ usermodels[0] }}/{{word}}" 
+ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}" {% if frequencies[usermodels[0]][word][1] == 'high'%} style="color: green;"
+ {% elif frequencies[usermodels[0]][word][1] == 'low' %} style="color: red;"{% endif %}>
+ <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></strong> ({{ pos }})</h3>
         <div class="row">
     {% for model in list_value%}
         <div class="col-md-5">
-        <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
-        <big>
-        {% if list_value[model] == "Unknown!" %}
-            {{ strings['similar18'] }} "{{ word.split('_')[0] }}"
-        {% elif list_value[model] == "No results!"  %}
-    	    {{strings['similar23']}}
-	{% else %}
+		<h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
+	{% if model in inferred %}
+	<i>{{strings['similar32']}}</i>
+	{% endif %}
+	<big>
+	{% if list_value[model] == "Unknown!" %}
+        {{ strings['similar18'] }} "{{ word }}"
+	{% elif list_value[model] == "No results!"  %}
+	 {{strings['similar23']}}
+	 {% else %}
         <ol>
         {% for res in list_value[model] if res != "Incorrect tag!" %}
         <li style='margin: 10px 0;'>
-        <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
+	<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}" {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+		    <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
                 <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
             </a>
 	        </div>
@@ -81,13 +86,12 @@
         </li>
         {% endfor %}
         </ol>
-       {% endif %}
+        {% endif %}
         </big>
         </div>
     {% endfor %}
         </div>
 {% endif %}
-        
          {% if error %}
         <p> <span style = "font-size:larger;"><strong>
           {% if 'Incorrect tag' in error %}
@@ -100,5 +104,5 @@
           </strong></span><p>
          {% endif %}
          </div>
-                </div>
+    </div>
 {% endblock %}

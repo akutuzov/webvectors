@@ -32,3 +32,84 @@ margin: 0;
 border-radius: 50%;
 overflow: hidden;
 }
+
+.avatarlarge{
+display: inline-block;
+margin: 0 auto;
+opacity: 0.8;
+filter: alpha(opacity=50); /* For IE8 and earlier */
+width: 100%;
+/*padding: 5px; */
+border: 0px solid blue;
+}
+
+.avatarlarge img{
+display: inline-block;
+margin: 0 auto;
+opacity: 0.5;
+-webkit-filter: blur(3px);
+filter: alpha(opacity=50); /* For IE8 and earlier */
+width: 100%;
+border: 0;
+/*margin: 1px;*/
+}
+
+.tint {
+  position: relative;
+  float: left;
+  cursor: pointer;
+}
+
+.tint:before {
+  content: "";
+  display: inline-block;
+  width: 100%;
+  float: right;
+  clear: both;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.3);
+  -moz-transition: background .3s linear;
+  -webkit-transition: background .3s linear;
+  -o-transition: background .3s linear;
+  transition: background .3s linear;
+}
+
+.tint:hover:before {
+  background: none;
+}
+
+
+/* Centered text */
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 5vw;
+    font-weight: 900;
+    color: black;
+    transform: translate(-50%, -50%);
+}
+
+/* Bottom left text */
+.left {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    font-size: 360%;
+    font-weight: bold;
+    color: black;
+    transform: translate(-50%, -50%);
+}
+
+/*.centered:hover {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 500%;
+    color: black;
+    transform: translate(-50%, -50%);
+}

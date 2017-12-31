@@ -16,8 +16,8 @@
                     <input type="text" class="form-control" name="query" value="{{','.join(query)}}" maxlength=300>
                 {% else %}
                 <input type="text" class="form-control" name="query" placeholder="{{strings['similar26']}}" maxlength=300>
-                {% endif %}
-                  <input id="sim_history" name="sim_history" type="hidden" value="{% if value %} {{ str_sim_history }} {% endif %}">
+		{% endif %}
+		<input id="sim_history" name="sim_history" type="hidden" value="{% if value %} {{ str_sim_history }} {% endif %}">
               </div>
               <div class="radio">
                   <p><small><em>{{strings['similar3']}}</em></small></p>
@@ -39,23 +39,30 @@
             <td><strong>{{strings['similar28']}}</strong></td><td><strong>{{strings['similar29']}}</strong><br/>
                 (<a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
             {% for res in value  %}
-            <tr><td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][0]}}/">{{res[0][0].split("_")[0].replace('::', ' ')}}</a></em>
-                <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][1]}}/">{{res[0][1].split("_")[0].replace('::', ' ')}}</a></em></td> <td>{{ "{:.3f} ".format(res[1]) }}</td></tr>
+	    <tr><td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][0]}}/"
+    title="{{strings['synraw15']}} {{ res[0][0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][0]][0]}}" {% if frequencies[res[0][0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][0]][1] == 'low' %} style="color: red;"  {% endif %}>
+	    {{res[0][0].split("_")[0].replace('::', ' ')}} 
+				    </a>
+	  </em>
+	  <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][1]}}/"
+  title="{{strings['synraw15']}} {{ res[0][1].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][1]][0]}}" {% if frequencies[res[0][1]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][1]][1] == 'low' %} style="color: red;"  {% endif %}>
+	  {{res[0][1].split("_")[0].replace('::', ' ')}}	  
+	  </a></em></td> <td>{{ "{:.3f} ".format(res[1]) }}</td></tr>
             {% endfor %}
-
             </table>
-            </span>
-      {% if sim_hist|length > 1 %}
-          <hr/>
-          <h3>{{strings['similar31']}}</h3>
-          <table class="table">
-          {% for el in sim_hist[:-1] %}
-                <tr><td style="vertical-align:top"> <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][0]}}/">{{el[0][0][0].split("_")[0].replace('::', ' ')}}</a></em>
-                <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][1]}}/">{{el[0][0][1].split("_")[0]}}</a></em></td> <td>{{ "{:.3f} ".format(el[0][1]) }} </td></tr>
-          {% endfor %}
-          </table>
-            {% endif %}
-           {% endif %}
+    </span>
+          {% if sim_hist|length > 1 %}
+              <hr/>
+	      <h3>{{strings['similar31']}}</h3>
+              <table class="table">
+	          {% for el in sim_hist[:-1] %}
+	              <tr><td style="vertical-align:top"> <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][0]}}/">{{el[0][0][0].split("_")[0].replace('::', ' ')}}</a></em>
+	              <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][1]}}/">{{el[0][0][1].split("_")[0]}}</a></em></td> <td>{{ "{:.3f} ".format(el[0][1]) }} </td></tr>
+	           {% endfor %}
+	      </table>
+	      {% endif %}
+	      {% endif %}
+
 
 
           {% if error_sim %}

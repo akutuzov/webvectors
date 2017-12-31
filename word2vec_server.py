@@ -2,7 +2,9 @@
 # coding: utf-8
 
 from __future__ import print_function
+from __future__ import division
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import str
 import socket
@@ -13,6 +15,7 @@ import gensim
 import logging
 import json
 import configparser
+import csv
 
 config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
@@ -27,37 +30,60 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 # Loading models
 
 our_models = {}
-for line in open(root + config.get('Files and directories', 'models'), 'r').readlines():
-    if line.startswith("#"):
-        continue
-    res = line.strip().split('\t')
-    (identifier, description, path, string, default) = res
-    our_models[identifier] = path
+with open(root + config.get('Files and directories', 'models'), 'r') as csvfile:
+    reader = csv.DictReader(csvfile, delimiter='\t')
+    for row in reader:
+        our_models[row['identifier']] = {}
+        our_models[row['identifier']]['path'] = row['path']
+        our_models[row['identifier']]['default'] = row['default']
+        our_models[row['identifier']]['tags'] = row['tags']
+        our_models[row['identifier']]['algo'] = row['algo']
+        our_models[row['identifier']]['corpus_size'] = int(row['size'])
 
 models_dic = {}
 
 for m in our_models:
-    if our_models[m].endswith('.bin.gz'):
-        models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(our_models[m], binary=True)
+    modelfile = our_models[m]['path']
+    if our_models[m]['algo'] == 'fasttext':
+        models_dic[m] = gensim.models.fasttext.FastText.load(modelfile)
     else:
-        models_dic[m] = gensim.models.Word2Vec.load(our_models[m])
+        if modelfile.endswith('.bin.gz'):
+            models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(modelfile, binary=True)
+        else:
+            models_dic[m] = gensim.models.Word2Vec.load(modelfile)
     models_dic[m].init_sims(replace=True)
-    print("Model", m, "from file", our_models[m], "loaded successfully.", file=sys.stderr)
+    # models_dic[m].wv.syn0.dtype = np.float16
+    print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
 
 
 # Vector functions
+
+def frequency(word, model):
+    corpus_size = our_models[model]['corpus_size']
+    if word not in models_dic[model].wv.vocab:
+        return 0, 'low'
+    wordfreq = models_dic[model].wv.vocab[word].count
+    relative = wordfreq / corpus_size
+    tier = 'mid'
+    if relative > 0.00001:
+        tier = 'high'
+    elif relative < 0.0000005:
+        tier = 'low'
+    return wordfreq, tier
+
 
 def find_synonyms(query):
     q = query['query']
     pos = query['pos']
     usermodel = query['model']
-    results = []
+    results = {'frequencies': {}}
     qf = q
+    results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
-    if qf not in model:
+    if qf not in model.wv.vocab:
         candidates_set = set()
         candidates_set.add(q.upper())
-        if tags:
+        if tags and our_models[usermodel]['tags'] == 'True':
             candidates_set.add(q.split('_')[0] + '_X')
             candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
             candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
@@ -66,29 +92,36 @@ def find_synonyms(query):
             candidates_set.add(q.capitalize())
         noresults = True
         for candidate in candidates_set:
-            if candidate in model:
+            if candidate in model.wv.vocab:
                 qf = candidate
                 noresults = False
                 break
         if noresults:
-            results.append(q + " is unknown to the model")
-            return results
+            if our_models[usermodel]['algo'] == 'fasttext':
+                results['inferred'] = True
+            else:
+                results[q + " is unknown to the model"] = True
+                return results
+    results['neighbors'] = []
     if pos == 'ALL':
         for i in model.most_similar(positive=qf, topn=10):
-            results.append(i)
+            results['neighbors'].append(i)
     else:
         counter = 0
-        for i in model.most_similar(positive=qf, topn=20):
+        for i in model.most_similar(positive=qf, topn=30):
             if counter == 10:
                 break
             if i[0].split('_')[-1] == pos:
-                results.append(i)
+                results['neighbors'].append(i)
                 counter += 1
     if len(results) == 0:
-        results.append('No results')
+        results['No results'] = True
         return results
+    for res in results['neighbors']:
+        freq, tier = frequency(res[0], usermodel)
+        results['frequencies'][res[0]] = (freq, tier)
     raw_vector = model[qf]
-    results.append(raw_vector.tolist())
+    results['vector'] = raw_vector.tolist()
     return results
 
 
@@ -96,15 +129,17 @@ def find_similarity(query):
     q = query['query']
     usermodel = query['model']
     model = models_dic[usermodel]
-    results = []
+    results = {'similarities': [], 'frequencies': {}}
     for pair in q:
         (q1, q2) = pair
         qf1 = q1
         qf2 = q2
-        if q1 not in model:
+        results['frequencies'][q1] = frequency(q1, usermodel)
+        results['frequencies'][q2] = frequency(q2, usermodel)
+        if q1 not in model.wv.vocab:
             candidates_set = set()
             candidates_set.add(q1.upper())
-            if tags:
+            if tags and our_models[usermodel]['tags'] == 'True':
                 candidates_set.add(q1.split('_')[0] + '_X')
                 candidates_set.add(q1.split('_')[0].lower() + '_' + q1.split('_')[1])
                 candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
@@ -113,17 +148,20 @@ def find_similarity(query):
                 candidates_set.add(q1.capitalize())
             noresults = True
             for candidate in candidates_set:
-                if candidate in model:
+                if candidate in model.wv.vocab:
                     qf1 = candidate
                     noresults = False
                     break
             if noresults:
-                results.append(q1 + " is unknown to the model")
-                return results
-        if q2 not in model:
+                if our_models[usermodel]['algo'] == 'fasttext':
+                    results['inferred'] = True
+                else:
+                    results["Unknown to the model"] = q1
+                    return results
+        if q2 not in model.wv.vocab:
             candidates_set = set()
             candidates_set.add(q2.upper())
-            if tags:
+            if tags and our_models[usermodel]['tags'] == 'True':
                 candidates_set.add(q2.split('_')[0] + '_X')
                 candidates_set.add(q2.split('_')[0].lower() + '_' + q2.split('_')[1])
                 candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
@@ -132,16 +170,19 @@ def find_similarity(query):
                 candidates_set.add(q2.capitalize())
             noresults = True
             for candidate in candidates_set:
-                if candidate in model:
+                if candidate in model.wv.vocab:
                     qf2 = candidate
                     noresults = False
                     break
             if noresults:
-                results.append(q2 + " is unknown to the model")
-                return results
+                if our_models[usermodel]['algo'] == 'fasttext':
+                    results['inferred'] = True
+                else:
+                    results["Unknown to the model"] = q2
+                    return results
         pair2 = (qf1, qf2)
         result = model.similarity(qf1, qf2)
-        results.append((pair2, result))
+        results['similarities'].append((pair2, result))
     return results
 
 
@@ -150,19 +191,21 @@ def scalculator(query):
     pos = query['pos']
     usermodel = query['model']
     model = models_dic[usermodel]
-    results = []
+    results = {'neighbors': [], 'frequencies': {}}
     positive_list = q[0]
     negative_list = q[1]
     plist = []
     nlist = []
     for word in positive_list:
-        if word in model:
+        if len(word) < 2:
+            continue
+        if word in model.wv.vocab:
             plist.append(word)
             continue
-        elif word not in model:
+        else:
             candidates_set = set()
             candidates_set.add(word.upper())
-            if tags:
+            if tags and our_models[usermodel]['tags'] == 'True':
                 candidates_set.add(word.split('_')[0] + '_X')
                 candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
                 candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
@@ -171,25 +214,28 @@ def scalculator(query):
                 candidates_set.add(word.capitalize())
             noresults = True
             for candidate in candidates_set:
-                if candidate in model:
+                if candidate in model.wv.vocab:
                     q = candidate
                     noresults = False
                     break
             if noresults:
-                results.append(word + " is unknown to the model")
-                return results
+                if our_models[usermodel]['algo'] == 'fasttext':
+                    results['inferred'] = True
+                else:
+                    results["Unknown to the model"] = word
+                    return results
             else:
                 plist.append(q)
     for word in negative_list:
         if len(word) < 2:
             continue
-        if word in model:
+        if word in model.wv.vocab:
             nlist.append(word)
             continue
-        elif word not in model:
+        else:
             candidates_set = set()
             candidates_set.add(word.upper())
-            if tags:
+            if tags and our_models[usermodel]['tags'] == 'True':
                 candidates_set.add(word.split('_')[0] + '_X')
                 candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
                 candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
@@ -198,38 +244,48 @@ def scalculator(query):
                 candidates_set.add(word.capitalize())
             noresults = True
             for candidate in candidates_set:
-                if candidate in model:
+                if candidate in model.wv.vocab:
                     q = candidate
                     noresults = False
                     break
             if noresults:
-                results.append(word + " is unknown to the model")
-                return results
+                if our_models[usermodel]['algo'] == 'fasttext':
+                    results['inferred'] = True
+                else:
+                    results["Unknown to the model"] = word
+                    return results
             else:
                 nlist.append(q)
     if pos == "ALL":
         for w in model.most_similar(positive=plist, negative=nlist, topn=5):
-            results.append(w)
+            results['neighbors'].append(w)
     else:
         for w in model.most_similar(positive=plist, negative=nlist, topn=30):
             if w[0].split('_')[-1] == pos:
-                results.append(w)
-            if len(results) == 5:
+                results['neighbors'].append(w)
+            if len(results['neighbors']) == 5:
                 break
-    if len(results) == 0:
-        results.append("No results")
+    if len(results['neighbors']) == 0:
+        results['No results'] = True
+        return results
+    for res in results['neighbors']:
+        freq, tier = frequency(res[0], usermodel)
+        results['frequencies'][res[0]] = (freq, tier)
     return results
 
 
 def vector(query):
     q = query['query']
     usermodel = query['model']
+    results = {}
     qf = q
+    results['frequencies'] = {}
+    results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
-    if q not in model:
+    if q not in model.wv.vocab:
         candidates_set = set()
         candidates_set.add(q.upper())
-        if tags:
+        if tags and our_models[usermodel]['tags'] == 'True':
             candidates_set.add(q.split('_')[0] + '_X')
             candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
             candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
@@ -238,15 +294,20 @@ def vector(query):
             candidates_set.add(q.capitalize())
         noresults = True
         for candidate in candidates_set:
-            if candidate in model:
+            if candidate in model.wv.vocab:
                 qf = candidate
                 noresults = False
                 break
         if noresults:
-            return [q + " is unknown to the model"]
+            if our_models[usermodel]['algo'] == 'fasttext':
+                results['inferred'] = True
+            else:
+                results[q + " is unknown to the model"] = True
+                return results
     raw_vector = model[qf]
     raw_vector = raw_vector.tolist()
-    return raw_vector
+    results['vector'] = raw_vector
+    return results
 
 
 operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': vector}
@@ -259,7 +320,7 @@ print('Socket created', file=sys.stderr)
 try:
     s.bind((HOST, PORT))
 except socket.error as msg:
-    print('Bind failed. Message ' + str(msg), file=sys.stderr)
+    print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1], file=sys.stderr)
     sys.exit()
 
 print('Socket bind complete', file=sys.stderr)

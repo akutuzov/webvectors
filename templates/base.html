@@ -12,6 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <meta name="description" content="{{strings['description1']}}">
+    <meta name='wmail-verification' content='070c0f36f9e585407648627b86eb5861' />
+    <meta name="google-site-verification" content="4GNnqehZ8sQRJ2VCkAhJsFGB7fJJzc5DwiD9rkIQ0P4" />
     {%- endblock metas %}
 
     {%- block styles %}
@@ -43,8 +45,8 @@
             <li><a href="{{ url }}{{lang}}/similar/">{{strings['base6']}}</a></li>
             <li><a href="{{ url }}{{lang}}/visual/">{{strings['base13']}}</a></li>
             <li><a href="{{ url }}{{lang}}/calculator/">{{strings['base5']}}</a></li>
-            <li><a href="{{ url }}{{lang}}/misc/">{{strings['base17']}}</a></li>
-            <li><a href="{{ url }}{{lang}}/about/">{{strings['base4']}}</a></li>
+             <li><a href="{{ url }}{{lang}}/misc/">{{strings['base17']}}</a></li>
+             <li><a href="{{ url }}{{lang}}/about/">{{strings['base4']}}</a></li>
             {% if lang=="en" %}
             <li><a title="{{strings['base16']}}" href="{{request.script_root}}/{{ other_lang }}{{request.path[3:]}}">{{ languages }}</a></li>
             {% else %}
@@ -61,9 +63,9 @@
     {% block content -%}
     {%- endblock content %}
         <div class="text-nowrap"><hr>
-            <p style="text-align:right;"><small><a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+        <p style="text-align:right;"><small><a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
                 <img alt="{{strings['base12']}}" title="{{strings['base12']}}" style="border-width:0" src="{{ url }}data/images/88x31.png/" />
-            </a></small></p>
+        </a></small></p>
         </div>
     </div>
 </div>
@@ -76,6 +78,7 @@
     <script type="text/javascript" src="{{ url }}data/js/typeahead/typeahead.bundle.min.js/"></script>
     <script type="text/javascript" src="{{ url }}data/js/hint.js/"></script>
     <script type="text/javascript" src="{{ url }}data/js/addfield.js/"></script>
+    <script type="text/javascript" src="{{ url }}data/js/sorttable.js/"></script>
     {%- endblock scripts %}
     {%- endblock body %}
   </body>
