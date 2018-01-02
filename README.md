@@ -1,7 +1,5 @@
-# NB: this README is to a large extent deprecated. It will be updated soon.
-
 # webvectors
-_Webvectors_ is a toolkit to serve distributional semantic models (particularly, continuous word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python 2, and uses _Flask_ and _Gensim_ under the hood.
+_Webvectors_ is a toolkit to serve distributional semantic models (particularly, continuous word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python, and uses _Flask_ and _Gensim_ under the hood.
 
 Working demos:
 <ul>
@@ -9,15 +7,15 @@ Working demos:
 <li>http://vectors.nlpl.eu/explore/embeddings/ (for English and Norwegian)</li>
 </ul>
 
-The service can be either integrated into Apache web server as a WSGI application or run as a standalone server using Gunicorn.
+The service can be either integrated into _Apache_ web server as a WSGI application or run as a standalone server using _Gunicorn_.
 
 ## Brief installation instructions
 
+0. Clone WebVectors git repository (_git clone https://github.com/akutuzov/webvectors.git_) into a directory acessible by your web server.
 1. Install _Apache_ for Apache integration or _Gunicorn_ for standalone server.
-2. Install _Flask_ and _Gensim_.
-3. If you want to use lemmatization, install [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/), [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
-4. Clone [WebVectors code](https://github.com/akutuzov/webvectors) into a directory accessible by your web server.
-5. Configure the files:
+2. Install all the Python requirements (_pip install -r requirements.txt_)
+3. If you want to use PoS tagging for user queries, install [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/), [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
+4. Configure the files:
 
 ### For Apache installation variant
 
@@ -30,7 +28,7 @@ where **WEBNAME** is the alias for your service relative to the server root (web
 
 In all `*.wsgi` and `*.py` files in your _WebVectors_ directory, replace `webvectors.cfg` in the string
 `config.read('webvectors.cfg')`
-with the absolute path to the `webvectors.cfg` file
+with the absolute path to the `webvectors.cfg` file.
 
 Set up your service using the configuration file `webvectors.cfg`.
 Most important settings are:
@@ -38,34 +36,39 @@ Most important settings are:
 <li> `root` - absolute path to your _WebVectors_ directory (**NB: end it with a slash!**)</li>
 <li> `temp` - absolute path to your temporary files directory </li>
 <li> `font` - absolute path to a TTF font you want to use for plots (otherwise default system font will be used) </li>
-<li> `lemmatize` - whether to use automatic PoS-tagging and lemmatization </li>
+<li> `lemmatize` - whether to use automatic lemmatization </li>
 <li> `default_search` - URL of search engine to use on individual word pages (for example, https://duckduckgo.com/?q=) </li></ul>
 
 **Tags**
 
-Models can use arbitrary tags assigned to words (for example, part-of-speech tags, as in _boot_N_). If your models are trained on words with tags, you should switch this on in `webvectors.cfg` (`use_tags` variable).
-Then, _WebVectors_ will allow users to limit their queries by tags. You also should specify the list of allowed tags (`tags_list` variable in `webvectors.cfg`) and the default tag (`default_tag`).
+Models can use arbitrary tags assigned to words (for example, part-of-speech tags, as in _boot_NOUN_). If your models are trained on words with tags, you should switch this on in `webvectors.cfg` (`use_tags` variable).
+Then, _WebVectors_ will allow users to limit their queries by tags. You also should specify the list of allowed tags (`tags_list` variable in `webvectors.cfg`) and the list of tags which will be shown to the user (`tags.tsv` file).
 
 **Models daemon**
 
-_WebVectors_ uses a daemon, which runs in the background and actually processes all vector tasks. It can also run on a different machine.
-Thus, in `webvectors.cfg` you should specify host and port that this daemon will listen at.
+_WebVectors_ uses a daemon, which runs in the background and actually processes all embedding tasks. It can also run on a different machine, if you want. Thus, in `webvectors.cfg` you should specify `host` and `port` that this daemon will listen at.
 After that, start `word2vec_server.py`. It will load the models and open a listening socket. This script must run permanently, so you may want to launch it using _screen_ or something like this.
 
 **Models**
 
-The list of models you want to use is defined in the file `models.csv`. It consists of tab-separated fields:
+The list of models you want to use is defined in the file `models.tsv`. It consists of tab-separated fields:
 <ul>
 <li> model identifier </li>
 <li> model description </li>
 <li> path to model </li>
 <li> identifier of localized model name </li>
-<li> is the model default or not </li></ul>
+<li> is the model default or not </li>
+<li> does the model contain PoS tags</li>
+<li> training algorithm of the model (word2vec/fastText/etc)</li>
+<li> size of the training corpus in words</li>
+</ul>
 Model identifier will be used as the name for checkboxes, and it is also important that in `strings.csv` the same identifier is used when denoting model names.
 
-Models can be of two formats:
-<ul><li> binary _word2vec_ models compressed with gzip (ends with `.bin.gz`) </li>
-<li> _Gensim_ format models (ends with `.model`) </li></ul>
+Models can currently be of 3 formats:
+<ul><li> binary _word2vec_ models compressed with gzip (ends with `.bin.gz`); </li>
+<li> _Gensim_ format _word2vec_ models (ends with `.model`); </li>
+<li>_Gensim_ format _fastText_ models (ends with `.model`).</li>
+</ul>
 
 _Webvectors_ will automatically detect models format and load all of them into memory. The users will be able to choose among loaded models.
 
