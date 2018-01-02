@@ -62,15 +62,17 @@ The list of models you want to use is defined in the file `models.tsv`. It consi
 <li> training algorithm of the model (word2vec/fastText/etc)</li>
 <li> size of the training corpus in words</li>
 </ul>
+
 Model identifier will be used as the name for checkboxes, and it is also important that in `strings.csv` the same identifier is used when denoting model names.
 
 Models can currently be of 3 formats:
-<ul><li> binary _word2vec_ models compressed with gzip (ends with `.bin.gz`); </li>
-<li> _Gensim_ format _word2vec_ models (ends with `.model`); </li>
-<li>_Gensim_ format _fastText_ models (ends with `.model`).</li>
+<ul>
+ <li> binary _word2vec_ models compressed with gzip (ends with `.bin.gz`); </li>
+<li> Gensim format _word2vec_ models (ends with `.model`); </li>
+<li> Gensim format _fastText_ models (ends with `.model`).</li>
 </ul>
 
-_Webvectors_ will automatically detect models format and load all of them into memory. The users will be able to choose among loaded models.
+_WebVectors_ will automatically detect models format and load all of them into memory. The users will be able to choose among loaded models.
 
 **Localization**
 
