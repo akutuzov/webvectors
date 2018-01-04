@@ -15,7 +15,7 @@ base13,Визуализации,Visualizations
 base14,Университет Осло, University of Oslo
 base15,Национальный Исследовательский Университет Высшая Школа Экономики,National Research University Higher School of Economics
 base16,Switch language,Сменить язык
-base17,Различные операции,Miscelaneous
+base17,Различные операции,Miscellaneous
 base18,"Слова, выделенные <span style='color: green;'>зеленым</span>, являются высокочастотными (доля слова в корпусе выше  0.00001); слова, выделенные <span style='color: red;'>красным</span>, являются низкочастотными (доля слова в корпусе ниже 0.0000005).","Words in <span style='color: green;'>green</span> are top frequent (corpus ratio higher than 0.00001); words in <span style='color: red;'>red</span>, are low frequent (corpus ratio less than 0.0000005)."
 calc1,Семантический калькулятор,Semantic Calculator
 calc2,Алгебраические операции,Algebraic operations

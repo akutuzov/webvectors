@@ -897,9 +897,9 @@ def similarity_api(model, wordpair):
         cleanword1 = cleanword1.split('_')[0]
     message = {'operation': '2', 'query': [[cleanword0, cleanword1]], 'model': model}
     result = json.loads(serverquery(message).decode('utf-8'))
-    if 'is unknown' in result[0]:
+    if "Unknown to the model" in result:
         return 'Unknown'
-    sim = result[0][-1]
+    sim = result['similarities'][-1][-1]
     return str(sim) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
 
 
