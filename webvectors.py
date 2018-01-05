@@ -739,7 +739,7 @@ def raw_finder(lang, model, userquery):
 
     model = model.strip()
     if not model.strip() in our_models:
-        return render_template('home.html', other_lang=other_lang, languages=languages, url=url)
+        return redirect(url + lang + '/', code=303)
     if userquery.strip().replace('_', '').replace('-', '').replace('::', '').isalnum():
         query = process_query(userquery.strip())
         if tags:
@@ -929,6 +929,7 @@ def about_page(lang):
 @wvectors.route(url + 'calculator/', methods=['GET', 'POST'])
 @wvectors.route(url + 'similar/', methods=['GET', 'POST'])
 @wvectors.route(url + 'visual/', methods=['GET', 'POST'])
+@wvectors.route(url + 'models/', methods=['GET', 'POST'])
 @wvectors.route(url, methods=['GET', 'POST'])
 def redirect_main():
     req = request.path.split('/')[-1]
