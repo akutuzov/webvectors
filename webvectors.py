@@ -65,7 +65,7 @@ except socket.gaierror:
     sys.exit()
 
 
-def serverquery(message):
+def serverquery(d_message):
     # create an INET, STREAMing socket
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -79,9 +79,9 @@ def serverquery(message):
     initial_reply = s.recv(1024)
 
     # Send some data to remote server
-    message = json.dumps(message, ensure_ascii=False)
+    d_message = json.dumps(d_message, ensure_ascii=False)
     try:
-        s.sendall(message.encode('utf-8'))
+        s.sendall(d_message.encode('utf-8'))
     except socket.error:
         # Send failed
         print('Send failed', file=sys.stderr)
@@ -158,7 +158,7 @@ def process_query(userquery):
                     pos_tag = poses[0]
                 else:
                     pos_tag = poses[-1]
-                query = userquery.  replace(' ', '::') + '_' + pos_tag
+                query = userquery.replace(' ', '::') + '_' + pos_tag
             else:
                 return 'Incorrect tag!'
     return query
@@ -938,5 +938,5 @@ def redirect_main():
     else:
         if req[-1] != '/':
             req += '/'
-        return redirect(url + 'en' + req)
+    return redirect(url + 'en' + req)
 

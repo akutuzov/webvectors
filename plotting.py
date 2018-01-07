@@ -60,7 +60,7 @@ def embed(words, matrix, classes, usermodel, fname):
         seen.add(class_label)
 
         lemma = word.split('_')[0].replace('::', ' ')
-        mid = len(lemma)/2
+        mid = len(lemma) / 2
         mid *= 6  # TODO Should really think about how to adapt this variable to the real plot size
         plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font, color=color)
 

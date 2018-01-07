@@ -44,11 +44,16 @@ models_dic = {}
 
 for m in our_models:
     modelfile = our_models[m]['path']
+    our_models[m]['vocabulary'] = True
     if our_models[m]['algo'] == 'fasttext':
         models_dic[m] = gensim.models.fasttext.FastText.load(modelfile)
     else:
         if modelfile.endswith('.bin.gz'):
             models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(modelfile, binary=True)
+            our_models[m]['vocabulary'] = False
+        elif modelfile.endswith('.vec.gz'):
+            models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(modelfile, binary=False)
+            our_models[m]['vocabulary'] = False
         else:
             models_dic[m] = gensim.models.Word2Vec.load(modelfile)
     models_dic[m].init_sims(replace=True)
@@ -62,6 +67,8 @@ def frequency(word, model):
     corpus_size = our_models[model]['corpus_size']
     if word not in models_dic[model].wv.vocab:
         return 0, 'low'
+    if not our_models[model]['vocabulary']:
+        return 0, 'mid'
     wordfreq = models_dic[model].wv.vocab[word].count
     relative = wordfreq / corpus_size
     tier = 'mid'

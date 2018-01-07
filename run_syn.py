@@ -4,7 +4,7 @@
 from future import standard_library
 
 standard_library.install_aliases()
-from flask import Flask, url_for, send_from_directory, request
+from flask import Flask, url_for, send_from_directory
 from lang_converter import LangConverter
 from webvectors import *
 import configparser
