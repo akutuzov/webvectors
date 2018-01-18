@@ -351,7 +351,7 @@ def clientthread(connect, addres):
         query = json.loads(data.decode('utf-8'))
         output = operations[query['operation']](query)
         now = datetime.datetime.now()
-        print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data, file=sys.stderr)
+        print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data.decode('utf-8'), file=sys.stderr)
         reply = json.dumps(output, ensure_ascii=False)
         connect.sendall(reply.encode('utf-8'))
         break
