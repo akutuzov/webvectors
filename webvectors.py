@@ -758,7 +758,7 @@ def raw_finder(lang, model, userquery):
         message = {'operation': '1', 'query': query, 'pos': pos_tag, 'model': model}
         result = json.loads(serverquery(message).decode('utf-8'))
         if query + " is unknown to the model" in result or "No results" in result:
-            return render_template('wordpage.html', error=result.keys()[0], other_lang=other_lang,
+            return render_template('wordpage.html', error=list(result)[0], other_lang=other_lang,
                                    languages=languages, url=url, word=query, models=our_models, model=model)
         else:
             inferred = set()
@@ -832,7 +832,7 @@ def generate(word, model, api_format):
             # handle cases when the server returned that the word is unknown to the model,
             # or for some other reason the associates list is empty
             if query + " is unknown to the model" in result or "No results" in result:
-                yield query + '\t' + result.keys()[0]
+                yield query + '\t' + list(result)[0]
             else:
 
                 # return result in csv
