@@ -34,7 +34,7 @@ def freeling_lemmatizer(word):
     freeling = subprocess.Popen([u'/usr/local/bin/analyzer_client', u'50006'], stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE)
     tagged = freeling.communicate(word.encode('utf-8').strip())
-    tagged = tagged[0].split('\n')
+    tagged = tagged[0].decode('utf-8').split('\n')
     tagged = [l for l in tagged if len(l) > 0]
     if len(tagged) < 1:
         return 'Error!'
