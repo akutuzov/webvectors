@@ -20,8 +20,8 @@ zcat large_corpus.txt.gz | python3 rus_preprocessing_mystem.py | gzip > processe
 '''
 
 
-def tag_mystem(text='Текст нужно передать функции в виде строки!', mapping=None, pos=True):
-    # если частеречные тэги не нужны (например, их нет в модели), выставьте pos=False
+def tag_mystem(text='Текст нужно передать функции в виде строки!', mapping=None, postags=True):
+    # если частеречные тэги не нужны (например, их нет в модели), выставьте postags=False
     # в этом случае на выход будут поданы только леммы
 
     processed = m.analyze(text)
@@ -39,7 +39,7 @@ def tag_mystem(text='Текст нужно передать функции в в
             tagged.append(lemma.lower() + '_' + pos)
         except KeyError:
             continue  # я здесь пропускаю знаки препинания, но вы можете поступить по-другому
-    if not pos:
+    if not postags:
         tagged = [t.split('_')[0] for t in tagged]
     return tagged
 
