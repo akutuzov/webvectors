@@ -57,7 +57,6 @@ for m in our_models:
         else:
             models_dic[m] = gensim.models.Word2Vec.load(modelfile)
     models_dic[m].init_sims(replace=True)
-    # models_dic[m].wv.syn0.dtype = np.float16
     print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
 
 
