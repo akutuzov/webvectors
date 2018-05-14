@@ -64,7 +64,7 @@ udpipe_model_url = 'http://rusvectores.org/static/models/udpipe_syntagrus.model'
 udpipe_filename = udpipe_model_url.split('/')[-1]
 
 if not os.path.isfile(udpipe_filename):
-    print('UDPipe model not found. Dowloading...', file=sys.stderr)
+    print('UDPipe model not found. Downloading...', file=sys.stderr)
     wget.download(udpipe_model_url)
 
 print('Loading the model...', file=sys.stderr)
