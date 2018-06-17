@@ -64,8 +64,8 @@ def embed(words, matrix, classes, usermodel, fname):
         mid *= 6  # TODO Should really think about how to adapt this variable to the real plot size
         plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font, color=color)
 
-    plot.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-    plot.tick_params(axis='y', which='both', left='off', right='off', labelleft='off')
+    plot.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+    plot.tick_params(axis='y', which='both', left=False, right=False, labelleft=False)
     plot.legend(loc='best')
 
     plot.savefig(root + 'data/images/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
