@@ -64,11 +64,11 @@ for m in our_models:
 
 def frequency(word, model):
     corpus_size = our_models[model]['corpus_size']
-    if word not in models_dic[model].vocab:
+    if word not in models_dic[model].wv.vocab:
         return 0, 'low'
     if not our_models[model]['vocabulary']:
         return 0, 'mid'
-    wordfreq = models_dic[model].vocab[word].count
+    wordfreq = models_dic[model].wv.vocab[word].count
     relative = wordfreq / corpus_size
     tier = 'mid'
     if relative > 0.00001:
@@ -86,7 +86,7 @@ def find_synonyms(query):
     qf = q
     results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
-    if qf not in model.vocab:
+    if qf not in model.wv.vocab:
         candidates_set = set()
         candidates_set.add(q.upper())
         if tags and our_models[usermodel]['tags'] == 'True':
@@ -98,7 +98,7 @@ def find_synonyms(query):
             candidates_set.add(q.capitalize())
         noresults = True
         for candidate in candidates_set:
-            if candidate in model.vocab:
+            if candidate in model.wv.vocab:
                 qf = candidate
                 noresults = False
                 break
@@ -142,7 +142,7 @@ def find_similarity(query):
         qf2 = q2
         results['frequencies'][q1] = frequency(q1, usermodel)
         results['frequencies'][q2] = frequency(q2, usermodel)
-        if q1 not in model.vocab:
+        if q1 not in model.wv.vocab:
             candidates_set = set()
             candidates_set.add(q1.upper())
             if tags and our_models[usermodel]['tags'] == 'True':
@@ -154,7 +154,7 @@ def find_similarity(query):
                 candidates_set.add(q1.capitalize())
             noresults = True
             for candidate in candidates_set:
-                if candidate in model.vocab:
+                if candidate in model.wv.vocab:
                     qf1 = candidate
                     noresults = False
                     break
@@ -164,7 +164,7 @@ def find_similarity(query):
                 else:
                     results["Unknown to the model"] = q1
                     return results
-        if q2 not in model.vocab:
+        if q2 not in model.wv.vocab:
             candidates_set = set()
             candidates_set.add(q2.upper())
             if tags and our_models[usermodel]['tags'] == 'True':
@@ -176,7 +176,7 @@ def find_similarity(query):
                 candidates_set.add(q2.capitalize())
             noresults = True
             for candidate in candidates_set:
-                if candidate in model.vocab:
+                if candidate in model.wv.vocab:
                     qf2 = candidate
                     noresults = False
                     break
@@ -205,7 +205,7 @@ def scalculator(query):
     for word in positive_list:
         if len(word) < 2:
             continue
-        if word in model.vocab:
+        if word in model.wv.vocab:
             plist.append(word)
             continue
         else:
@@ -220,7 +220,7 @@ def scalculator(query):
                 candidates_set.add(word.capitalize())
             noresults = True
             for candidate in candidates_set:
-                if candidate in model.vocab:
+                if candidate in model.wv.vocab:
                     q = candidate
                     noresults = False
                     break
@@ -235,7 +235,7 @@ def scalculator(query):
     for word in negative_list:
         if len(word) < 2:
             continue
-        if word in model.vocab:
+        if word in model.wv.vocab:
             nlist.append(word)
             continue
         else:
@@ -250,7 +250,7 @@ def scalculator(query):
                 candidates_set.add(word.capitalize())
             noresults = True
             for candidate in candidates_set:
-                if candidate in model.vocab:
+                if candidate in model.wv.vocab:
                     q = candidate
                     noresults = False
                     break
@@ -288,7 +288,7 @@ def vector(query):
     results['frequencies'] = {}
     results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
-    if q not in model.vocab:
+    if q not in model.wv.vocab:
         candidates_set = set()
         candidates_set.add(q.upper())
         if tags and our_models[usermodel]['tags'] == 'True':
@@ -300,7 +300,7 @@ def vector(query):
             candidates_set.add(q.capitalize())
         noresults = True
         for candidate in candidates_set:
-            if candidate in model.vocab:
+            if candidate in model.wv.vocab:
                 qf = candidate
                 noresults = False
                 break
