@@ -18,7 +18,7 @@ import configparser
 import csv
 
 
-class TokThread(threading.Thread):
+class WebVectorsThread(threading.Thread):
     def __init__(self, connect, address):
         threading.Thread.__init__(self)
         self.connect = connect
@@ -375,5 +375,5 @@ while 1:
     conn, addr = s.accept()
 
     # start new thread takes 1st argument as a function name to be run, 2nd is the tuple of arguments to the function.
-    thread = TokThread(conn, addr)
+    thread = WebVectorsThread(conn, addr)
     thread.start()
