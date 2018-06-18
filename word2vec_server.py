@@ -9,13 +9,47 @@ standard_library.install_aliases()
 from builtins import str
 import socket
 import datetime
-from _thread import *
+import threading
 import sys
 import gensim
 import logging
 import json
 import configparser
 import csv
+
+
+class TokThread(threading.Thread):
+    def __init__(self, connect, address):
+        threading.Thread.__init__(self)
+        self.connect = connect
+        self.address = address
+
+    def run(self):
+        clientthread(self.connect, self.address)
+
+
+def clientthread(connect, addres):
+    # Sending message to connected client
+    connect.send(bytes(b'word2vec model server'))
+
+    # infinite loop so that function do not terminate and thread do not end.
+    while True:
+        # Receiving from client
+        data = connect.recv(1024)
+        if not data:
+            break
+        query = json.loads(data.decode('utf-8'))
+        output = operations[query['operation']](query)
+        now = datetime.datetime.now()
+        print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t',
+              data.decode('utf-8'), file=sys.stderr)
+        reply = json.dumps(output, ensure_ascii=False)
+        connect.sendall(reply.encode('utf-8'))
+        break
+
+    # came out of loop
+    connect.close()
+
 
 config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
@@ -326,7 +360,7 @@ print('Socket created', file=sys.stderr)
 try:
     s.bind((HOST, PORT))
 except socket.error as msg:
-    print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1], file=sys.stderr)
+    print('Bind failed. Error Code and message: ' + str(msg), file=sys.stderr)
     sys.exit()
 
 print('Socket bind complete', file=sys.stderr)
@@ -335,34 +369,11 @@ print('Socket bind complete', file=sys.stderr)
 s.listen(100)
 print('Socket now listening on port', PORT, file=sys.stderr)
 
-
-# Function for handling connections. This will be used to create threads
-def clientthread(connect, addres):
-    # Sending message to connected client
-    connect.send(bytes(b'word2vec model server'))
-
-    # infinite loop so that function do not terminate and thread do not end.
-    while True:
-        # Receiving from client
-        data = connect.recv(1024)
-        if not data:
-            break
-        query = json.loads(data.decode('utf-8'))
-        output = operations[query['operation']](query)
-        now = datetime.datetime.now()
-        print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t', data.decode('utf-8'), file=sys.stderr)
-        reply = json.dumps(output, ensure_ascii=False)
-        connect.sendall(reply.encode('utf-8'))
-        break
-
-    # came out of loop
-    connect.close()
-
-
 # now keep talking with the client
 while 1:
     # wait to accept a connection - blocking call
     conn, addr = s.accept()
 
     # start new thread takes 1st argument as a function name to be run, 2nd is the tuple of arguments to the function.
-    start_new_thread(clientthread, (conn, addr))
+    thread = TokThread(conn, addr)
+    thread.start()
