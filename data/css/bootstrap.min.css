@@ -11,7 +11,7 @@
   color: #ecf0f1;
 }
 .navbar-primary .navbar-brand:hover, .navbar-primary .navbar-brand:focus {
-  color: #286090;
+  color: #133450;
 }
 .navbar-primary .navbar-text {
   color: #ecf0f1;
@@ -20,7 +20,7 @@
   color: #ecf0f1;
 }
 .navbar-primary .navbar-nav > li > a:hover, .navbar-primary .navbar-nav > li > a:focus {
-  color: #ecdbff;
+  color: #286090;
 }
 .navbar-primary .navbar-nav > li > .dropdown-menu {
   background-color: #337ab7;
