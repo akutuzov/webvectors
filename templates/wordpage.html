@@ -36,9 +36,8 @@
        <div style = "font-size:larger;">
 	       <a href="{{ url }}{{lang}}/{{ model }}/{{ res[0] }}" 
 		       title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0]][0]}}" {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %} >
-		{{res[0].split('_')[0].replace('::', ' ')}}
-	
-	</a> {{ "{:.4f} ".format(res[1]) }}
+		{{res[0].split('_')[0].replace('::', ' ')}}</a>
+           {{ "{:.4f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
 		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
@@ -51,6 +50,8 @@
         {% endfor %}
         </ol>
         </div>
+        <hr>
+        <p><i>{{strings['base18']}}</i></p>
         <h3>{{strings['synraw12']}}</h3>
         <ul>
         {% for m in models if m != model %}

@@ -41,8 +41,7 @@
             {% for res in value  %}
 	    <tr><td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][0]}}/"
     title="{{strings['synraw15']}} {{ res[0][0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][0]][0]}}" {% if frequencies[res[0][0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][0]][1] == 'low' %} style="color: red;"  {% endif %}>
-	    {{res[0][0].split("_")[0].replace('::', ' ')}} 
-				    </a>
+	    {{res[0][0].split("_")[0].replace('::', ' ')}}</a>
 	  </em>
 	  <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][1]}}/"
   title="{{strings['synraw15']}} {{ res[0][1].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][1]][0]}}" {% if frequencies[res[0][1]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][1]][1] == 'low' %} style="color: red;"  {% endif %}>
@@ -61,6 +60,8 @@
 	           {% endfor %}
 	      </table>
 	      {% endif %}
+          <hr>
+          <p><i>{{strings['base18']}}</i></p>
 	      {% endif %}
 
 
