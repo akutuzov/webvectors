@@ -221,7 +221,7 @@ def find_similarity(query):
                     results["Unknown to the model"] = q2
                     return results
         pair2 = (qf1, qf2)
-        result = model.similarity(qf1, qf2)
+        result = float(model.similarity(qf1, qf2))
         results['similarities'].append((pair2, result))
     return results
 
