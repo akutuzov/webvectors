@@ -44,7 +44,8 @@ dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
 
 if lemmatize:
-    from lemmatizer import tagword
+    from lemmatizer import tagword, tag_ud
+    tagger_port = config.getint('Sockets', 'tagger_port')
 
 tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
 if tensorflow_integration:
@@ -153,7 +154,7 @@ def process_query(userquery):
                 return 'Incorrect tag!'
         else:
             if lemmatize:
-                poses = tagword(userquery)
+                poses = tagword(userquery)  # # We tag using Stanford CoreNLP
                 if len(poses) == 1:
                     pos_tag = poses[0]
                 else:

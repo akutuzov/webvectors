@@ -5,14 +5,37 @@ import subprocess
 import requests
 import json
 
-# Stanford CoreNLP tagging for English (and other languages)
-# Demands Stanford Core NLP server running on a defined port
-# Start server with something like:
-# java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer --port 9999
-port = 9999
+
+def tag_ud(port, text='Do not forget to pass some text as a string!'):
+    # UDPipe tagging for any language you have a model for.
+    # Demands UDPipe REST server (https://ufal.mff.cuni.cz/udpipe/users-manual#udpipe_server)
+    # running on a port defined in webvectors.cfg
+    # Start the server with something like:
+    # udpipe_server --daemon 66666 MyModel MyModel /opt/my.model UD
+
+    # Sending user query to the server:
+    ud_reply = requests.post('http://localhost:%s/process' % port,
+                             data={'tokenizer': '', 'tagger': '', 'data': text}).content
+
+    # Getting the result in the CONLLU format:
+    processed = json.loads(ud_reply.decode('utf-8'))['result']
+
+    # Skipping technical lines:
+    content = [l for l in processed.split('\n') if not l.startswith('#')]
+
+    # Extracting lemmas and tags from the processed queries:
+    tagged = [w.split('\t')[2].lower() + '_' + w.split('\t')[3] for w in content if w]
+    poses = [t.split('_')[1] for t in tagged]
+    return poses
 
 
 def tagword(word):
+    # Stanford CoreNLP tagging for English (and other languages)
+    # Demands Stanford Core NLP server running on a defined port
+    # Start server with something like:
+    # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer --port 9999
+    port = 9999
+
     corenlp = requests.post(
         'http://localhost:%s/?properties={"annotators": "tokenize, pos, lemma", "outputFormat": "json"}' % port,
         data=word.encode('utf-8')).content
@@ -26,11 +49,10 @@ def tagword(word):
     return poses
 
 
-# Freeling tagging for Russian
-# Queries Freeling service at localhost port 50006
-# 
-
 def freeling_lemmatizer(word):
+    # Freeling tagging for Russian
+    # Queries Freeling service at localhost port 50006
+
     freeling = subprocess.Popen([u'/usr/local/bin/analyzer_client', u'50006'], stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE)
     tagged = freeling.communicate(word.encode('utf-8').strip())
