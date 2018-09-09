@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
-{%- block title %}
+{% block title %}
      <title>{{strings['synraw1']}} "{{word}}"</title>
- {%- endblock title %}
+ {% endblock title %}
 
+{% block metas %}
+    {{ super() }}
+    <meta name="robots" content="noindex">
+{% endblock metas %}
 
 {% block content %}
         {% if list_value %}
