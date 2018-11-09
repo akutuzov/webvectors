@@ -27,7 +27,8 @@
         <div class="row">
         <div class="col-md-7">
 	<h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong>
-	<a href="{{ url }}{{lang}}/{{ model }}/{{ word }}" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[word][0]}}" {% if frequencies[word][1] == 'high'%} style="color: green;"  {% elif frequencies[word][1] == 'low' %} style="color: red;"  {% endif %} >
+	<a href="{{ url }}{{lang}}/{{ model }}/{{ word }}" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[word][0]}}"
+       {% if frequencies[word][1] == 'high'%} style="color: green;"  {% elif frequencies[word][1] == 'low' %} style="color: red;"  {% endif %} >
 		&laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
             {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}">&laquo;{{ strings[models[model]] }}&raquo;</a>?</h2>
         {% if model in inferred %}
@@ -39,13 +40,15 @@
         <li style='margin: 10px 0;'>
        <div style = "font-size:larger;">
 	       <a href="{{ url }}{{lang}}/{{ model }}/{{ res[0] }}" 
-		       title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0]][0]}}" {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %} >
+		       title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0]][0]}}"
+              {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %} >
 		{{res[0].split('_')[0].replace('::', ' ')}}</a>
            {{ "{:.4f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
 		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
-                <img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+                <img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
+                title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
             </a>
 	        </div>
             {% endif %}
@@ -69,7 +72,8 @@
         </ul>
 
 	<span style = "font-size:larger;">
-        <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo; {{strings['synraw5']}} {{ model }}:</a>
+        <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;
+            {{strings['synraw5']}} {{ model }}:</a>
         </span>
         <div class="vector" id="HiddenDiv" style="DISPLAY: none" >
         {{ vector }}
@@ -77,9 +81,6 @@
         </div>
         <div class="col-md-5">
         <h2>{{strings['synraw9']}}</h2>
-        <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank">
-            <img src = '{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}" title = "{{word}} {{strings['synraw10']}}" class="img-responsive">
-        </a>	<hr/>
       <ul>
           <li><span style = "font-size:larger;">
               <a target="_blank" href="{{ search }}{{ word.split('_')[0].replace('::', ' ') }}">
@@ -93,9 +94,14 @@
     <hr/>
     {% if image %}
     <a href="https://en.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank">
-        <img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive">
+        <img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}"
+             title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive">
     </a>
     {% endif %}
+    <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank">
+    <img src = '{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}"
+         title = "{{word}} {{strings['synraw10']}}" class="img-responsive">
+        </a>	<hr/>
 
             </div>
 	</div>
