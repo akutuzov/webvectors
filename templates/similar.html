@@ -40,12 +40,17 @@
                 (<a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
             {% for res in value  %}
 	    <tr><td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][0]}}/"
-    title="{{strings['synraw15']}} {{ res[0][0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][0]][0]}}" {% if frequencies[res[0][0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][0]][1] == 'low' %} style="color: red;"  {% endif %}>
-	    {{res[0][0].split("_")[0].replace('::', ' ')}}</a>
+    title="{{strings['synraw15']}} {{ res[0][0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][0]][0]}}"
+    {% if frequencies[res[0][0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][0]][1] == 'low' %} style="color: red;"  {% endif %}>
+        {{res[0][0].split("_")[0].replace('::', ' ')}}{% if res[0][0].split('_')|length > 1 %}
+            <sub style="font-size:30%;">{{res[0][0].split('_')[-1]}}</sub>{% endif %}
+            </a>
 	  </em>
 	  <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][1]}}/"
-  title="{{strings['synraw15']}} {{ res[0][1].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][1]][0]}}" {% if frequencies[res[0][1]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][1]][1] == 'low' %} style="color: red;"  {% endif %}>
-	  {{res[0][1].split("_")[0].replace('::', ' ')}}	  
+  title="{{strings['synraw15']}} {{ res[0][1].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][1]][0]}}"
+             {% if frequencies[res[0][1]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][1]][1] == 'low' %} style="color: red;"  {% endif %}>
+	  {{res[0][1].split("_")[0].replace('::', ' ')}}{% if res[0][1].split('_')|length > 1 %}
+          <sub style="font-size:30%;">{{res[0][1].split('_')[-1]}}</sub>{% endif %}
 	  </a></em></td> <td>{{ "{:.3f} ".format(res[1]) }}</td></tr>
             {% endfor %}
             </table>
@@ -61,7 +66,10 @@
 	      </table>
 	      {% endif %}
           <hr>
-          <p><i>{{strings['base18']}}</i></p>
+          <ul>
+		    <li><p><i>{{strings['base18']}}</i></p></li>
+		    <li><p><i>{{strings['similar34']}}</i></p></li>
+		</ul>
 	      {% endif %}
 
 

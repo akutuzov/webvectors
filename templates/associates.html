@@ -74,12 +74,16 @@
         <ol>
         {% for res in list_value[model] if res != "Incorrect tag!" %}
         <li style='margin: 10px 0;'>
-	<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}" {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
-		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.2f} ".format(res[1]) }}
+	<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}}
+	{{ frequencies[model][res[0]][0]}}" {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
+            {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+        {{res[0].split('_')[0].replace('::', ' ')}}{% if res[0].split('_')|length > 1 %}
+            <sub style="font-size:50%;">{{res[0].split('_')[-1]}}</sub>{% endif %}</a> {{ "{:.2f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon">
 		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
-                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
+                     title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
             </a>
 	        </div>
             {% endif %}
@@ -92,7 +96,10 @@
     {% endfor %}
         </div>
     <hr>
-    <p><i>{{strings['base18']}}</i></p>
+     <ul>
+	<li><p><i>{{strings['base18']}}</i></p></li>
+	<li><p><i>{{strings['similar34']}}</i></p></li>
+	</ul>
 {% endif %}
          {% if error %}
         <p> <span style = "font-size:larger;"><strong>
