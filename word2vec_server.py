@@ -137,18 +137,18 @@ def find_synonyms(query):
                 noresults = False
                 break
         if noresults:
-            if our_models[usermodel]['algo'] == 'fasttext':
+            if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(qf):
                 results['inferred'] = True
             else:
                 results[q + " is unknown to the model"] = True
                 return results
     results['neighbors'] = []
     if pos == 'ALL':
-        for i in model.most_similar(positive=qf, topn=10):
+        for i in model.wv.most_similar(positive=qf, topn=10):
             results['neighbors'].append(i)
     else:
         counter = 0
-        for i in model.most_similar(positive=qf, topn=30):
+        for i in model.wv.most_similar(positive=qf, topn=30):
             if counter == 10:
                 break
             if i[0].split('_')[-1] == pos:
@@ -297,10 +297,10 @@ def scalculator(query):
             else:
                 nlist.append(q)
     if pos == "ALL":
-        for w in model.most_similar(positive=plist, negative=nlist, topn=5):
+        for w in model.wv.most_similar(positive=plist, negative=nlist, topn=5):
             results['neighbors'].append(w)
     else:
-        for w in model.most_similar(positive=plist, negative=nlist, topn=30):
+        for w in model.wv.most_similar(positive=plist, negative=nlist, topn=30):
             if w[0].split('_')[-1] == pos:
                 results['neighbors'].append(w)
             if len(results['neighbors']) == 5:
@@ -374,6 +374,7 @@ while 1:
     # wait to accept a connection - blocking call
     conn, addr = s.accept()
 
-    # start new thread takes 1st argument as a function name to be run, 2nd is the tuple of arguments to the function.
+    # start new thread takes 1st argument as a function name to be run,
+    # 2nd is the tuple of arguments to the function.
     thread = WebVectorsThread(conn, addr)
     thread.start()

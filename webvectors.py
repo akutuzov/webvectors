@@ -44,7 +44,8 @@ dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
 
 if lemmatize:
-    from lemmatizer import tagword, tag_ud
+    from lemmatizer import tagword
+
     tagger_port = config.getint('Sockets', 'tagger_port')
 
 tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
@@ -154,7 +155,7 @@ def process_query(userquery):
                 return 'Incorrect tag!'
         else:
             if lemmatize:
-                poses = tagword(userquery)  # # We tag using Stanford CoreNLP
+                poses = tagword(userquery)  # We tag using Stanford CoreNLP
                 if len(poses) == 1:
                     pos_tag = poses[0]
                 else:
@@ -201,8 +202,10 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
         vector_row = '\t'.join(map(str, vector))
         tensortext += vector_row + '\n'
     a = ghGist.create(name=outfiletsv, description='Tensors', public=True, content=tensortext)
-    b = ghGist.create(name=outfiletsvmeta, description='Metadata', public=True, content=metadatatext)
-    datadic = {"embeddings": [{"tensorName": 'WebVectors', "tensorShape": [len(vectorlist[0]), len(wordlist)],
+    b = ghGist.create(
+        name=outfiletsvmeta, description='Metadata', public=True, content=metadatatext)
+    datadic = {"embeddings": [{"tensorName": 'WebVectors',
+                               "tensorShape": [len(vectorlist[0]), len(wordlist)],
                                "tensorPath": a['files'][outfiletsv]['raw_url'],
                                "metadataPath": b['files'][outfiletsvmeta]['raw_url']}]}
     c = ghGist.create(name=alias + '_config.json', description='WebVectors', public=True,
@@ -231,12 +234,13 @@ def home(lang):
         except:
             pass
         if list_data != 'dummy' and \
-                list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
+                list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ',
+                                                                                      '').isalnum():
             query = process_query(list_data)
             if query == "Incorrect tag!":
                 error_value = "Incorrect tag!"
-                return render_template('home.html', error=error_value, other_lang=other_lang, languages=languages,
-                                       url=url)
+                return render_template('home.html', error=error_value, other_lang=other_lang,
+                                       languages=languages, url=url)
             model_value = request.form.getlist('model')
             if len(model_value) < 1:
                 model = defaultmodel
@@ -248,8 +252,9 @@ def home(lang):
             message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
             result = json.loads(serverquery(message).decode('utf-8'))
             if query + " is unknown to the model" in result:
-                return render_template('home.html', error=query + " is unknown to the model", other_lang=other_lang,
-                                       languages=languages, url=url, word=query)
+                return render_template('home.html', error=query + " is unknown to the model",
+                                       other_lang=other_lang, languages=languages,
+                                       url=url, word=query)
             else:
                 inferred = set()
                 for word in result['neighbors']:
@@ -263,13 +268,14 @@ def home(lang):
                     inferred.add(model)
                 return render_template('home.html', list_value=result['neighbors'], word=query,
                                        wordimages=images, models=our_models, model=model, tags=tags,
-                                       other_lang=other_lang, languages=languages, url=url, inferred=inferred,
-                                       frequencies=result['frequencies'])
+                                       other_lang=other_lang, languages=languages, url=url,
+                                       inferred=inferred, frequencies=result['frequencies'])
         else:
             error_value = "Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,
                                    languages=languages, url=url)
-    return render_template('home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
+    return render_template(
+        'home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
 
 @wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
@@ -304,8 +310,9 @@ def misc_page(lang):
                 else:
                     model = model_value[0]
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages, url=url,
-                                           usermodels=model_value)
+                    return render_template(
+                        'home.html', other_lang=other_lang, languages=languages, url=url,
+                        usermodels=model_value)
                 for query in input_data.split(','):
                     if '' not in query.strip():
                         continue
@@ -316,9 +323,11 @@ def misc_page(lang):
                             w = process_query(w)
                             if "Incorrect tag!" in w:
                                 error_value = "Incorrect tag!"
-                                return render_template('similar.html', error_sim=error_value, models=our_models,
-                                                       other_lang=other_lang, languages=languages, url=url,
-                                                       usermodels=model_value, tags2show=exposed_tags)
+                                return render_template('similar.html', error_sim=error_value,
+                                                       models=our_models, other_lang=other_lang,
+                                                       languages=languages, url=url,
+                                                       usermodels=model_value,
+                                                       tags2show=exposed_tags)
                             if model_props[model]['tags'] == 'False':
                                 words.append(w.split('_')[0].strip())
                             else:
@@ -327,32 +336,36 @@ def misc_page(lang):
                         cleared_data.append((words[0].strip(), words[1].strip()))
                 if len(cleared_data) == 0:
                     error_value = "Incorrect query!"
-                    return render_template("similar.html", error_sim=error_value, other_lang=other_lang,
-                                           languages=languages, url=url, usermodels=model_value, tags2show=exposed_tags)
+                    return render_template(
+                        "similar.html", error_sim=error_value, other_lang=other_lang,
+                        languages=languages, url=url, usermodels=model_value,
+                        tags2show=exposed_tags)
                 message = {'operation': '2', 'query': cleared_data, 'model': model}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 cleared_data = [' '.join(el) for el in cleared_data]
                 if "Unknown to the model" in result:
                     return render_template("similar.html", error_sim=result["Unknown to the model"],
-                                           other_lang=other_lang,
-                                           languages=languages, models=our_models, tags2show=exposed_tags,
-                                           tags=tags, query=cleared_data, url=url, usermodels=model_value)
+                                           other_lang=other_lang, languages=languages,
+                                           models=our_models, tags2show=exposed_tags, tags=tags,
+                                           query=cleared_data, url=url, usermodels=model_value)
                 sim_history.append(result['similarities'])
                 if len(sim_history) > 10:
                     sim_history = sim_history[-10:]
                 str_sim_history = (json.dumps(sim_history, ensure_ascii=False))
-                return render_template('similar.html', value=result['similarities'], model=model, query=cleared_data,
-                                       models=our_models, tags=tags, other_lang=other_lang, tags2show=exposed_tags,
+                return render_template('similar.html', value=result['similarities'], model=model,
+                                       query=cleared_data, models=our_models, tags=tags,
+                                       other_lang=other_lang, tags2show=exposed_tags,
                                        languages=languages, url=url, usermodels=model_value,
                                        sim_hist=sim_history, str_sim_history=str_sim_history,
                                        frequencies=result['frequencies'])
             else:
                 error_value = "Incorrect query!"
-                return render_template("similar.html", error_sim=error_value, models=our_models, tags=tags,
-                                       tags2show=exposed_tags,
-                                       other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
+                return render_template("similar.html", error_sim=error_value, models=our_models,
+                                       tags=tags, tags2show=exposed_tags, other_lang=other_lang,
+                                       languages=languages, url=url, usermodels=[defaultmodel])
     return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang,
-                           languages=languages, url=url, usermodels=[defaultmodel], tags2show=exposed_tags)
+                           languages=languages, url=url, usermodels=[defaultmodel],
+                           tags2show=exposed_tags)
 
 
 @wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
@@ -380,9 +393,10 @@ def similar_page(lang):
 
             if query == "Incorrect tag!":
                 error_value = "Incorrect tag!"
-                return render_template('associates.html', error=error_value, word=list_data, models=our_models,
-                                       tags2show=exposed_tags,
-                                       other_lang=other_lang, languages=languages, url=url, usermodels=model_value)
+                return render_template('associates.html', error=error_value, word=list_data,
+                                       models=our_models, tags2show=exposed_tags,
+                                       other_lang=other_lang, languages=languages, url=url,
+                                       usermodels=model_value)
             userpos = []
             if tags:
                 pos_value = request.form.getlist('pos')
@@ -403,17 +417,19 @@ def similar_page(lang):
             frequencies = {}
             for model in model_value:
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages, url=url,
-                                           usermodels=model_value)
+                    return render_template('home.html', other_lang=other_lang, languages=languages,
+                                           url=url, usermodels=model_value)
                 if model_props[model]['tags'] == 'False':
-                    message = {'operation': '1', 'query': query.split('_')[0], 'pos': 'ALL', 'model': model}
+                    model_query = query.split('_')[0]
+                    message = {'operation': '1', 'query': model_query, 'pos': 'ALL', 'model': model}
                 else:
-                    message = {'operation': '1', 'query': query, 'pos': pos, 'model': model}
+                    model_query = query
+                    message = {'operation': '1', 'query': model_query, 'pos': pos, 'model': model}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 frequencies[model] = result['frequencies']
-                if query.split('_')[0] in frequencies[model] and query not in frequencies[model]:
-                    frequencies[model][query] = frequencies[model][query.split('_')[0]]
-                if query + " is unknown to the model" in result:
+                if model_query != query:
+                    frequencies[model][query] = frequencies[model][model_query]
+                if model_query + " is unknown to the model" in result:
                     models_row[model] = "Unknown!"
                     continue
                 elif 'No results' in result:
@@ -431,16 +447,18 @@ def similar_page(lang):
                     if 'inferred' in result:
                         inferred.add(model)
             return render_template('associates.html', list_value=models_row, word=query, pos=pos,
-                                   number=len(model_value), wordimages=images, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages, tags2show=exposed_tags,
-                                   url=url, usermodels=model_value, userpos=userpos,
-                                   inferred=inferred, frequencies=frequencies)
+                                   number=len(model_value), wordimages=images, models=our_models,
+                                   tags=tags, other_lang=other_lang, languages=languages,
+                                   tags2show=exposed_tags, url=url, usermodels=model_value,
+                                   userpos=userpos, inferred=inferred, frequencies=frequencies)
         else:
             error_value = "Incorrect query!"
-            return render_template("associates.html", error=error_value, models=our_models, tags=tags, url=url,
-                                   usermodels=[defaultmodel], tags2show=exposed_tags)
+            return render_template("associates.html", error=error_value, models=our_models,
+                                   tags=tags, url=url, usermodels=[defaultmodel],
+                                   tags2show=exposed_tags)
     return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang,
-                           languages=languages, url=url, usermodels=[defaultmodel], tags2show=exposed_tags)
+                           languages=languages, url=url, usermodels=[defaultmodel],
+                           tags2show=exposed_tags)
 
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
@@ -461,23 +479,28 @@ def visual_page(lang):
             groups = []
             for inputform in list_data[:10]:
                 group = set([process_query(w) for w in inputform.split(',') if len(w) > 1
-                             and w.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum()][:30])
+                             and
+                             w.replace('_', '').replace('-', '').replace('::', '').
+                            replace(' ', '').isalnum()][:30])
                 groups.append(group)
 
             querywords = [word for group in groups for word in group]
             if len(set(querywords)) != len(querywords):
                 error_value = "Words must be unique!"
-                return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=model_value)
+                return render_template("visual.html", error=error_value, models=our_models,
+                                       other_lang=other_lang, languages=languages, url=url,
+                                       usermodels=model_value)
             if len(querywords) < 7:
                 error_value = "Too few words!"
-                return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=model_value)
+                return render_template("visual.html", error=error_value, models=our_models,
+                                       other_lang=other_lang, languages=languages, url=url,
+                                       usermodels=model_value)
 
             if "Incorrect tag!" in querywords:
                 error_value = "Incorrect tag!"
-                return render_template('visual.html', error=error_value, models=our_models, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=model_value)
+                return render_template('visual.html', error=error_value, models=our_models,
+                                       other_lang=other_lang, languages=languages, url=url,
+                                       usermodels=model_value)
 
             classes = []
             for word in querywords:
@@ -491,8 +514,8 @@ def visual_page(lang):
             frequencies = {}
             for model in model_value:
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages, url=url,
-                                           usermodels=model_value)
+                    return render_template('home.html', other_lang=other_lang, languages=languages,
+                                           url=url, usermodels=model_value)
                 frequencies[model] = {}
                 unknown[model] = set()
                 words2vis = querywords
@@ -508,7 +531,8 @@ def visual_page(lang):
                 if not os.path.exists(root + 'data/images/tsneplots'):
                     os.makedirs(root + 'data/images/tsneplots')
                 if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK):
-                    print('No previous image found', root + 'data/images/tsneplots/' + plotfile, file=sys.stderr)
+                    print('No previous image found', root + 'data/images/tsneplots/' + plotfile,
+                          file=sys.stderr)
                     vectors = []
                     for w in words2vis:
                         if model_props[model]['tags'] == 'False':
@@ -541,18 +565,21 @@ def visual_page(lang):
                         models_row[model] = "Too few words!"
                 else:
                     if tensorflow_integration:
-                        links_row[model] = open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
+                        links_row[model] = \
+                            open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
                     else:
                         links_row[model] = None
-            return render_template('visual.html', languages=languages, visual=models_row, words=groups,
-                                   number=len(model_value), models=our_models, unknown=unknown, url=url,
-                                   usermodels=model_value, l2c=links_row, qwords=querywords, frequencies=frequencies)
+            return render_template('visual.html', languages=languages, visual=models_row,
+                                   words=groups, number=len(model_value), models=our_models,
+                                   unknown=unknown, url=url, usermodels=model_value, l2c=links_row,
+                                   qwords=querywords, frequencies=frequencies)
         else:
             error_value = "Incorrect query!"
-            return render_template("visual.html", error=error_value, models=our_models, other_lang=other_lang,
-                                   languages=languages, url=url, usermodels=[defaultmodel])
-    return render_template('visual.html', models=our_models, other_lang=other_lang, languages=languages,
-                           url=url, usermodels=[defaultmodel])
+            return render_template("visual.html", error=error_value, models=our_models,
+                                   other_lang=other_lang, languages=languages, url=url,
+                                   usermodels=[defaultmodel])
+    return render_template('visual.html', models=our_models, other_lang=other_lang,
+                           languages=languages, url=url, usermodels=[defaultmodel])
 
 
 @wvectors.route(url + '<lang:lang>/calculator/', methods=['GET', 'POST'])
@@ -585,12 +612,14 @@ def finder(lang):
             positive_data_list = [positive_data, positive2_data]
             negative_list = []
             if len(negative_data.strip()) > 1:
-                if negative_data.strip().replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
+                if negative_data.strip().replace('_', '').replace('-', ''). \
+                        replace('::', '').replace(' ', '').isalnum():
                     negative_list = [process_query(negative_data)]
 
             positive_list = []
             for w in positive_data_list:
-                if len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').replace(' ', '').isalnum():
+                if len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', ''). \
+                        replace(' ', '').isalnum():
                     positive_list.append(process_query(w))
 
             calcmodel_value = request.form.getlist('calcmodel')
@@ -599,12 +628,14 @@ def finder(lang):
 
             if len(positive_list) < 2 or len(negative_list) == 0:
                 error_value = "Incorrect query!"
-                return render_template("calculator.html", error=error_value, models=our_models, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=calcmodel_value, tags2show=exposed_tags)
+                return render_template("calculator.html", error=error_value, models=our_models,
+                                       other_lang=other_lang, languages=languages, url=url,
+                                       usermodels=calcmodel_value, tags2show=exposed_tags)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 error_value = "Incorrect tag!"
-                return render_template('calculator.html', error=error_value, models=our_models, tags2show=exposed_tags,
-                                       other_lang=other_lang, languages=languages, url=url, usermodels=calcmodel_value)
+                return render_template('calculator.html', error=error_value, models=our_models,
+                                       tags2show=exposed_tags, other_lang=other_lang,
+                                       languages=languages, url=url, usermodels=calcmodel_value)
             userpos = []
             if tags:
                 calcpos_value = request.form.getlist('pos')
@@ -626,10 +657,12 @@ def finder(lang):
                                            models=our_models, url=url, usermodels=calcmodel_value)
                 if model_props[model]['tags'] == 'False':
                     message = {'operation': '3', 'query': [[w.split('_')[0] for w in positive_list],
-                                                           [w.split('_')[0] for w in negative_list]], 'pos': 'ALL',
+                                                           [w.split('_')[0]
+                                                            for w in negative_list]], 'pos': 'ALL',
                                'model': model}
                 else:
-                    message = {'operation': '3', 'query': [positive_list, negative_list], 'pos': pos, 'model': model}
+                    message = {'operation': '3', 'query':
+                        [positive_list, negative_list], 'pos': pos, 'model': model}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 frequencies[model] = result['frequencies']
                 if 'No results' in result:
@@ -646,17 +679,21 @@ def finder(lang):
                         images = get_images(images)
                     except:
                         pass
-            return render_template('calculator.html', analogy_value=models_row, pos=pos, plist=positive_list,
-                                   userpos=userpos, nlist=negative_list, wordimages=images, models=our_models,
-                                   tags=tags, tags2show=exposed_tags, other_lang=other_lang, languages=languages,
-                                   url=url, usermodels=calcmodel_value, frequencies=frequencies)
+            return render_template('calculator.html', analogy_value=models_row, pos=pos,
+                                   plist=positive_list, userpos=userpos, nlist=negative_list,
+                                   wordimages=images, models=our_models, tags=tags,
+                                   tags2show=exposed_tags, other_lang=other_lang,
+                                   languages=languages, url=url, usermodels=calcmodel_value,
+                                   frequencies=frequencies)
 
         # Calculator
         if positive1_data != '':
             negative_list = [process_query(w) for w in negative1_data.split() if
-                             len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
+                             len(w) > 1 and
+                             w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
             positive_list = [process_query(w) for w in positive1_data.split() if
-                             len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
+                             len(w) > 1 and
+                             w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
 
             calcmodel_value = request.form.getlist('calcmodel')
             if len(calcmodel_value) < 1:
@@ -664,14 +701,16 @@ def finder(lang):
 
             if len(positive_list) == 0:
                 error_value = "Incorrect query!"
-                return render_template("calculator.html", calc_error=error_value, other_lang=other_lang,
-                                       tags2show=exposed_tags,
-                                       languages=languages, models=our_models, url=url, usermodels=calcmodel_value)
+                return render_template("calculator.html", calc_error=error_value,
+                                       other_lang=other_lang, tags2show=exposed_tags,
+                                       languages=languages, models=our_models, url=url,
+                                       usermodels=calcmodel_value)
             if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
                 error_value = "Incorrect tag!"
-                return render_template('calculator.html', calc_error=error_value, other_lang=other_lang,
-                                       tags2show=exposed_tags,
-                                       languages=languages, models=our_models, url=url, usermodels=calcmodel_value)
+                return render_template('calculator.html', calc_error=error_value,
+                                       other_lang=other_lang, tags2show=exposed_tags,
+                                       languages=languages, models=our_models, url=url,
+                                       usermodels=calcmodel_value)
             userpos = []
             if tags:
                 calcpos_value = request.form.getlist('calcpos')
@@ -693,10 +732,12 @@ def finder(lang):
                                            models=our_models, url=url, usermodels=calcmodel_value)
                 if model_props[model]['tags'] == 'False':
                     message = {'operation': '3', 'query': [[w.split('_')[0] for w in positive_list],
-                                                           [w.split('_')[0] for w in negative_list]], 'pos': 'ALL',
+                                                           [w.split('_')[0]
+                                                            for w in negative_list]], 'pos': 'ALL',
                                'model': model}
                 else:
-                    message = {'operation': '3', 'query': [positive_list, negative_list], 'pos': pos, 'model': model}
+                    message = {'operation': '3', 'query': [positive_list, negative_list],
+                               'pos': pos, 'model': model}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 frequencies[model] = result['frequencies']
                 if "No results" in result:
@@ -713,21 +754,21 @@ def finder(lang):
                         images = get_images(images)
                     except:
                         pass
-            return render_template('calculator.html', calc_value=models_row, pos=pos, plist2=positive_list,
-                                   tags2show=exposed_tags,
-                                   nlist2=negative_list, wordimages=images, models=our_models, tags=tags,
-                                   userpos=userpos,
-                                   other_lang=other_lang, languages=languages, url=url,
-                                   usermodels=calcmodel_value, frequencies=frequencies)
+            return render_template('calculator.html', calc_value=models_row, pos=pos,
+                                   plist2=positive_list, tags2show=exposed_tags,
+                                   nlist2=negative_list, wordimages=images, models=our_models,
+                                   tags=tags, userpos=userpos, other_lang=other_lang,
+                                   languages=languages, url=url, usermodels=calcmodel_value,
+                                   frequencies=frequencies)
 
         else:
             error_value = "Incorrect query!"
-            return render_template("calculator.html", error=error_value, models=our_models, tags=tags,
-                                   tags2show=exposed_tags,
-                                   other_lang=other_lang, languages=languages, url=url, usermodels=[defaultmodel])
+            return render_template("calculator.html", error=error_value, models=our_models,
+                                   tags=tags, tags2show=exposed_tags, other_lang=other_lang,
+                                   languages=languages, url=url, usermodels=[defaultmodel])
     return render_template("calculator.html", models=our_models, tags=tags, other_lang=other_lang,
-                           tags2show=exposed_tags,
-                           languages=languages, url=url, usermodels=[defaultmodel])
+                           tags2show=exposed_tags, languages=languages, url=url,
+                           usermodels=[defaultmodel])
 
 
 @wvectors.route(url + '<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
@@ -760,7 +801,8 @@ def raw_finder(lang, model, userquery):
         result = json.loads(serverquery(message).decode('utf-8'))
         if query + " is unknown to the model" in result or "No results" in result:
             return render_template('wordpage.html', error=list(result)[0], other_lang=other_lang,
-                                   languages=languages, url=url, word=query, models=our_models, model=model)
+                                   languages=languages, url=url, word=query, models=our_models,
+                                   model=model)
         else:
             inferred = set()
             if 'inferred' in result:
@@ -781,11 +823,12 @@ def raw_finder(lang, model, userquery):
                     image = images[query.split('_')[0]]
                 except:
                     pass
-            return render_template('wordpage.html', list_value=result['neighbors'], word=query, model=model,
-                                   pos=pos_tag,
-                                   vector=vector, image=image, wordimages=images, vectorvis=fname, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url, search=defaultsearchengine,
-                                   models=our_models, inferred=inferred, frequencies=result['frequencies'])
+            return render_template('wordpage.html', list_value=result['neighbors'], word=query,
+                                   model=model, pos=pos_tag, vector=vector, image=image,
+                                   wordimages=images, vectorvis=fname, tags=tags,
+                                   other_lang=other_lang, languages=languages, url=url,
+                                   search=defaultsearchengine, models=our_models, inferred=inferred,
+                                   frequencies=result['frequencies'])
     else:
         error_value = 'Incorrect query!'
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
@@ -825,7 +868,8 @@ def generate(word, model, api_format):
         else:
             # form the query and get the result from the server
             if model_props[model]['tags'] == 'False':
-                message = {'operation': '1', 'query': query.split('_')[0], 'pos': 'ALL', 'model': model}
+                message = {'operation': '1', 'query':
+                    query.split('_')[0], 'pos': 'ALL', 'model': model}
             else:
                 message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
             result = json.loads(serverquery(message).decode('utf-8'))
@@ -872,8 +916,9 @@ def api(model, word, api_format):
 
     cleanword = ''.join([char for char in word if char.isalnum()])
     return Response(generate(word, model, api_format), mimetype=mime,
-                    headers={"Content-Disposition": "attachment;filename=%s.%s" % (cleanword.encode('utf-8'),
-                                                                                   api_format.encode('utf-8'))})
+                    headers={"Content-Disposition":
+                                 "attachment;filename=%s.%s" %
+                                 (cleanword.encode('utf-8'), api_format.encode('utf-8'))})
 
 
 @wvectors.route(url + '<model>/<wordpair>/api/similarity/', methods=['GET'])
@@ -889,8 +934,10 @@ def similarity_api(model, wordpair):
     wordpair = wordpair.split('__')
     if not model.strip() in our_models:
         return 'The model ' + model.strip() + ' is unknown'
-    cleanword0 = ''.join([char for char in wordpair[0] if char.isalnum() or char == '_' or char == '::' or char == '-'])
-    cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_' or char == '::' or char == '-'])
+    cleanword0 = ''.join([char for char in wordpair[0] if char.isalnum() or char == '_'
+                          or char == '::' or char == '-'])
+    cleanword1 = ''.join([char for char in wordpair[1] if char.isalnum() or char == '_'
+                          or char == '::' or char == '-'])
     cleanword0 = process_query(cleanword0)
     cleanword1 = process_query(cleanword1)
     if model_props[model]['tags'] == 'False':
@@ -911,7 +958,8 @@ def models_page(lang):
     s.add(lang)
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
-    return render_template('%s/models.html' % lang, other_lang=other_lang, languages=languages, url=url)
+    return render_template(
+        '%s/models.html' % lang, other_lang=other_lang, languages=languages, url=url)
 
 
 @wvectors.route(url + '<lang:lang>/about/')
@@ -922,7 +970,8 @@ def about_page(lang):
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
 
-    return render_template('%s/about.html' % lang, other_lang=other_lang, languages=languages, url=url)
+    return render_template(
+        '%s/about.html' % lang, other_lang=other_lang, languages=languages, url=url)
 
 
 # redirecting requests with no lang:
@@ -940,4 +989,3 @@ def redirect_main():
         if req[-1] != '/':
             req += '/'
     return redirect(url + 'en' + req)
-

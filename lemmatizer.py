@@ -37,7 +37,8 @@ def tagword(word):
     port = 9999
 
     corenlp = requests.post(
-        'http://localhost:%s/?properties={"annotators": "tokenize, pos, lemma", "outputFormat": "json"}' % port,
+        'http://localhost:%s/?properties='
+        '{"annotators": "tokenize, pos, lemma", "outputFormat": "json"}' % port,
         data=word.encode('utf-8')).content
     tagged = json.loads(corenlp.decode('utf-8'), strict=False)
     if len(tagged["sentences"]) < 1:
@@ -53,8 +54,8 @@ def freeling_lemmatizer(word):
     # Freeling tagging for Russian
     # Queries Freeling service at localhost port 50006
 
-    freeling = subprocess.Popen([u'/usr/local/bin/analyzer_client', u'50006'], stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE)
+    freeling = subprocess.Popen([u'/usr/local/bin/analyzer_client', u'50006'],
+                                stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     tagged = freeling.communicate(word.encode('utf-8').strip())
     tagged = tagged[0].decode('utf-8').split('\n')
     tagged = [l for l in tagged if len(l) > 0]
@@ -72,7 +73,8 @@ def freeling_lemmatizer(word):
                     universal_pos = 'PROPN'
                 if len(tag) > 5:
                     freeling_info = tag[6]
-                    if freeling_info == 'G' or freeling_info == 'N' or freeling_info == 'S' or freeling_info == 'F':
+                    if freeling_info == 'G' or freeling_info == 'N' or freeling_info == 'S' \
+                            or freeling_info == 'F':
                         universal_pos = 'PROPN'
         else:
             universal_pos = 'X'
