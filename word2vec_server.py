@@ -80,7 +80,7 @@ for m in our_models:
     modelfile = our_models[m]['path']
     our_models[m]['vocabulary'] = True
     if our_models[m]['algo'] == 'fasttext':
-        models_dic[m] = gensim.models.fasttext.FastText.load(modelfile)
+        models_dic[m] = gensim.models.KeyedVectors.load(modelfile)
     else:
         if modelfile.endswith('.bin.gz'):
             models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(modelfile, binary=True)
@@ -89,7 +89,7 @@ for m in our_models:
             models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(modelfile, binary=False)
             our_models[m]['vocabulary'] = False
         else:
-            models_dic[m] = gensim.models.Word2Vec.load(modelfile)
+            models_dic[m] = gensim.models.KeyedVectors.load(modelfile)
     models_dic[m].init_sims(replace=True)
     print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
 
