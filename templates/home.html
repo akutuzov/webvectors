@@ -30,7 +30,8 @@
         <ol>
         {% for res in list_value if not "unknown to the model" in list_value and res[0] != "No results" %}
         <li style='margin: 10px 0;'>
-	<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0]][0]}}" {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+	<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}}
+	{{ frequencies[res[0]][0]}}" {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
 		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
