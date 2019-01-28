@@ -161,8 +161,6 @@ def process_query(userquery):
                 else:
                     pos_tag = poses[-1]
                 query = userquery.replace(' ', '::') + '_' + pos_tag
-            else:
-                return 'Incorrect tag!'
     return query
 
 
@@ -785,7 +783,7 @@ def raw_finder(lang, model, userquery):
     if userquery.strip().replace('_', '').replace('-', '').replace('::', '').isalnum():
         query = process_query(userquery.strip())
         if tags:
-            if len(query.split('_')) < 2:
+            if query == "Incorrect tag!":
                 error_value = "Incorrect tag!"
                 return render_template('wordpage.html', error=error_value, other_lang=other_lang,
                                        languages=languages, url=url)
