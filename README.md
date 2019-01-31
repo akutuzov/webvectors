@@ -9,6 +9,8 @@ Working demos:
 
 The service can be either integrated into _Apache_ web server as a WSGI application or run as a standalone server using _Gunicorn_.
 
+![Logo](https://rusvectores.org/data/images/associates_rus.png/)
+
 ## Brief installation instructions
 
 0. Clone WebVectors git repository (_git clone https://github.com/akutuzov/webvectors.git_) into a directory acessible by your web server.
