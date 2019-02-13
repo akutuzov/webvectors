@@ -26,24 +26,39 @@
         </script>
         <div class="row">
         <div class="col-md-7">
+
+
+  <!-- What words are related to [word] in model [model]? -->
 	<h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong>
 	<a href="{{ url }}{{lang}}/{{ model }}/{{ word }}" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[word][0]}}"
        {% if frequencies[word][1] == 'high'%} style="color: green;"  {% elif frequencies[word][1] == 'low' %} style="color: red;"  {% endif %} >
 		&laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
             {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}">&laquo;{{ strings[models[model]] }}&raquo;</a>?</h2>
+
+
+       <!-- If the word is not present in the model -->
         {% if model in inferred %}
     	    <i>{{strings['similar32']}}</i>
 	    {% endif %}
         <div style="max-width:300px;">
         <ol>
+
+
+        <!-- We iterate over the results -->
         {% for res in list_value %}
         <li style='margin: 10px 0;'>
        <div style = "font-size:larger;">
 	       <a href="{{ url }}{{lang}}/{{ model }}/{{ res[0] }}" 
 		       title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0]][0]}}"
               {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %} >
+
 		{{res[0].split('_')[0].replace('::', ' ')}}</a>
+
+
+
+          <!-- Showing similarity -->
            {{ "{:.4f} ".format(res[1]) }}
+        <!-- If there are relevant images, they are pulled from Wikipedia with the links to the articles -->
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
 		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
@@ -64,6 +79,8 @@
 	</ul>
         <h3>{{strings['synraw12']}}</h3>
         <ul>
+
+        <!-- Show the raw vector of the word in another model -->
         {% for m in models if m != model %}
         <li>
     	    <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}">{{ strings[models[m]] }}</a>
@@ -98,6 +115,8 @@
              title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive">
     </a>
     {% endif %}
+
+    <!-- Vector plot of the word -->
     <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank">
     <img src = '{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}"
          title = "{{word}} {{strings['synraw10']}}" class="img-responsive">
@@ -107,6 +126,9 @@
 	</div>
 
         {% endif %}
+
+        
+        <!-- In case of incorrect tag or query-->
         {% if error %}
         <p> <span style = "font-size:larger;"><strong>
 
