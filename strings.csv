@@ -17,7 +17,8 @@ base15,Национальный Исследовательский Универ�
 base16,Switch language,Сменить язык
 base17,Различные операции,Miscellaneous
 base18,"Слова, выделенные <span style='color: green;'>зеленым</span>, являются высокочастотными (доля в корпусе выше 0.00001); слова, выделенные <span style='color: red;'>красным</span>, являются низкочастотными (доля в корпусе ниже 0.0000005).","Words in <span style='color: green;'>green</span> are top frequent (corpus ratio higher than 0.00001); words in <span style='color: red;'>red</span>, are low frequent (corpus ratio less than 0.0000005)."
-base19,"Показаны только ассоциаты той же части речи, что и слово в запросе. Изменить этот фильтр можно на вкладке <a href=""/similar"">Похожие слова</a>.","We show only the associates of the same part of speech as your query. All associates can be found at the <a href=""/similar"">Similar Words</a> tab."
+base19,"
+ы только ассоциаты той же части речи, что и слово в запросе. Изменить этот фильтр можно на вкладке <a href=""/similar"">Похожие слова</a>.","We show only the associates of the same part of speech as your query. All associates can be found at the <a href=""/similar"">Similar Words</a> tab."
 calc1,Семантический калькулятор,Semantic Calculator
 calc2,Алгебраические операции,Algebraic operations
 calc3,"Введите в&nbsp;&laquo;<strong>положительную</strong>&raquo; и&nbsp;&laquo;<strong>отрицательную</strong>&raquo; формы не&nbsp;более 10&nbsp;слов через пробел. <i>WebVectors</i> сложит вектора положительных слов и&nbsp;вычтет из&nbsp;них отрицательные. Затем он&nbsp;выдаст слова, наиболее близкие к&nbsp;получившемуся вектору. Если вы&nbsp;оставите отрицательное поле пустым, <i>WebVectors</i> просто найдет центр лексического кластера, образованного положительными словами.","Enter not more than 10&nbsp;space-separated words into <strong>positive</strong> and <strong>negative</strong> forms. <i>WebVectors</i> will sum up&nbsp;vectors for the positive words and subtract vectors from the negative ones. Then it&nbsp;will output the word closest to&nbsp;the resulting vector. If&nbsp;you leave negative form empty, <i>WebVectors</i> will simply find the center of&nbsp;word cluster formed by&nbsp;your positive words."
@@ -100,7 +101,7 @@ synraw10,&#8212;&nbsp;визуализация вектора; по&nbsp;кли�
 synraw11,в&nbsp;Википедии,in&nbsp;Wikipedia
 synraw12,Это слово в&nbsp;других моделях,This word in&nbsp;other models
 synraw13,в&nbsp;НКРЯ,in&nbsp;the RNC
-synraw14,частота в корпусе,corpus frequency
+synraw14,частота в корпусе,occurrences in the corpus
 synraw15,часть речи, part of speech
 upload10,"Когда обучение закончится, вы&nbsp;сможете скачать вашу модель здесь:","When the training is&nbsp;finished, you can download your model here:"
 upload11,Размерность векторов:,Vector size:
@@ -140,7 +141,7 @@ visual21,8&nbsp;тысяч наиболее частотных существи�
 visual22,Визуализировать в&nbsp;TensorFlow Projector,Visualize in&nbsp;TensorFlow Projector
 visual23,Показать трёхмерную проекцию взаимного расположения выбранных слов в&nbsp;TensorFlow Projector от&nbsp;Google,Show 3D&nbsp;projection of&nbsp;the chosen words in&nbsp;Google&#8217;s TensorFlow Projector
 visual24,"Вы&nbsp;можете добавлять новые группы слов кнопкой &#8217;+&#8217;; они отобразятся на&nbsp;визуализации разными цветами (если группа одна, цвета соответствуют частям речи). Оптимальное общее количество слов&nbsp;&#8212; от&nbsp;7&nbsp;до&nbsp;20.","You can add new groups of&nbsp;words with the &#8217;+&#8217; button. They will be&nbsp;visualized with different colors (if&nbsp;there is&nbsp;only 1&nbsp;group, the colors marks parts of&nbsp;speech). Optimal total number of&nbsp;words is&nbsp;from 7&nbsp;to&nbsp;20."
-frequency1,Частотность,Ratio
+frequency1,Частотность,Frequency
 frequency2,Высокая,High
 frequency3,Средняя,Medium
 frequency4,Низкая,Low
