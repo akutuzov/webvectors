@@ -30,7 +30,8 @@
 
     <!-- What words are related to [word] in model [model]? -->
   <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong>
-  <a href="{{ url }}{{lang}}/{{ model }}/{{ word }}" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[word][0]}}"
+  <a href="{{ url }}{{lang}}/{{ model }}/{{ word }}"
+     title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[word][0]}}"
        {% if frequencies[word][1] == 'high'%} style="color: green;"  {% elif frequencies[word][1] == 'low' %} style="color: red;"  {% endif %} >
     &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
    

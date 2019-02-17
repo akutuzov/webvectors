@@ -23,7 +23,9 @@
 
     <!-- Featuring results -->
     {% if list_value %}
-        <h3><strong>{{strings['home4']}} <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[word][0]}}" {% if frequencies[word][1] == 'high'%} style="color: green;"  {% elif frequencies[word][1] == 'low' %} style="color: red;"  {% endif %} >
+        <h3><strong>{{strings['home4']}}
+            <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[word][0]}}"
+                  {% if frequencies[word][1] == 'high'%} style="color: green;"  {% elif frequencies[word][1] == 'low' %} style="color: red;"  {% endif %} >
 	    {{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}}
         <a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a>)</strong></h3>
 
@@ -59,12 +61,14 @@
         {% endif %}
         class="{{frequencies[res[0]][1]}}"
         > 
-	    <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0]][0]}}" {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+	    <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0]][0]}}"
+           {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
 		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">
 		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
-                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
+                     title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
             </a>
 	        </div>
             {% endif %}

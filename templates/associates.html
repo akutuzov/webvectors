@@ -7,7 +7,9 @@
          
 <!-- webpage content - e.g. a post in a blog) -->
 {% block content %}
-        <!-- The "div" tag defines a division or a section in an HTML document, defines the contern of a part of a document. Styles are used for the content inside. Not to copy paste styles all the time, one can collect them in a style table and to add a "class" or "id" attribute with the name of the selector to the tag.-->
+        <!-- The "div" tag defines a division or a section in an HTML document, defines the contern of a part of a document.
+        Styles are used for the content inside.
+        Not to copy paste styles all the time, one can collect them in a style table and to add a "class" or "id" attribute with the name of the selector to the tag.-->
         <div class="row">
             <div class="col-md-10"> <!-- This "class" sets the element on the page and defines the width of the columns. -->
         <h2>{{strings['similar1']}}</h2> <!--  2-level header -->
@@ -72,7 +74,8 @@
                 <!-- The set of radiobuttons is over-->
             {% endif %}
 
-                <!-- Button "Find similar words!" It can be placed independently, but if we want to send data to the server, then it should be placed within th "form" container -->
+                <!-- Button "Find similar words!"
+                It can be placed independently, but if we want to send data to the server, then it should be placed within th "form" container -->
                 <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['similar15']}}</button>
             </form>
             <!-- end of the id="inputform" container-->
@@ -116,7 +119,8 @@
             <div class="col-md-5">
             <!-- The name of the model is made bold, the link to it is given.-->
             <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
-            <!-- If the word is not present in the model: "The word is out of model vocabulary; its embedding is inferred from its characters". -->
+            <!-- If the word is not present in the model:
+            "The word is out of model vocabulary; its embedding is inferred from its characters". -->
             {% if model in inferred %}
                 <i>{{strings['similar32']}}</i>
             {% endif %}
@@ -197,7 +201,8 @@
         <!-- What is seen below the results. -->
         <ul>
        <!--  <li><p><i>{{strings['base18']}}</i></p></li>  --> <!--  "Words in green..."  -->
-        <li><p><i>{{strings['similar34']}}</i></p></li> <!-- "Parts of speech are shown for each word, if present in the model."  -->
+            <!-- "Parts of speech are shown for each word, if present in the model."  -->
+        <li><p><i>{{strings['similar34']}}</i></p></li>
         </ul>
     {% endif %}
     <!-- The results are over. -->
