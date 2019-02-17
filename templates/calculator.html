@@ -34,20 +34,23 @@
       <!-- "typeahead" - to get suggestions from the server on how to complete the data entry 
         if the there is a query (negative word), its first word is used, else "mother" is inserted
         all in the 1st column -->
-        <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"{% else %} value="{{strings['calc33']}}"{% endif %} maxlength=50>
+        <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"
+               {% else %} value="{{strings['calc33']}}"{% endif %} maxlength=50>
         <!-- an arrow -->
             <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
         <!-- "typeahead" - to get suggestions
           if the there is a query (positive word), its first word is used, else "daughter" is inserted
           all in the 1st column -->
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}" {% else %} value="{{strings['calc34']}}"{% endif %} maxlength=50>
+		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}"
+               {% else %} value="{{strings['calc34']}}"{% endif %} maxlength=50>
 		</div>
     <!-- 2nd column -->
 		<div class = "col-md-5">
       <!-- "typeahead" - to get suggestions
           if the there is a query (positive word), its first word is used, else "father" is inserted
           all in the 2nd column -->
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}" {% else %} value="{{strings['calc35']}}"{% endif %} maxlength=50>
+		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}"
+               {% else %} value="{{strings['calc35']}}"{% endif %} maxlength=50>
         <!-- an arrow -->
             <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
     <!-- Questions below the arrow -->
@@ -97,7 +100,8 @@
                 {% else %}
 <!-- results as lists of links to word pages are made, with titles, images etc. -->
 		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}}
-		{{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}" {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
+		{{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
+           {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
                 {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
          {{res[0].split('_')[0].replace('::', ' ')}}{% if res[0].split('_')|length > 1 %}<sub style="font-size:30%;">
                 {{res[0].split('_')[-1]}}</sub>{% endif %}</a> {{ "{:.2f} ".format(res[1]) }}
