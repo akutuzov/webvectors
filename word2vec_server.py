@@ -116,6 +116,7 @@ def find_synonyms(query):
     q = query['query']
     pos = query['pos']
     usermodel = query['model']
+    nr_neighbors = query['nr_neighbors']
     results = {'frequencies': {}}
     qf = q
     results['frequencies'][q] = frequency(q, usermodel)
@@ -144,12 +145,12 @@ def find_synonyms(query):
                 return results
     results['neighbors'] = []
     if pos == 'ALL':
-        for i in model.wv.most_similar(positive=qf, topn=10):
+        for i in model.wv.most_similar(positive=qf, topn=nr_neighbors):
             results['neighbors'].append(i)
     else:
         counter = 0
         for i in model.wv.most_similar(positive=qf, topn=30):
-            if counter == 10:
+            if counter == nr_neighbors:
                 break
             if i[0].split('_')[-1] == pos:
                 results['neighbors'].append(i)
@@ -230,6 +231,7 @@ def scalculator(query):
     q = query['query']
     pos = query['pos']
     usermodel = query['model']
+    nr_neighbors = query['nr_neighbors']
     model = models_dic[usermodel]
     results = {'neighbors': [], 'frequencies': {}}
     positive_list = q[0]
@@ -297,13 +299,13 @@ def scalculator(query):
             else:
                 nlist.append(q)
     if pos == "ALL":
-        for w in model.wv.most_similar(positive=plist, negative=nlist, topn=5):
+        for w in model.wv.most_similar(positive=plist, negative=nlist, topn=nr_neighbors):
             results['neighbors'].append(w)
     else:
         for w in model.wv.most_similar(positive=plist, negative=nlist, topn=30):
             if w[0].split('_')[-1] == pos:
                 results['neighbors'].append(w)
-            if len(results['neighbors']) == 5:
+            if len(results['neighbors']) == nr_neighbors:
                 break
     if len(results['neighbors']) == 0:
         results['No results'] = True
