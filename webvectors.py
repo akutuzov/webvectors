@@ -247,7 +247,8 @@ def home(lang):
             images = {query.split('_')[0]: None}
             if model_props[model]['tags'] == 'False':
                 query = query.split('_')[0]
-            message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
+            message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model,
+                       'nr_neighbors': 10}
             result = json.loads(serverquery(message).decode('utf-8'))
             if query + " is unknown to the model" in result:
                 return render_template('home.html', error=query + " is unknown to the model",
@@ -419,10 +420,12 @@ def similar_page(lang):
                                            url=url, usermodels=model_value)
                 if model_props[model]['tags'] == 'False':
                     model_query = query.split('_')[0]
-                    message = {'operation': '1', 'query': model_query, 'pos': 'ALL', 'model': model}
+                    message = {'operation': '1', 'query': model_query, 'pos': 'ALL',
+                               'model': model, 'nr_neighbors': 10}
                 else:
                     model_query = query
-                    message = {'operation': '1', 'query': model_query, 'pos': pos, 'model': model}
+                    message = {'operation': '1', 'query': model_query, 'pos': pos, 'model': model,
+                               'nr_neighbors': 10}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 frequencies[model] = result['frequencies']
                 if model_query != query:
@@ -654,13 +657,13 @@ def finder(lang):
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
                 if model_props[model]['tags'] == 'False':
-                    message = {'operation': '3', 'query': [[w.split('_')[0] for w in positive_list],
-                                                           [w.split('_')[0]
-                                                            for w in negative_list]], 'pos': 'ALL',
-                               'model': model}
-                else:
                     message = {'operation': '3', 'query':
-                        [positive_list, negative_list], 'pos': pos, 'model': model}
+                        [[w.split('_')[0] for w in positive_list],
+                         [w.split('_')[0] for w in negative_list]], 'pos': 'ALL', 'model': model,
+                               'nr_neighbors': 5}
+                else:
+                    message = {'operation': '3', 'query': [positive_list, negative_list],
+                               'pos': pos, 'model': model, 'nr_neighbors': 5}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 frequencies[model] = result['frequencies']
                 if 'No results' in result:
@@ -729,13 +732,13 @@ def finder(lang):
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            models=our_models, url=url, usermodels=calcmodel_value)
                 if model_props[model]['tags'] == 'False':
-                    message = {'operation': '3', 'query': [[w.split('_')[0] for w in positive_list],
-                                                           [w.split('_')[0]
-                                                            for w in negative_list]], 'pos': 'ALL',
-                               'model': model}
+                    message = {'operation': '3', 'query':
+                        [[w.split('_')[0] for w in positive_list],
+                         [w.split('_')[0] for w in negative_list]], 'pos': 'ALL', 'model': model,
+                               'nr_neighbors': 5}
                 else:
                     message = {'operation': '3', 'query': [positive_list, negative_list],
-                               'pos': pos, 'model': model}
+                               'pos': pos, 'model': model, 'nr_neighbors': 5}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 frequencies[model] = result['frequencies']
                 if "No results" in result:
@@ -795,7 +798,8 @@ def raw_finder(lang, model, userquery):
         if model_props[model]['tags'] == 'False':
             query = query.split('_')[0]
             pos_tag = 'ALL'
-        message = {'operation': '1', 'query': query, 'pos': pos_tag, 'model': model}
+        message = {'operation': '1', 'query': query, 'pos': pos_tag, 'model': model,
+                   'nr_neighbors': 10}
         result = json.loads(serverquery(message).decode('utf-8'))
         if query + " is unknown to the model" in result or "No results" in result:
             return render_template('wordpage.html', error=list(result)[0], other_lang=other_lang,
@@ -866,10 +870,11 @@ def generate(word, model, api_format):
         else:
             # form the query and get the result from the server
             if model_props[model]['tags'] == 'False':
-                message = {'operation': '1', 'query':
-                    query.split('_')[0], 'pos': 'ALL', 'model': model}
+                message = {'operation': '1', 'query': query.split('_')[0], 'pos': 'ALL',
+                           'model': model, 'nr_neighbors': 10}
             else:
-                message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model}
+                message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model,
+                           'nr_neighbors': 10}
             result = json.loads(serverquery(message).decode('utf-8'))
 
             # handle cases when the server returned that the word is unknown to the model,
