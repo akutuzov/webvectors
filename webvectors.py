@@ -367,8 +367,8 @@ def misc_page(lang):
                            tags2show=exposed_tags)
 
 
-@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
-def similar_page(lang):
+@wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
+def associates_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
@@ -899,7 +899,7 @@ def generate(word, model, api_format):
                     yield json.dumps(result, ensure_ascii=False)
 
 
-@wvectors.route(url + '<model>/<word>/api/<api_format>', methods=['GET'])
+@wvectors.route(url + '<model>/<word>/api/<api_format>/', methods=['GET'])
 def api(model, word, api_format):
     """
     provides a list of neighbors for a given word in downloadable form: csv or json
