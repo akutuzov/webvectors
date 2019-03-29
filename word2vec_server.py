@@ -119,7 +119,6 @@ def find_synonyms(query):
     nr_neighbors = query['nr_neighbors']
     results = {'frequencies': {}}
     qf = q
-    results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
     if qf not in model.wv.vocab:
         candidates_set = set()
@@ -143,6 +142,7 @@ def find_synonyms(query):
             else:
                 results[q + " is unknown to the model"] = True
                 return results
+    results['frequencies'][q] = frequency(qf, usermodel)
     results['neighbors'] = []
     if pos == 'ALL':
         for i in model.wv.most_similar(positive=qf, topn=nr_neighbors):
@@ -175,8 +175,6 @@ def find_similarity(query):
         (q1, q2) = pair
         qf1 = q1
         qf2 = q2
-        results['frequencies'][q1] = frequency(q1, usermodel)
-        results['frequencies'][q2] = frequency(q2, usermodel)
         if q1 not in model.wv.vocab:
             candidates_set = set()
             candidates_set.add(q1.upper())
@@ -221,6 +219,8 @@ def find_similarity(query):
                 else:
                     results["Unknown to the model"] = q2
                     return results
+        results['frequencies'][qf1] = frequency(qf1, usermodel)
+        results['frequencies'][qf2] = frequency(qf2, usermodel)
         pair2 = (qf1, qf2)
         result = float(model.similarity(qf1, qf2))
         results['similarities'].append((pair2, result))
