@@ -141,6 +141,7 @@ def find_synonyms(query):
                 results['inferred'] = True
             else:
                 results[q + " is unknown to the model"] = True
+                results['frequencies'][q] = frequency(q, usermodel)
                 return results
     results['frequencies'][q] = frequency(qf, usermodel)
     results['neighbors'] = []
