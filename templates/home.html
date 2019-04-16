@@ -20,12 +20,11 @@
         <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['home3']}}</button>
         </form>
     </div>
-
     <!-- Featuring results -->
     {% if list_value %}
         <h3><strong>{{strings['home4']}}
-            <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[word][0]}}"
-                  {% if frequencies[word][1] == 'high'%} style="color: green;"  {% elif frequencies[word][1] == 'low' %} style="color: red;"  {% endif %} >
+            <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
+                  {% if frequencies[model][word][1] == 'high'%} style="color: green;"  {% elif frequencies[model][word][1] == 'low' %} style="color: red;"  {% endif %} >
 	    {{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}}
         <a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a>)</strong></h3>
 
@@ -52,17 +51,17 @@
         
         <!-- We iterate over the results -->
         <ol style="font-size: larger;">
-        {% for res in list_value if not "unknown to the model" in list_value and res[0] != "No results" %}
+        {% for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
         
         <!-- The class and default style depends on frequency -->
         <li
-        {% if frequencies[res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
+        {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
         {% else %} style="margin: 10px 0;"
         {% endif %}
-        class="{{frequencies[res[0]][1]}}"
+        class="{{frequencies[model][res[0]][1]}}"
         > 
-	    <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0]][0]}}"
-           {% if frequencies[res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+	    <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
+           {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
 		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]]  %}
 	        <div class="avataricon" style="clear:both;">

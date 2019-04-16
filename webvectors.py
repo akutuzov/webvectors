@@ -245,11 +245,14 @@ def home(lang):
             else:
                 model = model_value[0]
             images = {query.split('_')[0]: None}
+            models_row = {}
+            frequencies = {}
             if model_props[model]['tags'] == 'False':
                 query = query.split('_')[0]
             message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model,
                        'nr_neighbors': 10}
             result = json.loads(serverquery(message).decode('utf-8'))
+            frequencies[model] = result['frequencies']
             if query + " is unknown to the model" in result:
                 return render_template('home.html', error=query + " is unknown to the model",
                                        other_lang=other_lang, languages=languages,
@@ -258,6 +261,7 @@ def home(lang):
                 inferred = set()
                 for word in result['neighbors']:
                     images[word[0].split('_')[0]] = None
+                models_row[model] = result['neighbors']
                 if dbpedia:
                     try:
                         images = get_images(images)
@@ -265,10 +269,10 @@ def home(lang):
                         pass
                 if 'inferred' in result:
                     inferred.add(model)
-                return render_template('home.html', list_value=result['neighbors'], word=query,
+                return render_template('home.html', list_value=models_row, word=query,
                                        wordimages=images, models=our_models, model=model, tags=tags,
                                        other_lang=other_lang, languages=languages, url=url,
-                                       inferred=inferred, frequencies=result['frequencies'])
+                                       inferred=inferred, frequencies=frequencies)
         else:
             error_value = "Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,
@@ -421,11 +425,11 @@ def associates_page(lang):
                 if model_props[model]['tags'] == 'False':
                     model_query = query.split('_')[0]
                     message = {'operation': '1', 'query': model_query, 'pos': 'ALL',
-                               'model': model, 'nr_neighbors': 10}
+                               'model': model, 'nr_neighbors': 20}
                 else:
                     model_query = query
                     message = {'operation': '1', 'query': model_query, 'pos': pos, 'model': model,
-                               'nr_neighbors': 10}
+                               'nr_neighbors': 20}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 frequencies[model] = result['frequencies']
                 if model_query != query:
