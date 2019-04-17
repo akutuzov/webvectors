@@ -799,12 +799,15 @@ def raw_finder(lang, model, userquery):
             pos_tag = 'ALL'
         images = {query.split('_')[0]: None}
         image = None
+        models_row = {}
+        frequencies = {}
         if model_props[model]['tags'] == 'False':
             query = query.split('_')[0]
             pos_tag = 'ALL'
         message = {'operation': '1', 'query': query, 'pos': pos_tag, 'model': model,
                    'nr_neighbors': 10}
         result = json.loads(serverquery(message).decode('utf-8'))
+        frequencies[model] = result['frequencies']
         if query + " is unknown to the model" in result or "No results" in result:
             return render_template('wordpage.html', error=list(result)[0], other_lang=other_lang,
                                    languages=languages, url=url, word=query, models=our_models,
@@ -823,18 +826,19 @@ def raw_finder(lang, model, userquery):
             plotfile = root + 'data/images/singleplots/' + model + '_' + fname + '.png'
             if not os.access(plotfile, os.F_OK):
                 singularplot(query, model, vector, fname)
+            models_row[model] = result['neighbors']
             if dbpedia:
                 try:
                     images = get_images(images)
                     image = images[query.split('_')[0]]
                 except:
                     pass
-            return render_template('wordpage.html', list_value=result['neighbors'], word=query,
+            return render_template('wordpage.html', list_value=models_row, word=query,
                                    model=model, pos=pos_tag, vector=vector, image=image,
                                    wordimages=images, vectorvis=fname, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url,
                                    search=defaultsearchengine, models=our_models, inferred=inferred,
-                                   frequencies=result['frequencies'])
+                                   frequencies=frequencies)
     else:
         error_value = 'Incorrect query!'
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
