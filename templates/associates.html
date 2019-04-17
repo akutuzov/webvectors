@@ -113,7 +113,7 @@
             </div>
 
         <!-- Featuring results-->
-        <div class="row">
+        <div class="row" id="result" data-result ="{{ frequencies }}">
         {% for model in list_value%}
             <!-- Every model is allocated a column to be shown in. -->
             <div class="col-md-5">
@@ -139,7 +139,7 @@
         </span>
 
             <!-- <ol> creates a numbered list. Every list element starts with <li> -->
-            <ol style="font-size: larger;" type="1"> 
+            <ol id="{{ model }}" style="font-size: larger;" type="1"> 
             <!-- We iterate over the results -->
             {% for res in list_value[model] if res != "Incorrect tag!" %}
                 
@@ -148,8 +148,7 @@
                 {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
                 {% else %} style="margin: 10px 0;"
                 {% endif %}
-                class="{{frequencies[model][res[0]][1]}}"
-                > 
+                class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}"> 
 
                 <!-- Every word in the result is a link to the corresoinding webpage on the website. -->
                 <!-- title - what we can see when the cursor hovers over the word (pos and frequency). -->

@@ -61,7 +61,7 @@
       <!-- if there are results -->
         {% if analogy_value %}
       <!-- in the next row -->
-        <div class = "row">
+        <div class = "row" id="result" data-result="{{ frequencies }}">
   <!-- suggestion to change frequency -->
       <div class="checkbox">
       <p><small><em>{{strings['frequency1']}}</em></small></p>
@@ -79,7 +79,7 @@
         <!-- model name given -->
     	    <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
     	    
-    	    <ol style="font-size: larger;" type="1">
+    	    <ol id="{{ model }}" style="font-size: larger;" type="1">
         
     	{% for res in analogy_value[model] if res != "Incorrect tag!" %}
         <!-- hide words of low frequency -->
@@ -87,7 +87,7 @@
         {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
         {% else %} style="margin: 10px 0;"
         {% endif %}
-        class="{{frequencies[model][res[0]][1]}}">
+        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
         <!-- if the word is unknown or there are few associates -->
 
              {% if 'is unknown' in res %}
@@ -200,7 +200,7 @@
                         </div> 
   <!-- if there are results -->                                           
   {% if calc_value %}
-        <div class = "row">
+        <div class = "row" id="result" data-result="{{ frequencies }}">
           <!-- suggestion to change frequency -->
             <div class="checkbox">
             <p><small><em>{{strings['frequency1']}}</em></small></p>
@@ -218,15 +218,14 @@
         <!-- model name -->
     	    <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
     	    
-    	    <ol style="font-size: larger;" type="1">
+    	    <ol id="{{ model }}" style="font-size: larger;" type="1">
         
     	{% for res in calc_value[model] if res != "No similar words of this part of speech." and not 'No similar words' in res and not 'is unknown' in res %}
-    		<li 
+    	<li 
         {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
         {% else %} style="margin: 10px 0;"
         {% endif %}
-        class="{{frequencies[model][res[0]][1]}}"
-        >
+        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
         <!-- links for every result in a model -->       
         <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0] }}"
         {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  
