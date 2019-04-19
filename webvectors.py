@@ -272,7 +272,8 @@ def home(lang):
                 return render_template('home.html', list_value=models_row, word=query,
                                        wordimages=images, models=our_models, model=model, tags=tags,
                                        other_lang=other_lang, languages=languages, url=url,
-                                       inferred=inferred, frequencies=frequencies, visible_neighbors=10)
+                                       inferred=inferred, frequencies=frequencies,
+                                       visible_neighbors=10)
         else:
             error_value = "Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,
@@ -455,7 +456,8 @@ def associates_page(lang):
                                    number=len(model_value), wordimages=images, models=our_models,
                                    tags=tags, other_lang=other_lang, languages=languages,
                                    tags2show=exposed_tags, url=url, usermodels=model_value,
-                                   userpos=userpos, inferred=inferred, frequencies=frequencies, visible_neighbors=10)
+                                   userpos=userpos, inferred=inferred, frequencies=frequencies,
+                                   visible_neighbors=10)
         else:
             error_value = "Incorrect query!"
             return render_template("associates.html", error=error_value, models=our_models,
@@ -663,8 +665,8 @@ def finder(lang):
                 if model_props[model]['tags'] == 'False':
                     message = {'operation': '3', 'query':
                         [[w.split('_')[0] for w in positive_list],
-                         [w.split('_')[0] for w in negative_list]], 'pos': 'ALL', 'model': model,
-                               'nr_neighbors': 30}
+                         [w.split('_')[0] for w in negative_list]], 'pos': 'ALL',
+                               'model': model, 'nr_neighbors': 30}
                 else:
                     message = {'operation': '3', 'query': [positive_list, negative_list],
                                'pos': pos, 'model': model, 'nr_neighbors': 30}
@@ -738,8 +740,8 @@ def finder(lang):
                 if model_props[model]['tags'] == 'False':
                     message = {'operation': '3', 'query':
                         [[w.split('_')[0] for w in positive_list],
-                         [w.split('_')[0] for w in negative_list]], 'pos': 'ALL', 'model': model,
-                               'nr_neighbors': 30}
+                         [w.split('_')[0] for w in negative_list]], 'pos': 'ALL',
+                               'model': model, 'nr_neighbors': 30}
                 else:
                     message = {'operation': '3', 'query': [positive_list, negative_list],
                                'pos': pos, 'model': model, 'nr_neighbors': 30}
@@ -927,9 +929,9 @@ def api(model, word, api_format):
 
     cleanword = ''.join([char for char in word if char.isalnum()])
     return Response(generate(word, model, api_format), mimetype=mime,
-                    headers={"Content-Disposition":
-                                 "attachment;filename=%s.%s" %
-                                 (cleanword.encode('utf-8'), api_format.encode('utf-8'))})
+                    headers={"Content-Disposition": "attachment;filename=%s.%s"
+                                                    % (cleanword.encode('utf-8'),
+                                                       api_format.encode('utf-8'))})
 
 
 @wvectors.route(url + '<model>/<wordpair>/api/similarity/', methods=['GET'])
