@@ -24,7 +24,7 @@
         }
         }
         </script>
-        <div class="row" id="result" data-result="{{ frequencies }}">
+        <div class="row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
         <div class="col-md-7">
 
 
