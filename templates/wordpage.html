@@ -24,7 +24,7 @@
         }
         }
         </script>
-        <div class="row">
+        <div class="row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
         <div class="col-md-7">
 
 
@@ -57,7 +57,7 @@
           <i>{{strings['similar32']}}</i>
         {% endif %}
         <div style="max-width:300px;">
-        <ol>
+        <ol id="{{ model }}">
 
             <!-- We iterate over the results -->
             {% for res in list_value[model] if res != "Incorrect tag!" %}
@@ -67,7 +67,7 @@
                 <li {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
                 {% else %} style="margin: 10px 0;"
                 {% endif %}
-                class="{{frequencies[model][res[0]][1]}}">  
+                class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">  
 
                 <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
                 title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
