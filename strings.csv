@@ -84,11 +84,11 @@ similar28,Пары слов,Word pairs
 similar29,Косинусная близость,Cosine similarity
 similar30,Нет близких слов с&nbsp;такой частью речи,No&nbsp;similar words with this tag
 similar31,История запросов близости,Similarity queries history
-similar32,Слова нет в словаре модели; вектор восстановлен из составляющих его символов.,The word is out of model vocabulary; its embedding is inferred from its characters.
+similar32,Слова нет в словаре модели; вектор восстановлен из формы слова.,The word is out of model vocabulary; its embedding is inferred from its characters.
 similar33,Тайга,Taiga
 similar34,"Для каждого слова показана его часть речи (если в модели они размечены).","Parts of speech are shown for each word, if present in the model."
 synraw1,"Слова, семантически связанные&nbsp;с",Semantically related words for
-synraw2,Какие слова близки к&nbsp;слову,What words are related&nbsp;to
+synraw2,Какие слова похожи на&nbsp;слово,What words are related&nbsp;to
 synraw3,в,in&nbsp;the
 synraw4,Показать вектор,Show the raw vector&nbsp;of
 synraw5,в&nbsp;модели,in&nbsp;model
@@ -133,13 +133,13 @@ visual9,Слова не&nbsp;должны повторяться,Words must be&n
 visual15,Визуализировать,Visualize
 visual16,Визуализация,Visualization
 visual17,вычислено на&nbsp;модели,computed on&nbsp;data from
-visual18,14&nbsp;тысяч наиболее частотных существительных в&nbsp;НКРЯ,14K most frequent nouns in&nbsp;the Russian National Corpus
+visual18,5&nbsp;тысяч наиболее частотных знаменательных слов в&nbsp;НКРЯ,5K most frequent content words in&nbsp;the Russian National Corpus
 visual19,Визуализация отношений между cуществительными; по&nbsp;клику доступна полноразмерная версия,Plot for noun relations; click for full-size image
 visual20,Примеры больших семантических карт,Examples of&nbsp;large semantic maps
-visual21,8&nbsp;тысяч наиболее частотных существительных в&nbsp;новостном корпусе,8K&nbsp;most frequent nouns in&nbsp;the news corpus
+visual21,Тысяча наиболее частотных существительных в&nbsp;корпусе НКРЯ+Википедия,1K&nbsp;most frequent nouns in&nbsp;the RNC+Wikipedia corpus
 visual22,Визуализировать в&nbsp;TensorFlow Projector,Visualize in&nbsp;TensorFlow Projector
 visual23,Показать трёхмерную проекцию взаимного расположения выбранных слов в&nbsp;TensorFlow Projector от&nbsp;Google,Show 3D&nbsp;projection of&nbsp;the chosen words in&nbsp;Google&#8217;s TensorFlow Projector
-visual24,"Вы&nbsp;можете добавлять новые группы слов кнопкой &#8217;+&#8217;; они отобразятся на&nbsp;визуализации разными цветами (если группа одна, цвета соответствуют частям речи). Оптимальное общее количество слов&nbsp;&#8212; от&nbsp;7&nbsp;до&nbsp;20.","You can add new groups of&nbsp;words with the &#8217;+&#8217; button. They will be&nbsp;visualized with different colors (if&nbsp;there is&nbsp;only 1&nbsp;group, the colors marks parts of&nbsp;speech). Optimal total number of&nbsp;words is&nbsp;from 7&nbsp;to&nbsp;20."
+visual24,"Вы&nbsp;можете добавлять новые группы слов кнопкой &#8217;(+)&#8217;; они отобразятся на&nbsp;визуализации разными цветами (если группа одна, цвета соответствуют частям речи). Оптимальное общее количество слов&nbsp;&#8212; от&nbsp;7&nbsp;до&nbsp;20.","You can add new groups of&nbsp;words with the &#8217;(+)&#8217; button. They will be&nbsp;visualized with different colors (if&nbsp;there is&nbsp;only 1&nbsp;group, the colors marks parts of&nbsp;speech). Optimal total number of&nbsp;words is&nbsp;from 7&nbsp;to&nbsp;20."
 frequency1,Частотность слова,Word frequency
 frequency2,Высокая,High
 frequency3,Средняя,Medium

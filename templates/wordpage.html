@@ -30,7 +30,7 @@
 
     <!-- What words are related to [word] in model [model]? -->
   <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong>
-  <a href="{{ url }}{{lang}}/{{ model }}/{{ word }}"
+  <a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
      title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
        {% if frequencies[model][word][1] == 'high'%} style="color: green;"  {% elif frequencies[model][word][1] == 'low' %} style="color: red;"  {% endif %} >
     &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
@@ -112,7 +112,7 @@
         <!-- Show the raw vector of the word in another model -->
         {% for m in models if m != model %}
         <li>
-          <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}">{{ strings[models[m]] }}</a>
+          <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}/">{{ strings[models[m]] }}</a>
         </li>
         {% endfor %}
         </ul>
@@ -149,6 +149,7 @@
     {% endif %}
 
     <!-- Vector plot of the word -->
+    <hr/>
     <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank">
     <img src = '{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}"
          title = "{{word}} {{strings['synraw10']}}" class="img-responsive">
@@ -176,7 +177,7 @@
         <ul>
         {% for m in models if m != model %}
         <li>
-          <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}">{{ strings[models[m]] }}</a>
+          <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}/">{{ strings[models[m]] }}</a>
         </li>
         {% endfor %}
         </ul>

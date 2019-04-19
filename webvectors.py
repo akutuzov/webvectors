@@ -249,7 +249,10 @@ def home(lang):
             frequencies = {}
             if model_props[model]['tags'] == 'False':
                 query = query.split('_')[0]
-            message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model,
+                pos = 'ALL'
+            else:
+                pos = query.split('_')[-1]
+            message = {'operation': '1', 'query': query, 'pos': pos, 'model': model,
                        'nr_neighbors': 30}
             result = json.loads(serverquery(message).decode('utf-8'))
             frequencies[model] = result['frequencies']
@@ -373,6 +376,7 @@ def misc_page(lang):
 
 
 @wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
 def associates_page(lang):
     g.lang = lang
     s = set()
@@ -881,10 +885,10 @@ def generate(word, model, api_format):
             # form the query and get the result from the server
             if model_props[model]['tags'] == 'False':
                 message = {'operation': '1', 'query': query.split('_')[0], 'pos': 'ALL',
-                           'model': model, 'nr_neighbors': 30}
+                           'model': model, 'nr_neighbors': 10}
             else:
                 message = {'operation': '1', 'query': query, 'pos': 'ALL', 'model': model,
-                           'nr_neighbors': 30}
+                           'nr_neighbors': 10}
             result = json.loads(serverquery(message).decode('utf-8'))
 
             # handle cases when the server returned that the word is unknown to the model,
@@ -991,11 +995,12 @@ def about_page(lang):
 @wvectors.route(url + 'about/', methods=['GET', 'POST'])
 @wvectors.route(url + 'calculator/', methods=['GET', 'POST'])
 @wvectors.route(url + 'similar/', methods=['GET', 'POST'])
+@wvectors.route(url + 'associates/', methods=['GET', 'POST'])
 @wvectors.route(url + 'visual/', methods=['GET', 'POST'])
 @wvectors.route(url + 'models/', methods=['GET', 'POST'])
 @wvectors.route(url, methods=['GET', 'POST'])
 def redirect_main():
-    req = request.path.split('/')[-1]
+    req = request.path.split('/')[-2]
     if len(req) == 0:
         req = '/'
     else:
