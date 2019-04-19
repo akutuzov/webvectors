@@ -47,7 +47,7 @@
 	        <i>{{strings['similar32']}}</i>
         {% endif %}
 
-	    <div style="max-width:300px;" id="result" data-result="{{ frequencies }}">
+	    <div style="max-width:300px;" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
         
         <!-- We iterate over the results -->
         <ol id="{{ model }}" style="font-size: larger;"> 

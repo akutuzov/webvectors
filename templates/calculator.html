@@ -61,7 +61,7 @@
       <!-- if there are results -->
         {% if analogy_value %}
       <!-- in the next row -->
-        <div class = "row" id="result" data-result="{{ frequencies }}">
+        <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
   <!-- suggestion to change frequency -->
       <div class="checkbox">
       <p><small><em>{{strings['frequency1']}}</em></small></p>
@@ -200,7 +200,7 @@
                         </div> 
   <!-- if there are results -->                                           
   {% if calc_value %}
-        <div class = "row" id="result" data-result="{{ frequencies }}">
+        <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
           <!-- suggestion to change frequency -->
             <div class="checkbox">
             <p><small><em>{{strings['frequency1']}}</em></small></p>

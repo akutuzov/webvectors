@@ -113,7 +113,7 @@
             </div>
 
         <!-- Featuring results-->
-        <div class="row" id="result" data-result ="{{ frequencies }}">
+        <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
         {% for model in list_value%}
             <!-- Every model is allocated a column to be shown in. -->
             <div class="col-md-5">

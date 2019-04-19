@@ -52,12 +52,12 @@ function formResultsUsingFilterList(resultArray, maxNumber){
 };
 
 $(document).ready(function(){
-  const RESULTS = JSON.parse($("#result").data("result").replace(/'/g, '"'));
-  const FREQUENCIES = ['high', 'mid', 'low'];
+  const MAXNUM = $("#result").data("visible");
+  const RESULTS = $("#result").data("result");
   const MODELS = Object.keys(RESULTS);
+  const FREQUENCIES = ['high', 'mid', 'low'];
   const FILTER = 'freq';
-  const MAXNUM = ($('title').text() == 'WebVectors: Semantic Calculator' || $('title').text() == 'WebVectors: Семантический калькулятор') ? 5 : 10
-
+  
   let sortedResults = (makeListForEachFrequency(RESULTS, FREQUENCIES, MODELS, FILTER));
   let output = checkFrequencyMakeOutput(sortedResults, FREQUENCIES, FILTER);
   formResultsUsingFilterList(output, MAXNUM);
