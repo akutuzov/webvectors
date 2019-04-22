@@ -64,10 +64,7 @@
             {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
             {% else %} style="margin: 10px 0;"
             {% endif %}>
-	          <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-              {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
-              {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"
-              {% endif %}>
+	          <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}">
 		          {{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
               {% if wordimages[res[0].split('_')[0]] %}
 	              <div class="avataricon" style="clear:both;">

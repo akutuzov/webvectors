@@ -102,7 +102,7 @@
         If no results - "No results".
         Otherwise, the results are shown.
           We iterate over the results. Each word is a link to the corresoinding wordpage
-          The class and the style of each item depends on frequency.
+          The class and the style (css) of each item depends on frequency.
           When the cursor hovers over the word we can see pos and frequency (title).
           Tags are shown in the form of subscript indices (sub).
           Similarity is shown to the hundredth.
@@ -128,10 +128,7 @@
                       {% else %} style="margin: 10px 0;"
                       {% endif %}>
                       <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
-                        title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-                        {% if frequencies[model][res[0]][1] == 'high' %} style="color: green;"
-                        {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"
-                        {% endif %}>
+                        title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}">
                         {{res[0].split('_')[0].replace('::', ' ')}}
                         {% if res[0].split('_')|length > 1 %}
                           <sub style="font-size:50%;">{{res[0].split('_')[-1]}}</sub>
