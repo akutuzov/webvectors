@@ -5,43 +5,33 @@
      <title>{{strings['base3']}}: {{strings['similar1']}}</title>
 {% endblock title %}
          
-<!-- webpage content - e.g. a post in a blog) -->
+<!-- webpage content -->
 {% block content %}
-        <!-- The "div" tag defines a division or a section in an HTML document, defines the contern of a part of a document.
-        Styles are used for the content inside.
-        Not to copy paste styles all the time, one can collect them in a style table and to add a "class" or "id" attribute with the name of the selector to the tag.-->
         <div class="row">
-            <div class="col-md-10"> <!-- This "class" sets the element on the page and defines the width of the columns. -->
-        <h2>{{strings['similar1']}}</h2> <!--  2-level header -->
-        <div id="queryform"> 
-            <!-- "id" gives the element a unique name, which is used to define its style and call it via scripts. -->
-        <!-- "form" allows to exchange data between the user and the server. -->
+            <div class="col-md-10">
+        <h2>{{strings['similar1']}}</h2>
+        <!-- Request field -->
+        <div id="queryform">
         <form id="inputform" action="#" method=post>
-
-            <!-- Request field -->
             <div class="form-group">
                 <!-- Caption ("Enter a word..." ) -->
                 <p>{{strings['similar2']}}</p>
-
+                <!-- If there was a request, it's shown in the field, else the default "computer_NOUN" is shown -->
                 {% if list_value %}
-                <!-- If there was a request and a word in it, it's shown in the field. -->
                 <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
                 {% else %}
-                <!-- If there is no input, the deafolt "computer_NOUN" request is shown (home7) -->
                 <input type="text" class="typeahead" id="query" name="list_query" value="{{strings['home7']}}" maxlength=100>
                 {% endif %}
-
             </div>
             
             <!-- The checkbox for model selection --> 
             <div class="checkbox">
-                  <p><small><em>{{strings['similar3']}}</em></small></p> <!-- The <small> tag shrinks the font by one point. -->
+                  <p><small><em>{{strings['similar3']}}</em></small></p>
                 <fieldset>
                 <small>
                 <!-- A cicle for models to work with -->
                 {% for m in models %}
                     <label>
-                        <!-- The "checked" attribute defines whether any element on the list is already checked.-->
                         <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
                     </label>
                 {% endfor %}
@@ -51,7 +41,8 @@
 
               <!-- If post tags are used, one can select the pos in the results-->
             {% if tags %}
-                <p><small><em>{{strings['similar9']}}</em></small></p> <!-- The header "Show only:". <p> marks a paragraph -->
+                <!-- The header "Show only:" -->
+                <p><small><em>{{strings['similar9']}}</em></small></p>
 
                 <!-- radiobuttons for pos selection -->
                 <div class="radio">
@@ -71,31 +62,24 @@
                     </label>
                 </small>
                 </div>
-                <!-- The set of radiobuttons is over-->
             {% endif %}
 
-                <!-- Button "Find similar words!"
-                It can be placed independently, but if we want to send data to the server, then it should be placed within th "form" container -->
+                <!-- Button "Find similar words!" is placed in <form> to be able to send data to the server -->
                 <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['similar15']}}</button>
             </form>
-            <!-- end of the id="inputform" container-->
             </div>
-            <!-- end of id="queryform" -->
 
     <!-- Featuring results -->
     {% if list_value %}
-        <!-- 3-level title, "Semantic associates for", "strong" means "bold" -->
+        <!-- Title "Semantic associates for", "strong" means "bold" -->
         <h3><strong>{{strings['similar16']}}
-        <!-- After "href", the address to follow is given, e.g. https://rusvectores.org/ru/ruwikiruscorpora_upos_skipgram_300_2_2019/%D0%BA%D0%BE%D0%B7%D0%B0_NOUN/ , in case of "goat_NOUN". -->
-            <!-- title - what we can see when the cursor hovers over the word (pos and frequency). -->
-            <!-- if ...  - word's color depends on its frequency.-->
-            <!-- <i> encodes italics -->
+        <!-- When the cursor hovers over the word we can see pos and frequency (title).
+            The word's color depends on its frequency.-->
         <a href="{{ url }}{{lang}}/{{ usermodels[0] }}/{{word}}" 
             title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}"
             {% if frequencies[usermodels[0]][word][1] == 'high'%} style="color: green;"
             {% elif frequencies[usermodels[0]][word][1] == 'low' %} style="color: red;"{% endif %}>
             <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a>
-        <!-- pos is mentioned in parentheses -->
         </strong> ({{ pos }})</h3> 
 
             <!-- Checkbox for frequency selection-->
@@ -112,66 +96,53 @@
             </small>
             </div>
 
-        <!-- Featuring results-->
+        <!-- Featuring list of results
+        Every model is allocated a column to be shown in, the link to it is given
+        If the word is not present in the model: "The word is out of model vocabulary; its embedding is inferred from its characters".
+        If he word is unknown: "The model does not know the word".
+        If no results - "No results".
+        Otherwise, the results are shown.
+          We iterate over the results. Each word is a link to the corresoinding wordpage
+          The class and the style (css) of each item depends on frequency.
+          When the cursor hovers over the word we can see pos and frequency (title).
+          Tags are shown in the form of subscript indices (sub).
+          Similarity is shown to the hundredth.
+          If there are relevant images, they are pulled from Wikipedia with the links to the articles. -->
         <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
         {% for model in list_value%}
-            <!-- Every model is allocated a column to be shown in. -->
             <div class="col-md-5">
-            <!-- The name of the model is made bold, the link to it is given.-->
             <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
-            <!-- If the word is not present in the model:
-            "The word is out of model vocabulary; its embedding is inferred from its characters". -->
             {% if model in inferred %}
                 <i>{{strings['similar32']}}</i>
             {% endif %}
-        <!-- "big" increases the font size -->
-        <!-- <big> -->
-
-        <!-- If he word is unknown: "The model does not know the word". -->
         <span style="font-size: larger;">
         {% if list_value[model] == "Unknown!" %}
             {{ strings['similar18'] }} "{{ word }}"
-        <!-- Otherwise, in case no results - "No results" -->
         {% elif list_value[model] == "No results!"  %}
             {{strings['similar23']}}
-        <!-- Otherwise, the results are shown -->
         {% else %}
         </span>
 
-            <!-- <ol> creates a numbered list. Every list element starts with <li> -->
             <ol id="{{ model }}" style="font-size: larger;" type="1"> 
-            <!-- We iterate over the results -->
             {% for res in list_value[model] if res != "Incorrect tag!" %}
-                
-                <!-- The class depends on frequencies --> 
+                 
                 <li 
                 {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
                 {% else %} style="margin: 10px 0;"
                 {% endif %}
                 class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}"> 
 
-                <!-- Every word in the result is a link to the corresoinding webpage on the website. -->
-                <!-- title - what we can see when the cursor hovers over the word (pos and frequency). -->
-                <!-- word's color depends on its frequency. -->
                 <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
                 title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
                 {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
                 {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;" 
                 {% endif %}>
 
-                <!-- "::" is changed for a space -->
                 {{res[0].split('_')[0].replace('::', ' ')}}
-                <!-- If the result comes with apos tag -->
                 {% if res[0].split('_')|length > 1 %}
-                <!-- Show the tags in the form of subscript indices (sub)-->
                 <sub style="font-size:50%;">{{res[0].split('_')[-1]}}</sub>
                 {% endif %}</a> 
-
-                <!-- Showing similarity to the nearest hundredth -->
                 {{ "{:.2f} ".format(res[1]) }}
-
-                <!-- If there are relevant images, they are pulled from Wikipedia with the links to the articles -->
-                <!-- When the cursor hovers over the image, a title "chipmunks in Wikipedia" is shown. -->
                 {% if wordimages[res[0].split('_')[0]] %}
                     <div class="avataricon">
                     <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
@@ -179,32 +150,22 @@
                      title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
                     </a>
                     </div>
-
                 {% endif %}
                 </li>
-
             {% endfor %}
-            <!-- Featuring results is over. -->
             </ol>
         {% endif %}
-        <!-- </big> -->
         </div>
-        <!-- The column for one model is finished. -->
         {% endfor %}
-        <!-- Model iteration is over. -->
         </div>
         <!-- The section for the actual results is over. -->
-
-
-        <hr> <!-- draws a horisontal line. -->
-        <!-- What is seen below the results. -->
+        <hr>
+        <!-- "Parts of speech are shown for each word, if present in the model."  -->
         <ul>
-       <!--  <li><p><i>{{strings['base18']}}</i></p></li>  --> <!--  "Words in green..."  -->
-            <!-- "Parts of speech are shown for each word, if present in the model."  -->
         <li><p><i>{{strings['similar34']}}</i></p></li>
         </ul>
     {% endif %}
-    <!-- The results are over. -->
+    <!-- End of featuring results -->
 
     {% if error %}
         <p> <span style = "font-size:larger;"><strong>
