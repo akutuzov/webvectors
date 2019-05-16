@@ -1,5 +1,6 @@
+<!-- Look associates.html for more detailed comments -->
 {% extends "base.html" %}
-<!-- -->
+
 {% block title %}
      <title>{{strings['base3']}}: {{strings['calc1']}}</title>
  {% endblock title %}
@@ -23,46 +24,38 @@
 
         <h1>{{strings['calc1']}}</h1>
             <div class="row">
+	    <!-- The same relations-->
                 <div class="col-md-7">
-              <!-- The "form" begins, here data can be exchanged with the server. -->
               <form id="inputform" action="#" method=post>
               <div id="queryform">
               <div class="form-group">
-                <p>{{strings['calc4']}} <!-- Function explanation. -->
-		<div class = "row"> <!-- for rows, to start making columns at the same level -->
-		<div class = "col-md-5"> <!-- for columns, immediate children of rows, there will be two -->
-      <!-- "typeahead" - to get suggestions from the server on how to complete the data entry 
-        if the there is a query (negative word), its first word is used, else "mother" is inserted
-        all in the 1st column -->
+                <p>{{strings['calc4']}}
+		<div class = "row">
+		<!-- Column with known relation-->
+		<div class = "col-md-5">
+		<!-- The relation "mother:daughter" is used by default-->
         <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"
                {% else %} value="{{strings['calc33']}}"{% endif %} maxlength=50>
-        <!-- an arrow -->
             <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
-        <!-- "typeahead" - to get suggestions
-          if the there is a query (positive word), its first word is used, else "daughter" is inserted
-          all in the 1st column -->
 		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}"
                {% else %} value="{{strings['calc34']}}"{% endif %} maxlength=50>
 		</div>
-    <!-- 2nd column -->
+		<!-- Column with the interested word-->
 		<div class = "col-md-5">
-      <!-- "typeahead" - to get suggestions
-          if the there is a query (positive word), its first word is used, else "father" is inserted
-          all in the 2nd column -->
+		<!-- Target word "father" is used by default-->
 		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}"
                {% else %} value="{{strings['calc35']}}"{% endif %} maxlength=50>
-        <!-- an arrow -->
+
             <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
-    <!-- Questions below the arrow -->
 		<p style = "text-align:center;"><strong>???</strong></p>
 		</div>
 		</div>
               </div>
-      <!-- if there are results -->
+        <!-- Featuring the results -->
         {% if analogy_value %}
       <!-- in the next row -->
         <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-  <!-- suggestion to change frequency -->
+      <!-- Checkbox for frequency selection-->
       <div class="checkbox">
       <p><small><em>{{strings['frequency1']}}</em></small></p>
       <small>
@@ -74,21 +67,19 @@
       <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
       </small>
       </div>
+	
 	{% for model in analogy_value %}
       <div class = "col-md-5">
-        <!-- model name given -->
     	    <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
     	    
     	    <ol id="{{ model }}" style="font-size: larger;" type="1">
         
     	{% for res in analogy_value[model] if res != "Incorrect tag!" %}
-        <!-- hide words of low frequency -->
         <li 
         {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
         {% else %} style="margin: 10px 0;"
         {% endif %}
         class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
-        <!-- if the word is unknown or there are few associates -->
 
              {% if 'is unknown' in res %}
 
@@ -98,7 +89,6 @@
                 {{strings['similar30']}}
 
                 {% else %}
-<!-- results as lists of links to word pages are made, with titles, images etc. -->
 		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}}
 		{{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
            {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
@@ -115,20 +105,16 @@
             {% endif %}
             {% endif %}
             </li>
-          <!-- end of making results for a given model -->
     	    {% endfor %}
-          <!-- end of <ol style="font-size: larger;" type="1"> -->
     	    </ol>
         
         </div>
-  <!-- end of iterating models -->
 	{% endfor %}
 	</div>
-    <!-- Draws a line -->
     <hr>
+    <!-- "Parts of speech are shown for each word, if present in the model"-->
     <ul>
-	<!-- <li><p><i>{{strings['base18']}}</i></p></li>-->
-	<li><p><i>{{strings['similar34']}}</i></p></li> <!-- "Parts of speech are..."-->
+	<li><p><i>{{strings['similar34']}}</i></p></li>
 	</ul>
     {% endif %}
     
@@ -142,7 +128,7 @@
     </strong></span></p>
     {% endif %}
             </div>
-            <!-- model selection -->
+              <!-- Model selection -->
               <div class="checkbox">
                   <p><small><em>{{strings['similar3']}}</em></small></p>
                   <fieldset>
@@ -155,7 +141,7 @@
                       </small>
                   </fieldset>
               </div>
-              <!-- pos selection -->
+                  <!-- Pos selection -->
                   {% if tags %}
                   <p><small><em>{{strings['similar9']}}</em></small></p>
                   <div class="radio">
@@ -171,25 +157,23 @@
                       </small>
                   </div>
                   {% endif %}
-            <!-- button "Calculate!" -->
+              <!-- button "Calculate!" -->
               <button type="submit"  id="send_calc_query" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
             </form>
-            <!-- end of "form", server availability zone -->
                     </div>
-                <!-- 2nd bid column -->
+                <!-- Subtraction and search of the center of cluster-->
                 <div class="col-md-5">
-                  <!-- "post" implies that the form will be submittied to the server -->
                     <form method=post>
                         <div class="form-group">
-                            <p>{{strings['calc32']}}</p><!--"If you feel confident..." -->
-                            <p>{{strings['calc3']}}</p> <!--"Enter not more than 10 space-separated words..." -->
-                            <!-- if there is a quiery -->
+                            <p>{{strings['calc32']}}</p>
+                            <p>{{strings['calc3']}}</p>
+			    <!-- Show query words if they are in input-->
                             {% if plist2 %}
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
                                 <span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" value="{{ ' '.join(plist2) }}" maxlength=300>
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
                                 <span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" value="{{ ' '.join(nlist2) }}" maxlength=300>
-                            <!-- if not, placeholders are used -->
+			    <!-- if no query words, placeholders are used -->
                             {% else %}
                             <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
                                 <span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="{{strings['calc13']}}" maxlength=300>
@@ -198,10 +182,10 @@
 
                             {% endif %}
                         </div> 
-  <!-- if there are results -->                                           
+  <!-- Featuring the results -->                                          
   {% if calc_value %}
         <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-          <!-- suggestion to change frequency -->
+            <!-- Checkbox for frequency selection -->
             <div class="checkbox">
             <p><small><em>{{strings['frequency1']}}</em></small></p>
             <small>
@@ -215,7 +199,6 @@
             </div>
 	{% for model in calc_value %}
 	    <div class = "col-md-6">
-        <!-- model name -->
     	    <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
     	    
     	    <ol id="{{ model }}" style="font-size: larger;" type="1">
@@ -225,8 +208,7 @@
         {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
         {% else %} style="margin: 10px 0;"
         {% endif %}
-        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
-        <!-- links for every result in a model -->       
+        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">  
         <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0] }}"
         {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  
         {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  
@@ -235,7 +217,6 @@
         <sub style="font-size:30%;">{{res[0].split('_')[-1]}}</sub>
               {% endif %}</a> 
                 {{ "{:.2f} ".format(res[1]) }}
-          <!-- images for every result in a model, if possible --> 
     	    {% if wordimages[res[0].split('_')[0]]  %}
 	        
           <div class="avataricon">
@@ -268,7 +249,7 @@
 	<li><p><i>{{strings['similar34']}}</i></p></li>
 	</ul>
     {% endif %}
-    
+			<!-- In case of the error -->
                         {% if calc_error %}
                         <p> <span style = "font-size:larger;"><strong>
 
@@ -280,6 +261,7 @@
 
                         </strong></span><p>
                         {% endif %}
+			<!-- Choose the model -->
                         <div class="checkbox">
                   <p><small><em>{{strings['similar3']}}</em></small></p>
                   <fieldset>
@@ -293,6 +275,7 @@
                   </fieldset>
               </div>
                 {% if tags %}
+		<!-- Choose the pos -->
                     <p><small><em>{{strings['similar9']}}</em></small></p>
                     <div class="radio">
                       <small>
