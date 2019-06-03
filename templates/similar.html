@@ -1,91 +1,99 @@
 {% extends "base.html" %}
-
 {% block title %}
-     <title>{{strings['base3']}}: {{strings['similar1']}}</title>
+<title>{{strings['base3']}}: {{strings['similar1']}}</title>
 {% endblock title %}
-         
-
 {% block content %}
-        <div class="row">
-      <div class="col-md-8">
-                  <form method=post>
-              <div class="form-group">
-                <h2>{{strings['similar24']}}</h2>
-                <p>{{strings['similar25']}}</p>
-                {% if query %}
-                    <input type="text" class="form-control" name="query" value="{{','.join(query)}}" maxlength=300>
-                {% else %}
-                <input type="text" class="form-control" name="query" placeholder="{{strings['similar26']}}" maxlength=300>
-		{% endif %}
-		<input id="sim_history" name="sim_history" type="hidden" value="{% if value %} {{ str_sim_history }} {% endif %}">
-              </div>
-              <div class="radio">
-                  <p><small><em>{{strings['similar3']}}</em></small></p>
-                  <small>
-                  {% for m in models %}
-		    <label>
-                	<input type="radio" name="simmodel" {%if m in usermodels %}checked{% endif %} value="{{ m }}">{{ strings[models[m]] }}
-            	    </label>
-                {% endfor %}
-                  </small>
-              </div>
-
-
-              <button type="submit" class="btn btn-primary" name="query">{{strings['similar27']}}</button>
-            </form>
-          {% if value %}
-            <span style = "font-size:larger;">
-            <table class="table"><tr>
-            <td><strong>{{strings['similar28']}}</strong></td><td><strong>{{strings['similar29']}}</strong><br/>
-                (<a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)</td></tr>
-            {% for res in value  %}
-	    <tr><td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][0]}}/"
-    title="{{strings['synraw15']}} {{ res[0][0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][0]][0]}}"
-    {% if frequencies[res[0][0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][0]][1] == 'low' %} style="color: red;"  {% endif %}>
-        {{res[0][0].split("_")[0].replace('::', ' ')}}{% if res[0][0].split('_')|length > 1 %}
+<div class="row">
+  <div class="col-md-8">
+    <form method=post>
+      <div class="form-group">
+        <h2>{{strings['similar24']}}</h2>
+        <p>{{strings['similar25']}}</p>
+        {% if query %}
+        <input type="text" class="form-control" name="query" value="{{','.join(query)}}" maxlength=300>
+        {% else %}
+        <input type="text" class="form-control" name="query" placeholder="{{strings['similar26']}}" maxlength=300>
+        {% endif %}
+        <input id="sim_history" name="sim_history" type="hidden" value="{% if value %} {{ str_sim_history }} {% endif %}">
+      </div>
+      <div class="radio">
+        <p><small><em>{{strings['similar3']}}</em></small></p>
+        <small>
+        {% for m in models %}
+        <label>
+        <input type="radio" name="simmodel" {%if m in usermodels %}checked{% endif %} value="{{ m }}">{{ strings[models[m]] }}
+        </label>
+        {% endfor %}
+        </small>
+      </div>
+      <button type="submit" class="btn btn-primary" name="query">{{strings['similar27']}}</button>
+    </form>
+    {% if value %}
+    <span style = "font-size:larger;">
+      <table class="table">
+        <tr>
+          <td><strong>{{strings['similar28']}}</strong></td>
+          <td><strong>{{strings['similar29']}}</strong><br/>
+            (<a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>)
+          </td>
+        </tr>
+        {% for res in value  %}
+        <tr>
+          <td style="vertical-align:top"><em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][0]}}/"
+            title="{{strings['synraw15']}} {{ res[0][0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][0]][0]}}"
+            {% if frequencies[res[0][0]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][0]][1] == 'low' %} style="color: red;"  {% endif %}>
+            {{res[0][0].split("_")[0].replace('::', ' ')}}{% if res[0][0].split('_')|length > 1 %}
             <sub style="font-size:30%;">{{res[0][0].split('_')[-1]}}</sub>{% endif %}
             </a>
-	  </em>
-	  <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][1]}}/"
-  title="{{strings['synraw15']}} {{ res[0][1].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][1]][0]}}"
-             {% if frequencies[res[0][1]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][1]][1] == 'low' %} style="color: red;"  {% endif %}>
-	  {{res[0][1].split("_")[0].replace('::', ' ')}}{% if res[0][1].split('_')|length > 1 %}
-          <sub style="font-size:30%;">{{res[0][1].split('_')[-1]}}</sub>{% endif %}
-	  </a></em></td> <td>{{ "{:.3f} ".format(res[1]) }}</td></tr>
-            {% endfor %}
-            </table>
+            </em>
+            <em><a href="{{ url }}{{lang}}/{{ model }}/{{res[0][1]}}/"
+            title="{{strings['synraw15']}} {{ res[0][1].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][1]][0]}}"
+            {% if frequencies[res[0][1]][1] == 'high'%} style="color: green;"  {% elif frequencies[res[0][1]][1] == 'low' %} style="color: red;"  {% endif %}>
+            {{res[0][1].split("_")[0].replace('::', ' ')}}{% if res[0][1].split('_')|length > 1 %}
+            <sub style="font-size:30%;">{{res[0][1].split('_')[-1]}}</sub>{% endif %}
+            </a></em>
+          </td>
+          <td>{{ "{:.3f} ".format(res[1]) }}</td>
+        </tr>
+        {% endfor %}
+      </table>
     </span>
-          {% if sim_hist|length > 1 %}
-              <hr/>
-	      <h3>{{strings['similar31']}}</h3>
-              <table class="table">
-	          {% for el in sim_hist[:-1] %}
-	              <tr><td style="vertical-align:top"> <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][0]}}/">{{el[0][0][0].split("_")[0].replace('::', ' ')}}</a></em>
-	              <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][1]}}/">{{el[0][0][1].split("_")[0]}}</a></em></td> <td>{{ "{:.3f} ".format(el[0][1]) }} </td></tr>
-	           {% endfor %}
-	      </table>
-	      {% endif %}
-          <hr>
-          <ul>
-		    <li><p><i>{{strings['base18']}}</i></p></li>
-		    <li><p><i>{{strings['similar34']}}</i></p></li>
-		</ul>
-	      {% endif %}
-
-
-
-          {% if error_sim %}
-          <p> <span style = "font-size:larger;"><strong>
-          {% if 'Incorrect tag' in error %}
-                   {{strings['similar22']}}
-          {% elif 'Incorrect query' in error %}
-                   {{strings['similar21']}}
-          {% else %}
-            {{strings['similar18']}}
-          {% endif %}
-
-          </strong></span><p>
-            {% endif %}
-              </div>
-                </div>
+    {% if sim_hist|length > 1 %}
+    <hr/>
+    <h3>{{strings['similar31']}}</h3>
+    <table class="table">
+      {% for el in sim_hist[:-1] %}
+      <tr>
+        <td style="vertical-align:top"> <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][0]}}/">{{el[0][0][0].split("_")[0].replace('::', ' ')}}</a></em>
+          <em><a href="{{ url }}{{lang}}/{{ model }}/{{el[0][0][1]}}/">{{el[0][0][1].split("_")[0]}}</a></em>
+        </td>
+        <td>{{ "{:.3f} ".format(el[0][1]) }} </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+    <hr>
+    <ul>
+      <li>
+        <p><i>{{strings['base18']}}</i></p>
+      </li>
+      <li>
+        <p><i>{{strings['similar34']}}</i></p>
+      </li>
+    </ul>
+    {% endif %}
+    {% if error_sim %}
+    <p> <span style = "font-size:larger;"><strong>
+      {% if 'Incorrect tag' in error %}
+      {{strings['similar22']}}
+      {% elif 'Incorrect query' in error %}
+      {{strings['similar21']}}
+      {% else %}
+      {{strings['similar18']}}
+      {% endif %}
+      </strong></span>
+    <p>
+      {% endif %}
+  </div>
+</div>
 {% endblock %}

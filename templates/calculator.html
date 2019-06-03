@@ -1,297 +1,282 @@
 <!-- Look associates.html for more detailed comments -->
 {% extends "base.html" %}
-
 {% block title %}
-     <title>{{strings['base3']}}: {{strings['calc1']}}</title>
- {% endblock title %}
-
-
+<title>{{strings['base3']}}: {{strings['calc1']}}</title>
+{% endblock title %}
 {% block content %}
- <!--js script for template: turn element style into a "block" if it's style was 'none' before.-->
- <script>
-        function ShowHide(divId)
-        {
-        if(document.getElementById(divId).style.display == 'none')
-        {
-        document.getElementById(divId).style.display='block';
-        }
-        else
-        {
-        document.getElementById(divId).style.display = 'none';
-        }
-        }
-        </script>
-
-        <h1>{{strings['calc1']}}</h1>
-            <div class="row">
-	    <!-- The same relations-->
-                <div class="col-md-7">
-              <form id="inputform" action="#" method=post>
-              <div id="queryform">
-              <div class="form-group">
-                <p>{{strings['calc4']}}
-		<div class = "row">
-		<!-- Column with known relation-->
-		<div class = "col-md-5">
-		<!-- The relation "mother:daughter" is used by default-->
-        <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"
-               {% else %} value="{{strings['calc33']}}"{% endif %} maxlength=50>
-            <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}"
-               {% else %} value="{{strings['calc34']}}"{% endif %} maxlength=50>
-		</div>
-		<!-- Column with the interested word-->
-		<div class = "col-md-5">
-		<!-- Target word "father" is used by default-->
-		<input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}"
-               {% else %} value="{{strings['calc35']}}"{% endif %} maxlength=50>
-
-            <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
-		<p style = "text-align:center;"><strong>???</strong></p>
-		</div>
-		</div>
-              </div>
+<!--js script for template: turn element style into a "block" if it's style was 'none' before.-->
+<script>
+  function ShowHide(divId)
+  {
+  if(document.getElementById(divId).style.display == 'none')
+  {
+  document.getElementById(divId).style.display='block';
+  }
+  else
+  {
+  document.getElementById(divId).style.display = 'none';
+  }
+  }
+</script>
+<h1>{{strings['calc1']}}</h1>
+<div class="row">
+  <!-- The same relations-->
+  <div class="col-md-7">
+    <form id="inputform" action="#" method=post>
+      <div id="queryform">
+        <div class="form-group">
+          <p>{{strings['calc4']}}
+          <div class = "row">
+            <!-- Column with known relation-->
+            <div class = "col-md-5">
+              <!-- The relation "mother:daughter" is used by default-->
+              <input type="text" class="typeahead" style="width:200px;" id="query_negative" name="negative" {% if nlist %}value="{{nlist[0]}}"
+              {% else %} value="{{strings['calc33']}}"{% endif %} maxlength=50>
+              <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
+              <input type="text" class="typeahead" style="width:200px;" id="query_positive2" name="positive2" {% if plist %}value="{{plist[1]}}"
+              {% else %} value="{{strings['calc34']}}"{% endif %} maxlength=50>
+            </div>
+            <!-- Column with the interested word-->
+            <div class = "col-md-5">
+              <!-- Target word "father" is used by default-->
+              <input type="text" class="typeahead" style="width:200px;" id="query_positive" name="positive" {% if plist %}value="{{plist[0]}}"
+              {% else %} value="{{strings['calc35']}}"{% endif %} maxlength=50>
+              <img style="margin:0px auto;display:block" src = "{{ url }}data/images/arrow_down_blue.png" width="30" alt = "{{strings['calc31']}}" title = "{{strings['calc31']}}">
+              <p style = "text-align:center;"><strong>???</strong></p>
+            </div>
+          </div>
+        </div>
         <!-- Featuring the results -->
         {% if analogy_value %}
-      <!-- in the next row -->
+        <!-- in the next row -->
         <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-      <!-- Checkbox for frequency selection-->
-      <div class="checkbox">
-      <p><small><em>{{strings['frequency1']}}</em></small></p>
-      <small>
-          <label style="color: green;" title="{{strings['frequency5']}}">
-      <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
-          <label style="color: #337ab7;" title="{{strings['frequency6']}}">
-      <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
-          <label style="color: red;" title="{{strings['frequency7']}}">
-      <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
-      </small>
-      </div>
-	
-	{% for model in analogy_value %}
-      <div class = "col-md-5">
-    	    <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
-    	    
-    	    <ol id="{{ model }}" style="font-size: larger;" type="1">
-        
-    	{% for res in analogy_value[model] if res != "Incorrect tag!" %}
-        <li 
-        {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
-        {% else %} style="margin: 10px 0;"
-        {% endif %}
-        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
-
-             {% if 'is unknown' in res %}
-
-                {{strings['similar18']}}
-            {% elif 'No similar words' in res %}
-
-                {{strings['similar30']}}
-
-                {% else %}
-		<a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}}
-		{{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-           {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
-                {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
-         {{res[0].split('_')[0].replace('::', ' ')}}{% if res[0].split('_')|length > 1 %}<sub style="font-size:30%;">
-                {{res[0].split('_')[-1]}}</sub>{% endif %}</a> {{ "{:.2f} ".format(res[1]) }}
-    		{% if wordimages[res[0].split('_')[0]]  %}
-	        <div class="avataricon">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
-                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
-                     title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
-            </a>
-	        </div>
-            {% endif %}
-            {% endif %}
-            </li>
-    	    {% endfor %}
-    	    </ol>
-        
-        </div>
-	{% endfor %}
-	</div>
-    <hr>
-    <!-- "Parts of speech are shown for each word, if present in the model"-->
-    <ul>
-	<li><p><i>{{strings['similar34']}}</i></p></li>
-	</ul>
-    {% endif %}
-    
-    {% if error %}
-    <p> <span style = "font-size:larger;"><strong>
-    {% if 'Incorrect tag' in error%}
-        {{strings['similar22']}}
-    {% elif 'Incorrect query' in error %}
-        {{strings['similar21']}}
-        {% endif %}
-    </strong></span></p>
-    {% endif %}
-            </div>
-              <!-- Model selection -->
-              <div class="checkbox">
-                  <p><small><em>{{strings['similar3']}}</em></small></p>
-                  <fieldset>
-                      <small>
-                        {% for m in models %}
-                      <label>
-                          <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
-                      </label>
-                      {% endfor %}
-                      </small>
-                  </fieldset>
-              </div>
-                  <!-- Pos selection -->
-                  {% if tags %}
-                  <p><small><em>{{strings['similar9']}}</em></small></p>
-                  <div class="radio">
-                      <small>
-                         {% for tag in tags2show %}
-                           <label>
-                                <input type="radio" name="pos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
-                           </label>
-                        {% endfor %}
-                          <label>
-                            <input type="radio" name="pos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
-                          </label>
-                      </small>
-                  </div>
-                  {% endif %}
-              <!-- button "Calculate!" -->
-              <button type="submit"  id="send_calc_query" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
-            </form>
-                    </div>
-                <!-- Subtraction and search of the center of cluster-->
-                <div class="col-md-5">
-                    <form method=post>
-                        <div class="form-group">
-                            <p>{{strings['calc32']}}</p>
-                            <p>{{strings['calc3']}}</p>
-			    <!-- Show query words if they are in input-->
-                            {% if plist2 %}
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
-                                <span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" value="{{ ' '.join(plist2) }}" maxlength=300>
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
-                                <span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" value="{{ ' '.join(nlist2) }}" maxlength=300>
-			    <!-- if no query words, placeholders are used -->
-                            {% else %}
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
-                                <span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="{{strings['calc13']}}" maxlength=300>
-                            <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
-                                <span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" maxlength=300>
-
-                            {% endif %}
-                        </div> 
-  <!-- Featuring the results -->                                          
-  {% if calc_value %}
-        <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-            <!-- Checkbox for frequency selection -->
-            <div class="checkbox">
+          <!-- Checkbox for frequency selection-->
+          <div class="checkbox">
             <p><small><em>{{strings['frequency1']}}</em></small></p>
             <small>
-                <label style="color: green;" title="{{strings['frequency5']}}">
+            <label style="color: green;" title="{{strings['frequency5']}}">
             <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
-                <label style="color: #337ab7;" title="{{strings['frequency6']}}">
+            <label style="color: #337ab7;" title="{{strings['frequency6']}}">
             <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
-                <label style="color: red;" title="{{strings['frequency7']}}">
+            <label style="color: red;" title="{{strings['frequency7']}}">
             <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
             </small>
-            </div>
-	{% for model in calc_value %}
-	    <div class = "col-md-6">
-    	    <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
-    	    
-    	    <ol id="{{ model }}" style="font-size: larger;" type="1">
-        
-    	{% for res in calc_value[model] if res != "No similar words of this part of speech." and not 'No similar words' in res and not 'is unknown' in res %}
-    	<li 
-        {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
-        {% else %} style="margin: 10px 0;"
+          </div>
+          {% for model in analogy_value %}
+          <div class = "col-md-5">
+            <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
+            <ol id="{{ model }}" style="font-size: larger;" type="1">
+              {% for res in analogy_value[model] if res != "Incorrect tag!" %}
+              <li
+              {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
+              {% else %} style="margin: 10px 0;"
+              {% endif %}
+              class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
+              {% if 'is unknown' in res %}
+              {{strings['similar18']}}
+              {% elif 'No similar words' in res %}
+              {{strings['similar30']}}
+              {% else %}
+              <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
+              title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
+              {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
+              {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+              {{res[0].split('_')[0].replace('::', ' ')}}{% if res[0].split('_')|length > 1 %}<sub style="font-size:30%;">
+              {{res[0].split('_')[-1]}}</sub>{% endif %}</a> {{ "{:.2f} ".format(res[1]) }}
+              {% if wordimages[res[0].split('_')[0]]  %}
+              <div class="avataricon">
+                <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
+                  title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+                </a>
+              </div>
+              {% endif %}
+              {% endif %}
+              </li>
+              {% endfor %}
+            </ol>
+          </div>
+          {% endfor %}
+        </div>
+        <hr>
+        <!-- "Parts of speech are shown for each word, if present in the model"-->
+        <ul>
+          <li>
+            <p><i>{{strings['similar34']}}</i></p>
+          </li>
+        </ul>
         {% endif %}
-        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">  
-        <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0] }}"
-        {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  
-        {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  
-        {% endif %}>
-        {{res[0].split('_')[0].replace('::', ' ')}}{% if res[0].split('_')|length > 1 %}
-        <sub style="font-size:30%;">{{res[0].split('_')[-1]}}</sub>
-              {% endif %}</a> 
-                {{ "{:.2f} ".format(res[1]) }}
-    	    {% if wordimages[res[0].split('_')[0]]  %}
-	        
-          <div class="avataricon">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
-                <img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
-                title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
-            </a>
-	        </div>
+        {% if error %}
+        <p> <span style = "font-size:larger;"><strong>
+          {% if 'Incorrect tag' in error%}
+          {{strings['similar22']}}
+          {% elif 'Incorrect query' in error %}
+          {{strings['similar21']}}
+          {% endif %}
+          </strong></span>
+        </p>
+        {% endif %}
+      </div>
+      <!-- Model selection -->
+      <div class="checkbox">
+        <p><small><em>{{strings['similar3']}}</em></small></p>
+        <fieldset>
+          <small>
+          {% for m in models %}
+          <label>
+          <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
+          </label>
+          {% endfor %}
+          </small>
+        </fieldset>
+      </div>
+      <!-- Pos selection -->
+      {% if tags %}
+      <p><small><em>{{strings['similar9']}}</em></small></p>
+      <div class="radio">
+        <small>
+        {% for tag in tags2show %}
+        <label>
+        <input type="radio" name="pos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
+        </label>
+        {% endfor %}
+        <label>
+        <input type="radio" name="pos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
+        </label>
+        </small>
+      </div>
+      {% endif %}
+      <!-- button "Calculate!" -->
+      <button type="submit"  id="send_calc_query" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
+    </form>
+  </div>
+  <!-- Subtraction and search of the center of cluster-->
+  <div class="col-md-5">
+    <form method=post>
+      <div class="form-group">
+        <p>{{strings['calc32']}}</p>
+        <p>{{strings['calc3']}}</p>
+        <!-- Show query words if they are in input-->
+        {% if plist2 %}
+        <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
+        <span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" value="{{ ' '.join(plist2) }}" maxlength=300>
+        <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
+        <span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" value="{{ ' '.join(nlist2) }}" maxlength=300>
+        <!-- if no query words, placeholders are used -->
+        {% else %}
+        <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
+        <span style="color:green;">+</span></strong></span></span><input type="text" class="form-control" name="positive1" placeholder="{{strings['calc13']}}" maxlength=300>
+        <span style = "font-size:larger;"><span style = "font-size:larger;"><strong>
+        <span style="color:red;">-</span></strong></span></span><input type="text" class="form-control" name="negative1" maxlength=300>
+        {% endif %}
+      </div>
+      <!-- Featuring the results -->
+      {% if calc_value %}
+      <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
+        <!-- Checkbox for frequency selection -->
+        <div class="checkbox">
+          <p><small><em>{{strings['frequency1']}}</em></small></p>
+          <small>
+          <label style="color: green;" title="{{strings['frequency5']}}">
+          <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
+          <label style="color: #337ab7;" title="{{strings['frequency6']}}">
+          <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
+          <label style="color: red;" title="{{strings['frequency7']}}">
+          <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
+          </small>
+        </div>
+        {% for model in calc_value %}
+        <div class = "col-md-6">
+          <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
+          <ol id="{{ model }}" style="font-size: larger;" type="1">
+            {% for res in calc_value[model] if res != "No similar words of this part of speech." and not 'No similar words' in res and not 'is unknown' in res %}
+            <li
+            {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
+            {% else %} style="margin: 10px 0;"
+            {% endif %}
+            class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
+            <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
+            title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0] }}"
+            {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
+            {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"
+            {% endif %}>
+            {{res[0].split('_')[0].replace('::', ' ')}}{% if res[0].split('_')|length > 1 %}
+            <sub style="font-size:30%;">{{res[0].split('_')[-1]}}</sub>
+            {% endif %}</a>
+            {{ "{:.2f} ".format(res[1]) }}
+            {% if wordimages[res[0].split('_')[0]]  %}
+            <div class="avataricon">
+              <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+              <img src = '{{ wordimages[res[0].split('_')[0]] }}' alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
+              title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+              </a>
+            </div>
             {% endif %}
             </li>
-    	    {% endfor %}
-        
-    	    </ol>
-        
-    	    {% for res in calc_value[model] if 'No results' in res or 'No similar words' in res or 'is unknown' in res %}
-    	    {% if 'is unknown' in res %}
-                <strong> {{strings['similar18']}}</strong>
-            {% elif 'No similar words' in res %}
-                <strong> {{strings['similar30']}}</strong>
-            {% else %}
-    		<strong>{{ res.decode('utf-8') }}</strong>
-    	     {% endif %}
-    	    {% endfor %}
+            {% endfor %}
+          </ol>
+          {% for res in calc_value[model] if 'No results' in res or 'No similar words' in res or 'is unknown' in res %}
+          {% if 'is unknown' in res %}
+          <strong> {{strings['similar18']}}</strong>
+          {% elif 'No similar words' in res %}
+          <strong> {{strings['similar30']}}</strong>
+          {% else %}
+          <strong>{{ res.decode('utf-8') }}</strong>
+          {% endif %}
+          {% endfor %}
         </div>
-	{% endfor %}
-	</div>
-    <hr>
-    <ul>
-	<!-- <li><p><i>{{strings['base18']}}</i></p></li> -->
-	<li><p><i>{{strings['similar34']}}</i></p></li>
-	</ul>
-    {% endif %}
-			<!-- In case of the error -->
-                        {% if calc_error %}
-                        <p> <span style = "font-size:larger;"><strong>
-
-                         {% if 'Incorrect tag' in calc_error %}
-                            {{strings['similar22']}}
-                            {% elif 'Incorrect query' in calc_error %}
-                            {{strings['similar21']}}
-                        {% endif %}
-
-                        </strong></span><p>
-                        {% endif %}
-			<!-- Choose the model -->
-                        <div class="checkbox">
-                  <p><small><em>{{strings['similar3']}}</em></small></p>
-                  <fieldset>
-                      <small>
-                        {% for m in models %}
-                      <label>
-                          <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
-                      </label>
-                      {% endfor %}
-                      </small>
-                  </fieldset>
-              </div>
-                {% if tags %}
-		<!-- Choose the pos -->
-                    <p><small><em>{{strings['similar9']}}</em></small></p>
-                    <div class="radio">
-                      <small>
-                        {% for tag in tags2show %}
-                           <label>
-                                <input type="radio" name="calcpos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
-                          </label>
-                        {% endfor %}
-                        <label>
-                            <input type="radio" name="calcpos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
-                        </label>
-                      </small>
-                  </div>
-                {% endif %}
-                        <button type="submit" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
-                    </form>
-                </div>
-            </div>
+        {% endfor %}
+      </div>
+      <hr>
+      <ul>
+        <!-- <li><p><i>{{strings['base18']}}</i></p></li> -->
+        <li>
+          <p><i>{{strings['similar34']}}</i></p>
+        </li>
+      </ul>
+      {% endif %}
+      <!-- In case of the error -->
+      {% if calc_error %}
+      <p> <span style = "font-size:larger;"><strong>
+        {% if 'Incorrect tag' in calc_error %}
+        {{strings['similar22']}}
+        {% elif 'Incorrect query' in calc_error %}
+        {{strings['similar21']}}
+        {% endif %}
+        </strong></span>
+      <p>
+        {% endif %}
+        <!-- Choose the model -->
+      <div class="checkbox">
+        <p><small><em>{{strings['similar3']}}</em></small></p>
+        <fieldset>
+          <small>
+          {% for m in models %}
+          <label>
+          <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
+          </label>
+          {% endfor %}
+          </small>
+        </fieldset>
+      </div>
+      {% if tags %}
+      <!-- Choose the pos -->
+      <p><small><em>{{strings['similar9']}}</em></small></p>
+      <div class="radio">
+        <small>
+        {% for tag in tags2show %}
+        <label>
+        <input type="radio" name="calcpos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
+        </label>
+        {% endfor %}
+        <label>
+        <input type="radio" name="calcpos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
+        </label>
+        </small>
+      </div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>
+    </form>
+  </div>
+</div>
 {% endblock %}
