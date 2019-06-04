@@ -1,28 +1,28 @@
-{% block doc %}
+{%- block doc %}
 <!DOCTYPE html>
 <html{% block html_attribs %} lang="{{ lang }}"{% endblock html_attribs %}>
-{% block html %}
+{%- block html %}
 <head>
-  {% block head %}
-  {% block title %}
+  {%- block head -%}
+  {%- block title %}
   <title>{{strings['base1']}}</title>
-  {% endblock title %}
-  {% block metas %}
+  {%- endblock title -%}
+  {%- block metas %}
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <meta name="description" content="{{strings['description1']}}">
-  {% endblock metas %}
-  {% block styles %}
+  {%- endblock metas -%}
+  {%- block styles %}
   <!-- Bootstrap -->
   <link href="{{ url }}data/css/bootstrap.min.css/" rel="stylesheet" media="screen">
   <link rel="stylesheet" href="{{ url }}data/css/typeahead.css/">
   <link href="{{ url }}data/css/avatar.css/" rel="stylesheet" media="screen">
-  {% endblock styles %}
-  {% endblock head %}
+  {%- endblock styles -%}
+  {%- endblock head %}
 </head>
 <body{% block body_attribs %}{% endblock body_attribs %}>
-{% block body %}
-{% block navbar %}
+{%- block body -%}
+{%- block navbar %}
 <nav class="navbar navbar-primary navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
@@ -41,22 +41,22 @@
         <li><a href="{{ url }}{{lang}}/calculator/">{{strings['base5']}}</a></li>
         <li><a href="{{ url }}{{lang}}/misc/">{{strings['base17']}}</a></li>
         <li><a href="{{ url }}{{lang}}/about/">{{strings['base4']}}</a></li>
-        {% if lang=="en" %}
+        {%- if lang=="en" %}
         <li><a title="{{strings['base16']}}" href="{{request.script_root}}/{{ other_lang }}{{request.path[3:]}}">{{ languages }}</a></li>
-        {% else %}
+        {%- else %}
         <li><a title="{{strings['base16']}}" href="{{request.script_root}}/{{ other_lang }}{{request.path[3:]}}">{{ languages }}</a></li>
-        {% endif %}
+        {%- endif %}
       </ul>
     </div>
     <!--/.nav-collapse -->
   </div>
 </nav>
-{% endblock navbar %}
+{%- endblock navbar %}
 <div class="container">
   <div class="starter-template">
     <span><br><br><br></span>
-    {% block content %}
-    {% endblock content %}
+    {%- block content -%}
+    {%- endblock content %}
     <div class="text-nowrap">
       <hr>
       <p style="text-align:right;"><small><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">
@@ -66,7 +66,7 @@
     </div>
   </div>
 </div>
-{% block scripts %}
+{%- block scripts %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="{{ url }}data/js/bootstrap.min.js/"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
@@ -77,10 +77,11 @@
 <script src="{{ url }}data/js/addfield.js/"></script>
 <script src="{{ url }}data/js/sorttable.js/"></script>
 <script src="{{ url }}data/js/filter.js/"></script>
-{% endblock scripts %}
-{% endblock body %}
+{%- endblock scripts %}
+{%- endblock body %}
 </body>
-{% endblock html %}
+{% endblock html -%}
 </html>
-{% endblock doc %}
+{%- endblock doc -%}
+
 

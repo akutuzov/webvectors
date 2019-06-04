@@ -1,6 +1,6 @@
 <!-- Look associates.html for more detailed comments -->
-{% extends "base.html" %}
-{% block content %}
+{%- extends "base.html" -%}
+{%- block content %}
 <h1 style="text-align:center">{{strings['home1']}}</h1>
 <p style="text-align:center" class="lead">{{strings['home6']}}</p>
 <!-- Request field -->
@@ -8,20 +8,23 @@
 <div id="queryform">
   <form id="inputform" style="text-align:center" action="#" method=post>
     <div class="form-group">
-      {% if word %}
+      {%- if word %}
       <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
-      {% else %}
+      {%- else -%}
       <input type="text" class="typeahead" id="query" name="list_query" value="{{strings['home7']}}" maxlength=100>
-      {% endif %}
+      {% endif -%}
     </div>
     <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['home3']}}</button>
   </form>
 </div>
 <!-- Featuring results -->
-{% if list_value %}
+{%- if list_value -%}
 <h3><strong>{{strings['home4']}}
-  <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
-  {% if frequencies[model][word][1] == 'high'%} style="color: green;"  {% elif frequencies[model][word][1] == 'low' %} style="color: red;"  {% endif %} >
+  <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
+  title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
+  {%- if frequencies[model][word][1] == 'high' %} style="color: green;"
+  {%- elif frequencies[model][word][1] == 'low' %} style="color: red;"
+  {%- endif -%}>
   {{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}}
   <a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a>)</strong>
 </h3>
@@ -39,31 +42,31 @@
   </small>
 </div>
 <!-- If the word is not present in the model but its embedding is inferred from its characters -->
-{% if model in inferred %}
+{%- if model in inferred %}
 <i>{{strings['similar32']}}</i>
-{% endif %}
+{%- endif %}
 <!-- Iteration over the results -->
 <div style="max-width:300px;" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
   <ol id="{{ model }}" style="font-size: larger;">
-    {% for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
+    {%- for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
     <li
     {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
-    {% else %} style="margin: 10px 0;"
-    {% endif %}
+    {%- else -%} style="margin: 10px 0;"
+    {%- endif %}
     class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
     <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-    {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
+    {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;" {%- endif -%}>
     {{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
-    {% if wordimages[res[0].split('_')[0]]  %}
+    {% if wordimages[res[0].split('_')[0]] -%}
     <div class="avataricon" style="clear:both;">
       <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
       <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
         title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
       </a>
     </div>
-    {% endif %}
+    {%- endif -%}
     </li>
-    {% endfor %}
+    {%- endfor %}
   </ol>
 </div>
 <hr>
@@ -72,19 +75,19 @@
     <p><i>{{strings['base19']}}</i></p>
   </li>
 </ul>
+{%- elif error -%}
 <!-- In case of incorrect tag or query-->
-{% elif error %}
 <p> <span style = "font-size:larger;"><strong>
-  {% if 'Incorrect tag' in error %}
+  {% if 'Incorrect tag' in error -%}
   {{strings['similar22']}}
-  {% elif 'Incorrect query' in error %}
+  {%- elif 'Incorrect query' in error -%}
   {{strings['similar21']}}
-  {% else %}
+  {%- else -%}
   {{strings['similar18']}} {{ word }}
-  {% endif %}
+  {%- endif %}
   </strong></span>
 <p>
-  {% else %}
+  {% else -%}
   <!-- If there was no user query, show links to other pages (similar words, etc.) -->
   <span><br><br><br></span>
 <div class="container">
@@ -144,5 +147,5 @@
     </div>
   </div>
 </div>
-{% endif %}
-{% endblock %}
+{%- endif %}
+{%- endblock %}
