@@ -179,12 +179,12 @@ def process(pipeline, text='Строка', keep_pos=True, keep_punct=False):
                     named = False
                     past_lemma = '::'.join(memory)
                     memory = []
-                    tagged_propn.append(past_lemma + '_PROPN ')
+                    tagged_propn.append(past_lemma + '_PROPN')
             else:
                 named = False
                 past_lemma = '::'.join(memory)
                 memory = []
-                tagged_propn.append(past_lemma + '_PROPN ')
+                tagged_propn.append(past_lemma + '_PROPN')
                 tagged_propn.append('%s_%s' % (lemma, pos))
         else:
             if not named:
@@ -195,7 +195,7 @@ def process(pipeline, text='Строка', keep_pos=True, keep_punct=False):
                 named = False
                 past_lemma = '::'.join(memory)
                 memory = []
-                tagged_propn.append(past_lemma + '_PROPN ')
+                tagged_propn.append(past_lemma + '_PROPN')
                 tagged_propn.append('%s_%s' % (lemma, pos))
 
     if not keep_punct:
