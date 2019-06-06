@@ -1,147 +1,151 @@
 <!-- Look associates.html for more detailed comments -->
-{% extends "base.html" %}
-
-{% block content %}
-    <h1 style="text-align:center">{{strings['home1']}}</h1>
-    <p style="text-align:center" class="lead">{{strings['home6']}}</p>
-
-    <!-- Request field -->
-    <p style="text-align:center">{{strings['home2']}}</p>
-    <div id="queryform">
-        <form id="inputform" style="text-align:center" action="#" method=post>
-            <div class="form-group">
-            {% if word %}
-            <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
-            {% else %}
-            <input type="text" class="typeahead" id="query" name="list_query" value="{{strings['home7']}}" maxlength=100>
-            {% endif %}
-            </div>
-        <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['home3']}}</button>
-        </form>
+{%- extends "base.html" -%}
+{%- block content %}
+<h1 style="text-align:center">{{strings['home1']}}</h1>
+<p style="text-align:center" class="lead">{{strings['home6']}}</p>
+<!-- Request field -->
+<p style="text-align:center">{{strings['home2']}}</p>
+<div id="queryform">
+  <form id="inputform" style="text-align:center" action="#" method=post>
+    <div class="form-group">
+      {%- if word %}
+      <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
+      {%- else -%}
+      <input type="text" class="typeahead" id="query" name="list_query" value="{{strings['home7']}}" maxlength=100>
+      {% endif -%}
     </div>
-    <!-- Featuring results -->
-    {% if list_value %}
-        <h3><strong>{{strings['home4']}}
-            <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/" title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
-                  {% if frequencies[model][word][1] == 'high'%} style="color: green;"  {% elif frequencies[model][word][1] == 'low' %} style="color: red;"  {% endif %} >
-	    {{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}}
-        <a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a>)</strong></h3>
-
-            <!-- Checkbox for frequency selection -->
-            <div class="checkbox">
-            <p><small><em>{{strings['frequency1']}}</em></small></p>
-            <small>
-            <label style="color: green;" title="{{strings['frequency5']}}">
-            <input id="high" type="checkbox" checked>{{ strings['frequency2']}}
-            </label>
-            <label style="color: #337ab7;" title="{{strings['frequency6']}}">
-            <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
-            <label style="color: red;" title="{{strings['frequency7']}}">
-            <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>  
-            </small>
-            </div>
-        
-        <!-- If the word is not present in the model but its embedding is inferred from its characters -->
-	    {% if model in inferred %}
-	        <i>{{strings['similar32']}}</i>
-        {% endif %}
-	    <!-- Iteration over the results -->
-	    <div style="max-width:300px;" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-        
-        <ol id="{{ model }}" style="font-size: larger;"> 
-        {% for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
-        
-        <li
-        {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
-        {% else %} style="margin: 10px 0;"
-        {% endif %}
-        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}"> 
-	    <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-           {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"  {% endif %}>
-		{{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
-        {% if wordimages[res[0].split('_')[0]]  %}
-	        <div class="avataricon" style="clear:both;">
-		    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
-                <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
-                     title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
-            </a>
-	        </div>
-            {% endif %}
-        </li>
-        {% endfor %}
-        </ol>
-        </div>
-    <hr>
-        <ul>
-	    <li><p><i>{{strings['base19']}}</i></p></li>
-        </ul>
-
-    <!-- In case of incorrect tag or query-->
-    {% elif error %}
-      <p> <span style = "font-size:larger;"><strong>
-
-        {% if 'Incorrect tag' in error %}
-                   {{strings['similar22']}}
-        {% elif 'Incorrect query' in error %}
-                   {{strings['similar21']}}
-        {% else %}
-            {{strings['similar18']}} {{ word }}
-        {% endif %}
-
-        </strong></span><p>
-
-    {% else %}
-    <!-- If there was no user query, show links to other pages (similar words, etc.) -->
-    <span><br><br><br></span>
-    <div class="container">
-    <div class="starter-template">
-        
-        <div class="row" style="text-align:center;max-width:900px;margin:auto">
-        <div class="col-md-6">
+    <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['home3']}}</button>
+  </form>
+</div>
+<!-- Featuring results -->
+{%- if list_value -%}
+<h3><strong>{{strings['home4']}}
+  <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
+  title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
+  {%- if frequencies[model][word][1] == 'high' %} style="color: green;"
+  {%- elif frequencies[model][word][1] == 'low' %} style="color: red;"
+  {%- endif -%}>
+  {{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}}
+  <a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a>)</strong>
+</h3>
+<!-- Checkbox for frequency selection -->
+<div class="checkbox">
+  <p><small><em>{{strings['frequency1']}}</em></small></p>
+  <small>
+  <label style="color: green;" title="{{strings['frequency5']}}">
+  <input id="high" type="checkbox" checked>{{ strings['frequency2']}}
+  </label>
+  <label style="color: #337ab7;" title="{{strings['frequency6']}}">
+  <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
+  <label style="color: red;" title="{{strings['frequency7']}}">
+  <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
+  </small>
+</div>
+<!-- If the word is not present in the model but its embedding is inferred from its characters -->
+{%- if model in inferred %}
+<i>{{strings['similar32']}}</i>
+{%- endif %}
+<!-- Iteration over the results -->
+<div style="max-width:300px;" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
+  <ol id="{{ model }}" style="font-size: larger;">
+    {%- for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
+    <li
+    {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
+    {%- else -%} style="margin: 10px 0;"
+    {%- endif %}
+    class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
+    <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
+    {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"  {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;" {%- endif -%}>
+    {{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+    {% if wordimages[res[0].split('_')[0]] -%}
+    <div class="avataricon" style="clear:both;">
+      <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+      <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
+        title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+      </a>
+    </div>
+    {%- endif -%}
+    </li>
+    {%- endfor %}
+  </ol>
+</div>
+<hr>
+<ul>
+  <li>
+    <p><i>{{strings['base19']}}</i></p>
+  </li>
+</ul>
+{%- elif error -%}
+<!-- In case of incorrect tag or query-->
+<p> <span style = "font-size:larger;"><strong>
+  {% if 'Incorrect tag' in error -%}
+  {{strings['similar22']}}
+  {%- elif 'Incorrect query' in error -%}
+  {{strings['similar21']}}
+  {%- else -%}
+  {{strings['similar18']}} {{ word }}
+  {%- endif %}
+  </strong></span>
+<p>
+  {% else -%}
+  <!-- If there was no user query, show links to other pages (similar words, etc.) -->
+  <span><br><br><br></span>
+<div class="container">
+  <div class="starter-template">
+    <div class="row" style="text-align:center;max-width:900px;margin:auto">
+      <div class="col-md-6">
         <div class="avatarlarge" style="clear:both;">
-	    <a href="{{ url }}{{lang}}/associates/">
+          <a href="{{ url }}{{lang}}/associates/">
             <div class="tint">
-            <img class="img-responsive" src = "{{ url }}data/images/associates_new.png" alt = "{{strings['base6']}}" title = "{{strings['base6']}}">
+              <img class="img-responsive" src = "{{ url }}data/images/associates_new.png" alt = "{{strings['base6']}}" title = "{{strings['base6']}}">
             </div>
-		    <div class="centered"><h2>{{strings['base6']}}</h2></div>
-            </a>
-        </div>
-        </div>
-            <div class="col-md-6">
-            <div class="avatarlarge" style="clear:both;">
-	        <a href="{{ url }}{{lang}}/visual/">
-                <div class="tint">
-                <img class="img-responsive" src = "{{ url }}data/images/visual_new.png" alt = "{{strings['base13']}}" title = "{{strings['base13']}}">
-                </div>
-		    <div class="centered"><h2>{{strings['base13']}}</h2></div>
-            </a>
+            <div class="centered">
+              <h2>{{strings['base6']}}</h2>
             </div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="avatarlarge" style="clear:both;">
+          <a href="{{ url }}{{lang}}/visual/">
+            <div class="tint">
+              <img class="img-responsive" src = "{{ url }}data/images/visual_new.png" alt = "{{strings['base13']}}" title = "{{strings['base13']}}">
             </div>
-        </div>
-        <!--span><br><br></span-->
-        <div class="row" style="text-align:center;max-width:900px;margin:auto">
-        <div class="col-md-6">
-            <div class="avatarlarge" style="clear:both;">
-	        <a href="{{ url }}{{lang}}/calculator/">
-                <div class="tint">
-                <img class="img-responsive" src = "{{ url }}data/images/calculator_new.png" alt = "{{strings['base5']}}" title = "{{strings['base5']}}">
-                </div>
-		    <div class="centered"><h2>{{strings['base5']}}</h2></div>
-            </a>
+            <div class="centered">
+              <h2>{{strings['base13']}}</h2>
             </div>
+          </a>
         </div>
-        <div class="col-md-6">
-            <div class="avatarlarge" style="clear:both;">
-	        <a href="{{ url }}{{lang}}/misc/">
-		    <div class="tint">
-                <img class="img-responsive" src = "{{ url }}data/images/misc_new.png" alt = "{{strings['base17']}}" title = "{{strings['base17']}}">
-                </div>
-		        <div class="centered"><h2>{{strings['base17']}}</h2></div>
-            </a>
-            </div>
-        </div>
-        </div>
+      </div>
     </div>
+    <!--span><br><br></span-->
+    <div class="row" style="text-align:center;max-width:900px;margin:auto">
+      <div class="col-md-6">
+        <div class="avatarlarge" style="clear:both;">
+          <a href="{{ url }}{{lang}}/calculator/">
+            <div class="tint">
+              <img class="img-responsive" src = "{{ url }}data/images/calculator_new.png" alt = "{{strings['base5']}}" title = "{{strings['base5']}}">
+            </div>
+            <div class="centered">
+              <h2>{{strings['base5']}}</h2>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="avatarlarge" style="clear:both;">
+          <a href="{{ url }}{{lang}}/misc/">
+            <div class="tint">
+              <img class="img-responsive" src = "{{ url }}data/images/misc_new.png" alt = "{{strings['base17']}}" title = "{{strings['base17']}}">
+            </div>
+            <div class="centered">
+              <h2>{{strings['base17']}}</h2>
+            </div>
+          </a>
+        </div>
+      </div>
     </div>
-    {% endif %}
-{% endblock %}
+  </div>
+</div>
+{%- endif %}
+{%- endblock %}

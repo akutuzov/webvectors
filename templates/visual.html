@@ -1,115 +1,103 @@
 {% extends "base.html" %}
-
 {% block title %}
-     <title>{{strings['base3']}}: {{strings['visual1']}}</title>
- {% endblock title %}
-
-
-
+<title>{{strings['base3']}}: {{strings['visual1']}}</title>
+{% endblock title %}
 {% block content %}
-
-        <h1>{{strings['visual1']}}</h1>
-        <form method=post>
-              <div class="form-group">
-                  <p>{{strings['visual2']}}</p>
-                <div class="fields">
-                {% if visual %}
-                <div class="input-group">
-                <input type="text" class="form-control" name="list_query" value="{{ ','.join(words[0]) }}" maxlength=200>
-                <span class="btn input-group-addon add-field">(+)</span>
-                </div>
-                {% for group in words[1:] %}
-                <div class="input-group">
-                <input type="text" class="form-control" name="list_query" value="{{ ','.join(group) }}" maxlength=200>
-                <span class="btn input-group-addon delete-field">(–)</span>
-                </div>
-                {% endfor %}
-                
-                {% else %}
-                <div class="input-group">
-                <input type="text" class="form-control" name="list_query" value="{{strings['visual7']}}" maxlength=200>
-                <span class="btn input-group-addon add-field">(+)</span>
-                </div>
-                {% endif %}
-                
-                <span class="help-block">{{strings['visual24']}}</span>
-                </div>
-              </div>
-              
-              <div class="checkbox">
-                  <p><small><em>{{strings['similar3']}}</em></small></p>
-                <fieldset>
-		<small>
-		{% for m in models %}
-		<label>
-                  <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
-                </label>
-                {% endfor %}
-		</small>
-                </fieldset>
-              </div>
-              <button type="submit" class="btn btn-primary">{{strings['visual15']}}</button>
-            </form>
+<h1>{{strings['visual1']}}</h1>
+<form method=post>
+  <div class="form-group">
+    <p>{{strings['visual2']}}</p>
+    <div class="fields">
       {% if visual %}
-	<h3>{{strings['visual3']}}<sup>*</sup></h3>
-	{% for word in qwords %}
-	<a href="{{ url }}{{lang}}/{{ visual.keys()[0] }}/{{word}}/" 
-		{% if word in frequencies[visual.keys()[0]] %}
-		title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[visual.keys()[0]][word][0]}}" {% if frequencies[visual.keys()[0]][word][1] == 'high'%} style="color: green;"  {% elif frequencies[visual.keys()[0]][word][1] == 'low' %} style="color: red;"  {% endif %}
-		{% endif %}
-		>
-	{{ word.split('_')[0].replace('::', ' ') }}</a>
-	{% endfor %}
-        <div class="row">
-        {% for model in visual %}
-        <div class="col-md-5">
-        <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
-        {% if not 'Too few words' in visual[model] %}
-	  {% if l2c[model] %}
-	  <i><a target="_blank" title="{{strings['visual23']}}" href="https://projector.tensorflow.org/?config={{ l2c[model] }}">
-		  {{strings['visual22']}}</a></i>
-	  {% endif %}
-            <a href="{{ url }}data/images/tsneplots/{{ visual[model] }}" target="_blank">
-                <img class="img-responsive" src = "{{ url }}data/images/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}">
-            </a>
-	    {% else %}
-	        <p>{{strings['visual8']}}</p>
-	    {% endif %}
-	{% if unknown[model] %}
-	<p>{{strings['visual4']}}</p>
-	<ul>
-	{% for w in unknown[model] %}
-	<li><b>{{ w }}</b></li>
-	{% endfor %}
-	</ul>
-	{% endif %}
-	</div>
-	
-         {% endfor %}
-         </div>
-         
-    {% elif error %}
-	  <p> <span style = "font-size:larger;"><strong>
-          {% if 'Incorrect tag' in error %}
-                   {{strings['similar22']}}
-          {% elif 'Incorrect query' in error %}
-                   {{strings['similar21']}}
-          {% elif 'Too few words' in error %}
-            {{strings['visual8']}}
-          {% elif 'Words must be unique' in error %}
-            {{strings['visual9']}}
-          {% else %}
-          {{ error }}
-          {% endif %}
-
-          </strong></span></p>
+      <div class="input-group">
+        <input type="text" class="form-control" name="list_query" value="{{ ','.join(words[0]) }}" maxlength=200>
+        <span class="btn input-group-addon add-field">(+)</span>
+      </div>
+      {% for group in words[1:] %}
+      <div class="input-group">
+        <input type="text" class="form-control" name="list_query" value="{{ ','.join(group) }}" maxlength=200>
+        <span class="btn input-group-addon delete-field">(–)</span>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="input-group">
+        <input type="text" class="form-control" name="list_query" value="{{strings['visual7']}}" maxlength=200>
+        <span class="btn input-group-addon add-field">(+)</span>
+      </div>
+      {% endif %}
+      <span class="help-block">{{strings['visual24']}}</span>
+    </div>
+  </div>
+  <div class="checkbox">
+    <p><small><em>{{strings['similar3']}}</em></small></p>
+    <fieldset>
+      <small>
+      {% for m in models %}
+      <label>
+      <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
+      </label>
+      {% endfor %}
+      </small>
+    </fieldset>
+  </div>
+  <button type="submit" class="btn btn-primary">{{strings['visual15']}}</button>
+</form>
+{% if visual %}
+<h3>{{strings['visual3']}}<sup>*</sup></h3>
+{% for word in qwords %}
+<a href="{{ url }}{{lang}}/{{ visual.keys()[0] }}/{{word}}/"
+{% if word in frequencies[visual.keys()[0]] %}
+title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[visual.keys()[0]][word][0]}}" {% if frequencies[visual.keys()[0]][word][1] == 'high'%} style="color: green;"  {% elif frequencies[visual.keys()[0]][word][1] == 'low' %} style="color: red;"  {% endif %}
+{% endif %}
+>
+{{ word.split('_')[0].replace('::', ' ') }}</a>
+{% endfor %}
+<div class="row">
+  {% for model in visual %}
+  <div class="col-md-5">
+    <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
+    {% if not 'Too few words' in visual[model] %}
+    {% if l2c[model] %}
+    <i><a target="_blank" title="{{strings['visual23']}}" href="https://projector.tensorflow.org/?config={{ l2c[model] }}">
+    {{strings['visual22']}}</a></i>
     {% endif %}
-
-	<hr/>
-	<p><small><i>* <a href="https://lvdmaaten.github.io/tsne/"><b>t-SNE</b></a> {{strings['visual5']}}</i></small><br/>
-	<small><i>L.J.P. van der Maaten and G.E. Hinton. <a href="https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf">
-        Visualizing High-Dimensional Data Using t-SNE</a>.
-        Journal of Machine Learning Research 9(Nov):2579-2605, 2008</i></small></p>
-
-	
+    <a href="{{ url }}data/images/tsneplots/{{ visual[model] }}" target="_blank">
+    <img class="img-responsive" src = "{{ url }}data/images/tsneplots/{{ visual[model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}">
+    </a>
+    {% else %}
+    <p>{{strings['visual8']}}</p>
+    {% endif %}
+    {% if unknown[model] %}
+    <p>{{strings['visual4']}}</p>
+    <ul>
+      {% for w in unknown[model] %}
+      <li><b>{{ w }}</b></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% elif error %}
+<p> <span style = "font-size:larger;"><strong>
+  {% if 'Incorrect tag' in error %}
+  {{strings['similar22']}}
+  {% elif 'Incorrect query' in error %}
+  {{strings['similar21']}}
+  {% elif 'Too few words' in error %}
+  {{strings['visual8']}}
+  {% elif 'Words must be unique' in error %}
+  {{strings['visual9']}}
+  {% else %}
+  {{ error }}
+  {% endif %}
+  </strong></span>
+</p>
+{% endif %}
+<hr/>
+<p><small><i>* <a href="https://lvdmaaten.github.io/tsne/"><b>t-SNE</b></a> {{strings['visual5']}}</i></small><br/>
+  <small><i>L.J.P. van der Maaten and G.E. Hinton. <a href="https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf">
+  Visualizing High-Dimensional Data Using t-SNE</a>.
+  Journal of Machine Learning Research 9(Nov):2579-2605, 2008</i></small>
+</p>
 {% endblock %}

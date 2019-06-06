@@ -1,178 +1,162 @@
 <!-- Look associates.html for more detailed comments -->
-{% extends "base.html" %}
-
-{% block title %}
-     <title>{{strings['synraw1']}} "{{word}}"</title>
- {% endblock title %}
-
-{% block metas %}
-    {{ super() }}
-    <meta name="robots" content="noindex">
-{% endblock metas %}
-
-{% block content %}
-        <!-- Featuring results -->
-        {% if list_value %}
-        <script>
-        function ShowHide(divId)
-        {
-        if(document.getElementById(divId).style.display == 'none')
-        {
-        document.getElementById(divId).style.display='block';
-        }
-        else
-        {
-        document.getElementById(divId).style.display = 'none';
-        }
-        }
-        </script>
-        <!-- Similar words and the word's vector -->
-        <div class="row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-        <!-- Header: "What words are related to [word] in model [model]?"" -->
-        <div class="col-md-7">
-
-  <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong>
-  <a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
-     title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
-       {% if frequencies[model][word][1] == 'high'%} style="color: green;"  {% elif frequencies[model][word][1] == 'low' %} style="color: red;"  {% endif %} >
-    &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
-   
-            {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}">&laquo;{{ strings[models[model]] }}&raquo;</a>?</h2>
-            <!-- Checkbox for frequency selection -->
-            <div class="checkbox">
-            <p><small><em>{{strings['frequency1']}}</em></small></p>
-            <small>
-                <label style="color: green;" title="{{strings['frequency5']}}">
-            <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
-                <label style="color: #337ab7;" title="{{strings['frequency6']}}">
-            <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
-                <label style="color: red;" title="{{strings['frequency7']}}">
-            <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
-            </small>
-            </div>
-
-
-        <!-- If the word is not present in the model but its embedding is inferred from its characters -->
-        {% if model in inferred %}
-          <i>{{strings['similar32']}}</i>
-        {% endif %}
-        <div style="max-width:300px;">
-        <ol id="{{ model }}">
-
-            {% for res in list_value[model] if res != "Incorrect tag!" %}
-
-                <li {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
-                {% else %} style="margin: 10px 0;"
-                {% endif %}
-                class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">  
-
-                <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
-                title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-                {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
-                {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;" 
-                {% endif %}>
-
-                {{res[0].split('_')[0].replace('::', ' ')}}
-                {% if res[0].split('_')|length > 1 %}
-                <sub style="font-size:50%;">{{res[0].split('_')[-1]}}</sub>
-                {% endif %}</a> 
-
-                {{ "{:.4f} ".format(res[1]) }}
-                
-                {% if wordimages[res[0].split('_')[0]] %}
-                    <div class="avataricon">
-                    <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
-                    <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
-                     title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
-                    </a>
-                    </div>
-
-                {% endif %}
-                </li>
-            {% endfor %}
-        </ol>
+{%- extends "base.html" -%}
+{%- block title -%}
+<title>{{strings['synraw1']}} "{{word}}"</title>
+{%- endblock title -%}
+{%- block metas -%}
+{{ super() }}
+<meta name="robots" content="noindex">
+{%- endblock metas -%}
+{%- block content %}
+<!-- Featuring results -->
+{%- if list_value -%}
+<script>
+  function ShowHide(divId)
+  {
+  if(document.getElementById(divId).style.display == 'none')
+  {
+  document.getElementById(divId).style.display='block';
+  }
+  else
+  {
+  document.getElementById(divId).style.display = 'none';
+  }
+  }
+</script>
+<!-- Similar words and the word's vector -->
+<div class="row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
+  <!-- Header: "What words are related to [word] in model [model]?"" -->
+  <div class="col-md-7">
+    <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong>
+      <a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
+      title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
+      {% if frequencies[model][word][1] == 'high'%} style="color: green;"  {% elif frequencies[model][word][1] == 'low' %} style="color: red;"  {% endif %} >
+      &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
+      {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}">&laquo;{{ strings[models[model]] }}&raquo;</a>?
+    </h2>
+    <!-- Checkbox for frequency selection -->
+    <div class="checkbox">
+      <p><small><em>{{strings['frequency1']}}</em></small></p>
+      <small>
+      <label style="color: green;" title="{{strings['frequency5']}}">
+      <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
+      <label style="color: #337ab7;" title="{{strings['frequency6']}}">
+      <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
+      <label style="color: red;" title="{{strings['frequency7']}}">
+      <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
+      </small>
+    </div>
+    <!-- If the word is not present in the model but its embedding is inferred from its characters -->
+    {%- if model in inferred %}
+    <i>{{strings['similar32']}}</i>
+    {%- endif %}
+    <div style="max-width:300px;">
+      <ol id="{{ model }}">
+        {%- for res in list_value[model] if res != "Incorrect tag!" %}
+        <li
+        {% if frequencies[model][res[0]][1]== 'low' -%} style="display: none;margin: 10px 0;"
+        {%- else -%} style="margin: 10px 0;"
+        {%- endif %}
+        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
+        <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
+        title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
+        {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
+        {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"
+        {%- endif -%}>
+        {{res[0].split('_')[0].replace('::', ' ')}}
+        {% if res[0].split('_')|length > 1 -%}
+        <sub style="font-size:50%;">{{res[0].split('_')[-1]}}</sub>
+        {% endif %}</a>
+        {{ "{:.4f} ".format(res[1]) }}
+        {% if wordimages[res[0].split('_')[0]] -%}
+        <div class="avataricon">
+          <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+          <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
+            title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+          </a>
         </div>
-
-
-        <hr>
-    <ul>
-      <li><p><i>{{strings['base19']}}</i></p></li>
-  </ul>
-  <!-- Links to the word in another models -->
-        <h3>{{strings['synraw12']}}</h3>
-        <ul>
-        {% for m in models if m != model %}
-        <li>
-          <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}/">{{ strings[models[m]] }}</a>
+        {% endif -%}
         </li>
-        {% endfor %}
-        </ul>
-  <!-- Show the word's raw vector in another models -->
-  <span style = "font-size:larger;">
-        <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;
-            {{strings['synraw5']}} {{ model }}:</a>
-        </span>
-
-
-        <div class="vector" id="HiddenDiv" style="DISPLAY: none" >
-        {{ vector }}
-        </div>
-        </div>
-        <!-- About the word and vector components on the plot-->
-        <div class="col-md-5">
-        <h2>{{strings['synraw9']}}</h2>
-      <ul>
-          <li><span style = "font-size:larger;">
-              <a target="_blank" href="{{ search }}{{ word.split('_')[0].replace('::', ' ') }}">
-              {{strings['synraw6']}} &laquo;{{ word.split('_')[0].replace('::', ' ') }}&raquo; {{strings['synraw7']}}
-              </a></span></li>
-          <li><span style = "font-size:larger;">
-              <a target="_blank" href="https://en.wiktionary.org/wiki/{{ word.split('_')[0].replace('::', ' ') }}">
-                  &laquo;{{ word.split('_')[0].replace('::', ' ') }}&raquo; {{strings['synraw8']}}
-              </a></span></li>
+        {%- endfor -%}
+      </ol>
+    </div>
+    <hr>
+    <ul>
+      <li>
+        <p><i>{{strings['base19']}}</i></p>
+      </li>
+    </ul>
+    <!-- Links to the word in another models -->
+    <h3>{{strings['synraw12']}}</h3>
+    <ul>
+      {%- for m in models if m != model %}
+      <li>
+        <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}/">{{ strings[models[m]] }}</a>
+      </li>
+      {%- endfor %}
+    </ul>
+    <!-- Show the word's raw vector in another models -->
+    <span style = "font-size:larger;">
+    <a onclick ="javascript:ShowHide('HiddenDiv')" href="javascript:;" >{{strings['synraw4']}} &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;
+    {{strings['synraw5']}} {{ model }}:</a>
+    </span>
+    <div class="vector" id="HiddenDiv" style="DISPLAY: none" >
+      {{ vector }}
+    </div>
+  </div>
+  <!-- About the word and vector components on the plot-->
+  <div class="col-md-5">
+    <h2>{{strings['synraw9']}}</h2>
+    <ul>
+      <li><span style = "font-size:larger;">
+        <a target="_blank" href="{{ search }}{{ word.split('_')[0].replace('::', ' ') }}">
+        {{strings['synraw6']}} &laquo;{{ word.split('_')[0].replace('::', ' ') }}&raquo; {{strings['synraw7']}}
+        </a></span>
+      </li>
+      <li><span style = "font-size:larger;">
+        <a target="_blank" href="https://en.wiktionary.org/wiki/{{ word.split('_')[0].replace('::', ' ') }}">
+        &laquo;{{ word.split('_')[0].replace('::', ' ') }}&raquo; {{strings['synraw8']}}
+        </a></span>
+      </li>
     </ul>
     <hr/>
     <!-- Vector's components on the plot-->
-    {% if image %}
+    {%- if image -%}
     <a href="https://en.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank">
-        <img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}"
-             title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive">
+    <img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}"
+      title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive">
     </a>
-    {% endif %}
-
+    {%- endif %}
     <!-- Vector plot of the word -->
     <hr/>
     <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank">
     <img src = '{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}"
-         title = "{{word}} {{strings['synraw10']}}" class="img-responsive">
-        </a>  <hr/>
-
-            </div>
+      title = "{{word}} {{strings['synraw10']}}" class="img-responsive">
+    </a>
+    <hr/>
   </div>
-
-        {% endif %}
-
-
-        <!-- In case of incorrect tag or query-->
-        {% if error %}
-        <p> <span style = "font-size:larger;"><strong>
-          {% if 'Incorrect tag' in error %}
-                   {{strings['similar22']}}
-          {% elif 'Incorrect query' in error %}
-                   {{strings['similar21']}}
-          {% else %}
-            {{strings['similar18']}} {{ word }} ({{ model }})
-          {% endif %}
-
-          </strong></span><p>
-          <h3>{{strings['synraw12']}}</h3>
-        <ul>
-        <!-- This word in another models -->
-        {% for m in models if m != model %}
-        <li>
-          <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}/">{{ strings[models[m]] }}</a>
-        </li>
-        {% endfor %}
-        </ul>
-        {% endif %}
-{% endblock %}
+</div>
+{% endif -%}
+{%- if error -%}
+<!-- In case of incorrect tag or query-->
+<p> <span style = "font-size:larger;"><strong>
+  {% if 'Incorrect tag' in error -%}
+  {{strings['similar22']}}
+  {%- elif 'Incorrect query' in error -%}
+  {{strings['similar21']}}
+  {%- else -%}
+  {{strings['similar18']}} {{ word }} ({{ model }})
+  {%- endif %}
+  </strong></span>
+<p>
+<h3>{{strings['synraw12']}}</h3>
+<ul>
+  <!-- This word in another models -->
+  {%- for m in models if m != model %}
+  <li>
+    <a href="{{ url }}{{lang}}/{{ m }}/{{ word }}/">{{ strings[models[m]] }}</a>
+  </li>
+  {% endfor -%}
+</ul>
+{%- endif %}
+{%- endblock %}
