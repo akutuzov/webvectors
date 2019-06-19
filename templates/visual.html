@@ -45,9 +45,9 @@
 {% if visual %}
 <h3>{{strings['visual3']}}<sup>*</sup></h3>
 {% for word in qwords %}
-<a href="{{ url }}{{lang}}/{{ visual.keys()[0] }}/{{word}}/"
-{% if word in frequencies[visual.keys()[0]] %}
-title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[visual.keys()[0]][word][0]}}" {% if frequencies[visual.keys()[0]][word][1] == 'high'%} style="color: green;"  {% elif frequencies[visual.keys()[0]][word][1] == 'low' %} style="color: red;"  {% endif %}
+<a href="{{ url }}{{lang}}/{{ visual|list|first }}/{{word}}/"
+{% if word in frequencies[visual|list|first] %}
+title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[visual|list|first][word][0]}}" {% if frequencies[visual|list|first][word][1] == 'high'%} style="color: green;"  {% elif frequencies[visual|list|first][word][1] == 'low' %} style="color: red;"  {% endif %}
 {% endif %}
 >
 {{ word.split('_')[0].replace('::', ' ') }}</a>
