@@ -48,9 +48,8 @@
   <ol id="{{ model }}" style="font-size: larger;">
     {%- for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
     <li
-    {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
-    {%- else -%} style="margin: 10px 0;"
-    {%- endif %}
+    style="margin: 10px 0;"
+    class="fullres{{frequencies[model][res[0]][1]}}"
     data-word="{{res[0]}}">
     <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
     class="{{frequencies[model][res[0]][1]}}">
