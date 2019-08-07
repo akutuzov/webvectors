@@ -73,9 +73,7 @@
           The word's color depends on its frequency.-->
         <a href="{{ url }}{{lang}}/{{ usermodels[0] }}/{{word}}"
         title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}"
-        {% if frequencies[usermodels[0]][word][1] == 'high'%} style="color: green;"
-        {% elif frequencies[usermodels[0]][word][1] == 'low' %} style="color: red;"
-        {% endif %}>
+        class="{{frequencies[usermodels[0]][word][1]}}">
         <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a>
       </strong>
       ({{ pos }})
@@ -84,11 +82,11 @@
     <div class="checkbox">
       <p><small><em>{{strings['frequency1']}}</em></small></p>
       <small>
-      <label style="color: green;" title="{{strings['frequency5']}}">
+      <label class="high" title="{{strings['frequency5']}}">
       <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
-      <label style="color: #337ab7;" title="{{strings['frequency6']}}">
+      <label class="mid" title="{{strings['frequency6']}}">
       <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
-      <label style="color: red;" title="{{strings['frequency7']}}">
+      <label class="low" title="{{strings['frequency7']}}">
       <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
       </small>
     </div>
@@ -124,12 +122,10 @@
           {% if frequencies[model][res[0]][1]== 'low' %} style="display: none;margin: 10px 0;"
           {% else -%} style="margin: 10px 0;"
           {%- endif %}
-          class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
+          data-word="{{res[0]}}">
           <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
           title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-          {%- if frequencies[model][res[0]][1] == 'high' %} style="color: green;"
-          {%- elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"
-          {%- endif -%}>
+          class="{{frequencies[model][res[0]][1]}}">
           {{res[0].split('_')[0].replace('::', ' ')}}
           {% if res[0].split('_')|length > 1 -%}
           <sub style="font-size:50%;">{{res[0].split('_')[-1]}}</sub>
