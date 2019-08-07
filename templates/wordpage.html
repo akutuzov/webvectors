@@ -53,10 +53,7 @@
     <div style="max-width:300px;">
       <ol id="{{ model }}">
         {%- for res in list_value[model] if res != "Incorrect tag!" %}
-        <li
-        style="margin: 10px 0;"
-        class="fullres{{frequencies[model][res[0]][1]}}"
-        data-word="{{res[0]}}">
+        <li class="fullres{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
         <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
         title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
         class="{{frequencies[model][res[0]][1]}}">

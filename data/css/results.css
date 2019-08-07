@@ -10,3 +10,6 @@
 .fullreslow{
   display: none;
 }
+.fullreshigh, .fullresmid, .fullreslow{
+  margin: 10px 0;
+}

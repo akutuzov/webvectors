@@ -67,10 +67,7 @@
             <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
             <ol id="{{ model }}" style="font-size: larger;" type="1">
               {%- for res in analogy_value[model] if res != "Incorrect tag!" %}
-              <li
-              style="margin: 10px 0;"
-              class="fullres{{frequencies[model][res[0]][1]}}"
-              data-word="{{res[0]}}">
+              <li class="fullres{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
               {% if 'is unknown' in res -%}
               {{strings['similar18']}}
               {% elif 'No similar words' in res -%}
@@ -192,10 +189,7 @@
           <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
           <ol id="{{ model }}" style="font-size: larger;" type="1">
             {%- for res in calc_value[model] if res != "No similar words of this part of speech." and not 'No similar words' in res and not 'is unknown' in res %}
-            <li
-            style="margin: 10px 0;"
-            class="fullres{{frequencies[model][res[0]][1]}}"
-            data-word="{{res[0]}}">
+            <li class="fullres{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
             <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
             title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0] }}"
             class="{{frequencies[model][res[0]][1]}}">

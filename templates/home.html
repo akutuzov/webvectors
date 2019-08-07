@@ -47,10 +47,7 @@
 <div style="max-width:300px;" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
   <ol id="{{ model }}" style="font-size: larger;">
     {%- for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
-    <li
-    style="margin: 10px 0;"
-    class="fullres{{frequencies[model][res[0]][1]}}"
-    data-word="{{res[0]}}">
+    <li class="fullres{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
     <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
     class="{{frequencies[model][res[0]][1]}}">
     {{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
