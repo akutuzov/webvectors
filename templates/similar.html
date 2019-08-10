@@ -43,7 +43,7 @@
             <em>
             <a href="{{ url }}{{lang}}/{{ model }}/{{res[0][0]}}/"
             title="{{strings['synraw15']}} {{ res[0][0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][0]][0]}}"
-            class="{{frequencies[res[0][0]][1]}}">
+            class="frequency-{{frequencies[res[0][0]][1]}}">
             {{res[0][0].split("_")[0].replace('::', ' ')}}
             {% if res[0][0].split('_')|length > 1 -%}
             <sub style="font-size:30%;">{{res[0][0].split('_')[-1]}}</sub>
@@ -53,7 +53,7 @@
             <em>
             <a href="{{ url }}{{lang}}/{{ model }}/{{res[0][1]}}/"
             title="{{strings['synraw15']}} {{ res[0][1].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[res[0][1]][0]}}"
-            class="{{frequencies[res[0][1]][1]}}">
+            class="frequency-{{frequencies[res[0][1]][1]}}">
             {{res[0][1].split("_")[0].replace('::', ' ')}}
             {% if res[0][1].split('_')|length > 1 -%}
             <sub style="font-size:30%;">{{res[0][1].split('_')[-1]}}</sub>
