@@ -1,0 +1,15 @@
+.frequency-high{
+  color: green;
+}
+.frequency-mid{
+  color: #337ab7;
+}
+.frequency-low{
+  color: red;
+}
+.frequency-item-low{
+  display: none;
+}
+.frequency-item-high, .frequency-item-mid, .frequency-item-low{
+  margin: 10px 0;
+}

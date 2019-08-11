@@ -30,7 +30,7 @@
     <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong>
       <a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
       title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
-      {% if frequencies[model][word][1] == 'high'%} style="color: green;"  {% elif frequencies[model][word][1] == 'low' %} style="color: red;"  {% endif %} >
+      class="frequency-{{frequencies[model][word][1]}}">
       &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
       {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}">&laquo;{{ strings[models[model]] }}&raquo;</a>?
     </h2>
@@ -38,11 +38,11 @@
     <div class="checkbox">
       <p><small><em>{{strings['frequency1']}}</em></small></p>
       <small>
-      <label style="color: green;" title="{{strings['frequency5']}}">
+      <label class="frequency-high" title="{{strings['frequency5']}}">
       <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
-      <label style="color: #337ab7;" title="{{strings['frequency6']}}">
+      <label class="frequency-mid" title="{{strings['frequency6']}}">
       <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
-      <label style="color: red;" title="{{strings['frequency7']}}">
+      <label class="frequency-low" title="{{strings['frequency7']}}">
       <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
       </small>
     </div>
@@ -53,16 +53,10 @@
     <div style="max-width:300px;">
       <ol id="{{ model }}">
         {%- for res in list_value[model] if res != "Incorrect tag!" %}
-        <li
-        {% if frequencies[model][res[0]][1]== 'low' -%} style="display: none;margin: 10px 0;"
-        {%- else -%} style="margin: 10px 0;"
-        {%- endif %}
-        class="{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
+        <li class="frequency-item-{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
         <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
         title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-        {% if frequencies[model][res[0]][1] == 'high'%} style="color: green;"
-        {% elif frequencies[model][res[0]][1] == 'low' %} style="color: red;"
-        {%- endif -%}>
+        class="frequency-{{frequencies[model][res[0]][1]}}">
         {{res[0].split('_')[0].replace('::', ' ')}}
         {% if res[0].split('_')|length > 1 -%}
         <sub style="font-size:50%;">{{res[0].split('_')[-1]}}</sub>
