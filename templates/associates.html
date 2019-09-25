@@ -24,39 +24,35 @@
         </div>
         <!-- The checkbox for model selection -->
         <div class="checkbox">
-          <p><small><em>{{strings['similar3']}}</em></small></p>
+          <p><em>{{strings['similar3']}}</em></p>
           <fieldset>
-            <small>
-              <!-- A cicle for models to work with -->
-              {%- for m in models %}
-              <label>
-              <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
-              </label>
-              {%- endfor %}
-            </small>
+            <!-- A cicle for models to work with -->
+            {%- for m in models %}
+            <label>
+            <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
+            </label>
+            {%- endfor %}
           </fieldset>
         </div>
         <!-- If post tags are used, one can select the pos in the results-->
         {% if tags -%}
         <!-- The header "Show only:" -->
-        <p><small><em>{{strings['similar9']}}</em></small></p>
-        <!-- radiobuttons for pos selection -->
         <div class="radio">
-          <small>
-            <!-- Within the cicle buttons with tags are added for the selected posses in the "tags.tsv" file. -->
-            {%- for tag in tags2show %}
-            <label>
-            <input type="radio" name="pos" {% if tag in userpos %}checked{% endif %} value="{{ tag }}"> {{strings[tags2show[tag]]}}
-            </label>
-            {%- endfor %}
-            <!-- And outside the cicle - buttons for all the possible posses and for the query pos. -->
-            <label>
-            <input type="radio" name="pos" {% if not userpos %}checked{% endif %} value="ALL"> {{strings['similar14']}}
-            </label>
-            <label>
-            <input type="radio" name="pos" {% if 'Q' in userpos %}checked{% endif %} value="Q"> {{strings['similar19']}}
-            </label>
-          </small>
+          <p><em>{{strings['similar9']}}</em></p>
+          <!-- radiobuttons for pos selection -->
+          <!-- Within the cicle buttons with tags are added for the selected posses in the "tags.tsv" file. -->
+          {%- for tag in tags2show %}
+          <label>
+          <input type="radio" name="pos" {% if tag in userpos %}checked{% endif %} value="{{ tag }}"> {{strings[tags2show[tag]]}}
+          </label>
+          {%- endfor %}
+          <!-- And outside the cicle - buttons for all the possible posses and for the query pos. -->
+          <label>
+          <input type="radio" name="pos" {% if not userpos %}checked{% endif %} value="ALL"> {{strings['similar14']}}
+          </label>
+          <label>
+          <input type="radio" name="pos" {% if 'Q' in userpos %}checked{% endif %} value="Q"> {{strings['similar19']}}
+          </label>
         </div>
         {%- endif %}
         <!-- Button "Find similar words!" is placed in <form> to be able to send data to the server -->
@@ -80,15 +76,13 @@
     </h3>
     <!-- Checkbox for frequency selection-->
     <div class="checkbox">
-      <p><small><em>{{strings['frequency1']}}</em></small></p>
-      <small>
+      <p><em>{{strings['frequency1']}}</em></p>
       <label class="frequency-high" title="{{strings['frequency5']}}">
       <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
       <label class="frequency-mid" title="{{strings['frequency6']}}">
       <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
       <label class="frequency-low" title="{{strings['frequency7']}}">
       <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
-      </small>
     </div>
     <!-- Featuring list of results
       Every model is allocated a column to be shown in, the link to it is given
