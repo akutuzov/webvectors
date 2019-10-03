@@ -28,8 +28,7 @@
 </h3>
 <!-- Checkbox for frequency selection -->
 <div class="checkbox">
-  <p><small><em>{{strings['frequency1']}}</em></small></p>
-  <small>
+  <p><em>{{strings['frequency1']}}</em></p>
   <label class="frequency-high" title="{{strings['frequency5']}}">
   <input id="high" type="checkbox" checked>{{ strings['frequency2']}}
   </label>
@@ -37,7 +36,6 @@
   <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
   <label class="frequency-low" title="{{strings['frequency7']}}">
   <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
-  </small>
 </div>
 <!-- If the word is not present in the model but its embedding is inferred from its characters -->
 {%- if model in inferred %}

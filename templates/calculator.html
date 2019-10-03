@@ -52,15 +52,13 @@
         <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
           <!-- Checkbox for frequency selection-->
           <div class="checkbox">
-            <p><small><em>{{strings['frequency1']}}</em></small></p>
-            <small>
+            <p><em>{{strings['frequency1']}}</em></p>
             <label class="frequency-high" title="{{strings['frequency5']}}">
             <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
             <label class="frequency-mid" title="{{strings['frequency6']}}">
             <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
             <label class="frequency-low" title="{{strings['frequency7']}}">
             <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
-            </small>
           </div>
           {% for model in analogy_value -%}
           <div class = "col-md-5">
@@ -118,22 +116,19 @@
       </div>
       <!-- Model selection -->
       <div class="checkbox">
-        <p><small><em>{{strings['similar3']}}</em></small></p>
+        <p><em>{{strings['similar3']}}</em></p>
         <fieldset>
-          <small>
           {%- for m in models %}
           <label>
           <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
           </label>
           {%- endfor %}
-          </small>
         </fieldset>
       </div>
       <!-- Pos selection -->
       {% if tags -%}
-      <p><small><em>{{strings['similar9']}}</em></small></p>
       <div class="radio">
-        <small>
+        <p><em>{{strings['similar9']}}</em></p>
         {%- for tag in tags2show %}
         <label>
         <input type="radio" name="pos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
@@ -142,7 +137,6 @@
         <label>
         <input type="radio" name="pos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
         </label>
-        </small>
       </div>
       {%- endif %}
       <!-- button "Calculate!" -->
@@ -174,15 +168,13 @@
       <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
         <!-- Checkbox for frequency selection -->
         <div class="checkbox">
-          <p><small><em>{{strings['frequency1']}}</em></small></p>
-          <small>
+          <p><em>{{strings['frequency1']}}</em></p>
           <label class="frequency-high" title="{{strings['frequency5']}}">
           <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
           <label class="frequency-mid" title="{{strings['frequency6']}}">
           <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
           <label class="frequency-low" title="{{strings['frequency7']}}">
           <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
-          </small>
         </div>
         {% for model in calc_value -%}
         <div class = "col-md-6">
@@ -241,22 +233,21 @@
         {% endif -%}
         <!-- Choose the model -->
       <div class="checkbox">
-        <p><small><em>{{strings['similar3']}}</em></small></p>
+        <p><em>{{strings['similar3']}}</em></p>
         <fieldset>
-          <small>
+          
           {%- for m in models %}
           <label>
           <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
           </label>
           {%- endfor %}
-          </small>
+          
         </fieldset>
       </div>
       {% if tags -%}
       <!-- Choose the pos -->
-      <p><small><em>{{strings['similar9']}}</em></small></p>
       <div class="radio">
-        <small>
+        <p><em>{{strings['similar9']}}</em></p>
         {%- for tag in tags2show %}
         <label>
         <input type="radio" name="calcpos" value="{{ tag }}" {% if tag in userpos %} checked {% endif %}> {{strings[tags2show[tag]]}}
@@ -265,7 +256,6 @@
         <label>
         <input type="radio" name="calcpos" value="ALL" {% if not userpos %} checked {% endif %}> {{strings['similar14']}}
         </label>
-        </small>
       </div>
       {%- endif %}
       <button type="submit" class="btn btn-primary" name="calc_query" value = "{{strings['calc18']}}">{{strings['calc18']}}</button>

@@ -1,0 +1,19 @@
+.checkbox label,
+.radio label {
+  font-size: 0.86em;
+  padding-left: 0;
+  margin-right: 5px;
+}
+
+.checkbox input[type=checkbox],
+.radio input[type=radio] {
+  position: relative;
+  top: -1px;
+  margin-top: 0;
+  margin-left: 0;
+  vertical-align: middle;
+}
+
+.checkbox input[type=checkbox] {
+  margin-right: 2px;
+}

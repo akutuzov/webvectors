@@ -29,15 +29,13 @@
     </div>
   </div>
   <div class="checkbox">
-    <p><small><em>{{strings['similar3']}}</em></small></p>
+    <p><em>{{strings['similar3']}}</em></p>
     <fieldset>
-      <small>
       {% for m in models %}
       <label>
       <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
       </label>
       {% endfor %}
-      </small>
     </fieldset>
   </div>
   <button type="submit" class="btn btn-primary">{{strings['visual15']}}</button>
