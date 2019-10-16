@@ -1,7 +1,7 @@
 #! python3
 
 import sys
-from gensim.utils import smart_open
+from smart_open import open
 from gensim.models.word2vec import LineSentence
 from gensim.models.phrases import Phrases, Phraser
 
@@ -60,7 +60,7 @@ def bigrammer(source_file, outfile, mincount=100, threshold=0.99, scoring='npmi'
                                  scoring=scoring, max_vocab_size=400000000, delimiter=b':::',
                                  progress_per=100000, common_terms=common)
     bigrams = Phraser(bigram_transformer)
-    tempfile = smart_open(outfile, 'a')
+    tempfile = open(outfile, 'a')
     print('Writing bigrammed text to %s' % outfile, file=sys.stderr)
     for i in bigrams[data]:
         tempfile.write(' '.join(i) + '\n')
@@ -80,13 +80,15 @@ def clean_token(token, misc):
     return out_token
 
 
-def clean_lemma(lemma, pos):
+def clean_lemma(lemma, pos, lowercase=True):
     """
     :param lemma:
     :param pos:
     :return:
     """
-    out_lemma = lemma.strip().replace(' ', '').replace('_', '').lower()
+    out_lemma = lemma.strip().replace(' ', '').replace('_', '')
+    if lowercase:
+        out_lemma = out_lemma.lower()
     if '|' in out_lemma or out_lemma.endswith('.jpg') or out_lemma.endswith('.png'):
         return None
     if pos != 'PUNCT':
@@ -100,7 +102,7 @@ def clean_lemma(lemma, pos):
     return out_lemma
 
 
-def extract_proper(source_file, outfile, sentencebreaks=True, entities=None):
+def extract_proper(source_file, outfile, sentencebreaks=True, entities=None, lowercase=True):
     """
     :param source_file:
     :param outfile:
@@ -112,7 +114,7 @@ def extract_proper(source_file, outfile, sentencebreaks=True, entities=None):
         entities = {'PROPN'}
     print('Processing CONLLU input %s...' % source_file, file=sys.stderr)
     print('Writing lemmas to %s...' % outfile, file=sys.stderr)
-    tempfile0 = smart_open(outfile, 'a')
+    tempfile0 = open(outfile, 'a')
 
     nr_lines = 0
     named = False
@@ -120,7 +122,7 @@ def extract_proper(source_file, outfile, sentencebreaks=True, entities=None):
     mem_case = None
     mem_number = None
 
-    for line in smart_open(source_file, 'r'):
+    for line in open(source_file, 'r'):
         if line.startswith('#'):
             continue
         if not line.strip():
@@ -138,8 +140,11 @@ def extract_proper(source_file, outfile, sentencebreaks=True, entities=None):
         (word_id, token, lemma, pos, xpos, feats, head, deprel, deps, misc) = res
         nr_lines += 1
         token = clean_token(token, misc)
-        lemma = clean_lemma(lemma, pos)
-        if not lemma and not token:
+        if lowercase:
+            lemma = clean_lemma(lemma, pos)
+        else:
+            lemma = clean_lemma(lemma, pos, lowercase=False)
+        if not lemma or not token:
             continue
         if pos in entities:
             if '|' not in feats:
