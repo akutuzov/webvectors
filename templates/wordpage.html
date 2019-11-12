@@ -23,10 +23,6 @@
   }
   }
 </script>
-<!-- Similar words and the word's vector -->
-<div class="row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-  <!-- Header: "What words are related to [word] in model [model]?"" -->
-  <div class="col-md-7">
     <h2>{{strings['synraw2']}} <span style = "font-size:larger;"><strong>
       <a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
       title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
@@ -34,8 +30,12 @@
       &laquo;{{word.split('_')[0].replace('::', ' ')}}&raquo;</a></strong></span>
       {{strings['synraw5']}} <a href="{{ url }}{{lang}}/models#{{model}}">&laquo;{{ strings[models[model]] }}&raquo;</a>?
     </h2>
+<!-- Similar words and the word's vector -->
+<div class="row" id="result" data-query="{{ word }}" data-visible="{{ visible_neighbors }}" data-result ='{{ frequencies|tojson }}' data-graph='{{ edges|tojson }}'>
+  <!-- Header: "What words are related to [word] in model [model]?"" -->
+  <div class="col-md-6">
     <!-- Checkbox for frequency selection -->
-    <div class="checkbox">
+    <div class="checkbox" id="frequencyCheck">
       <p><em>{{strings['frequency1']}}</em></p>
       <label class="frequency-high" title="{{strings['frequency5']}}">
       <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
@@ -48,8 +48,8 @@
     {%- if model in inferred %}
     <i>{{strings['similar32']}}</i>
     {%- endif %}
-    <div style="max-width:300px;">
-      <ol id="{{ model }}">
+    <div id="list">
+      <ol id="{{model}}" style="max-width:300px;">
         {%- for res in list_value[model] if res != "Incorrect tag!" %}
         <li class="frequency-item-{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
         <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
@@ -78,8 +78,30 @@
         <p><i>{{strings['base19']}}</i></p>
       </li>
     </ul>
+    <hr>
+  </div>
+  <div class="col-md-6" id="graph">
+    <fieldset>
+      <div class="form-inline">
+        <input class="form-control" style="max-width:75px;" type="number" id="threshold" min="0" max="1" step="0.01" value="0">
+        <label for="threshold" title="{{ strings['graph3'] }}">{{ strings['graph2']}}</label>
+        <input class="form-control" style="max-width:75px;" type="number" id="topn" min="0" max="10" step="1" value="10">
+        <label for="topn" title="{{ strings['graph5'] }}">{{ strings['graph4']}}</label>
+      </div>
+      <div class="form-inline">
+        <label>
+          <input type="checkbox" id="separator" checked="checked"> {{ strings['graph6'] }}
+        </label>
+      </div>
+      <button type="button" class="btn btn-primary" id="redraw">{{ strings['graph7'] }}</button>
+    </fieldset>
+    <svg></svg>
+  </div>
+  <hr>
+  <!-- About the word and vector components on the plot-->
+  <div class="col-md-6">
     <!-- Links to the word in another models -->
-    <h3>{{strings['synraw12']}}</h3>
+    <h2>{{strings['synraw12']}}</h2>
     <ul>
       {%- for m in models if m != model %}
       <li>
@@ -95,9 +117,6 @@
     <div class="vector" id="HiddenDiv" style="DISPLAY: none" >
       {{ vector }}
     </div>
-  </div>
-  <!-- About the word and vector components on the plot-->
-  <div class="col-md-5">
     <h2>{{strings['synraw9']}}</h2>
     <ul>
       <li><span style = "font-size:larger;">
@@ -112,20 +131,21 @@
       </li>
     </ul>
     <hr/>
-    <!-- Vector's components on the plot-->
+    <!-- Illustration -->
     {%- if image -%}
     <a href="https://en.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank">
     <img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}"
       title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive">
     </a>
-    {%- endif %}
-    <!-- Vector plot of the word -->
     <hr/>
+    {%- endif %}
+  </div>
+  <div class="col-md-6">
+    <!-- Vector plot of the word -->
     <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank">
     <img src = '{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png' alt = "{{word}} {{strings['synraw10']}}"
       title = "{{word}} {{strings['synraw10']}}" class="img-responsive">
     </a>
-    <hr/>
   </div>
 </div>
 {% endif -%}

@@ -90,7 +90,12 @@ def serverquery(d_message):
         s.close()
         return None
     # Now receive data
-    reply = s.recv(32768)
+    reply = b""
+    while True:
+        data = s.recv(32768)
+        if not data: break
+        reply += data
+
     s.close()
     return reply
 
@@ -272,6 +277,7 @@ def home(lang):
                         pass
                 if 'inferred' in result:
                     inferred.add(model)
+
                 return render_template('home.html', list_value=models_row, word=query,
                                        wordimages=images, models=our_models, model=model, tags=tags,
                                        other_lang=other_lang, languages=languages, url=url,
@@ -456,6 +462,8 @@ def associates_page(lang):
                             pass
                     if 'inferred' in result:
                         inferred.add(model)
+
+
             return render_template('associates.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models,
                                    tags=tags, other_lang=other_lang, languages=languages,
@@ -807,6 +815,7 @@ def raw_finder(lang, model, userquery):
         image = None
         models_row = {}
         frequencies = {}
+        edges = {}
         if model_props[model]['tags'] == 'False':
             query = query.split('_')[0]
             pos_tag = 'ALL'
@@ -839,12 +848,14 @@ def raw_finder(lang, model, userquery):
                     image = images[query.split('_')[0]]
                 except:
                     pass
+            edges[model] = result['edges']
+
             return render_template('wordpage.html', list_value=models_row, word=query,
                                    model=model, pos=pos_tag, vector=vector, image=image,
                                    wordimages=images, vectorvis=fname, tags=tags,
                                    other_lang=other_lang, languages=languages, url=url,
                                    search=defaultsearchengine, models=our_models, inferred=inferred,
-                                   frequencies=frequencies, visible_neighbors=10)
+                                   frequencies=frequencies, visible_neighbors=10, edges=edges)
     else:
         error_value = 'Incorrect query!'
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,

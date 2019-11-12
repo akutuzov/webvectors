@@ -94,6 +94,29 @@ for m in our_models:
     print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
 
 
+# Get pairs of words to create graph
+
+def get_edges(word, model, n):
+    edges = [{"source": word, "target": word, "value": 1}]
+    neighbors_list = []
+
+    mostsim = getattr(model, "similar_by_word")(word, topn=n)
+
+    for item in mostsim:
+        edges.append({"source": word, "target": item[0], "value": item[1]})
+        neighbors_list.append(item[0])
+
+    pairs = [
+        (neighbors_list[ab], neighbors_list[ba])
+        for ab in range(len(neighbors_list))
+        for ba in range(ab + 1, len(neighbors_list))
+    ]
+    for pair in pairs:
+        edges.append(
+            {"source": pair[0], "target": pair[1], "value": float(model.similarity(*pair))}
+        )
+    return edges
+
 # Vector functions
 
 def frequency(word, model):
@@ -117,7 +140,7 @@ def find_synonyms(query):
     pos = query['pos']
     usermodel = query['model']
     nr_neighbors = query['nr_neighbors']
-    results = {'frequencies': {}}
+    results = {'frequencies': {}, 'neighbours_dist':[]}
     qf = q
     model = models_dic[usermodel]
     if qf not in model.wv.vocab:
@@ -164,6 +187,7 @@ def find_synonyms(query):
         results['frequencies'][res[0]] = (freq, tier)
     raw_vector = model[qf]
     results['vector'] = raw_vector.tolist()
+    results['edges'] = get_edges(q, model, nr_neighbors)
     return results
 
 

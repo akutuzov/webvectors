@@ -51,7 +51,7 @@
         <!-- in the next row -->
         <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
           <!-- Checkbox for frequency selection-->
-          <div class="checkbox">
+          <div class="checkbox" id="frequencyCheck">
             <p><em>{{strings['frequency1']}}</em></p>
             <label class="frequency-high" title="{{strings['frequency5']}}">
             <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
@@ -167,7 +167,7 @@
       {% if calc_value -%}
       <div class = "row" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
         <!-- Checkbox for frequency selection -->
-        <div class="checkbox">
+        <div class="checkbox" id="frequencyCheck">
           <p><em>{{strings['frequency1']}}</em></p>
           <label class="frequency-high" title="{{strings['frequency5']}}">
           <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
@@ -235,13 +235,13 @@
       <div class="checkbox">
         <p><em>{{strings['similar3']}}</em></p>
         <fieldset>
-          
+
           {%- for m in models %}
           <label>
           <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="calcmodel" value="{{ m }}">{{ strings[models[m]] }}
           </label>
           {%- endfor %}
-          
+
         </fieldset>
       </div>
       {% if tags -%}
