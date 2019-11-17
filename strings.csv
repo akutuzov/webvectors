@@ -102,6 +102,7 @@ synraw12,Это слово в&nbsp;других моделях,This word in&nbsp
 synraw13,в&nbsp;НКРЯ,in&nbsp;the RNC
 synraw14,частота в корпусе,occurrences in the corpus
 synraw15,часть речи, part of speech
+synraw16,Визуализация вектора,Vector plot
 upload10,"Когда обучение закончится, вы&nbsp;сможете скачать вашу модель здесь:","When the training is&nbsp;finished, you can download your model here:"
 upload11,Размерность векторов:,Vector size:
 upload12,Алгоритм обучения:,Training mode:

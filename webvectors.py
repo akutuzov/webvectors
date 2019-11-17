@@ -78,7 +78,7 @@ def serverquery(d_message):
     # Connect to remote server
     s.connect((remote_ip, port))
     # Now receive initial data
-    initial_reply = s.recv(1024)
+    _ = s.recv(1024)
 
     # Send some data to remote server
     d_message = json.dumps(d_message, ensure_ascii=False)
@@ -93,7 +93,8 @@ def serverquery(d_message):
     reply = b""
     while True:
         data = s.recv(32768)
-        if not data: break
+        if not data:
+            break
         reply += data
 
     s.close()
@@ -462,7 +463,6 @@ def associates_page(lang):
                             pass
                     if 'inferred' in result:
                         inferred.add(model)
-
 
             return render_template('associates.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models,
