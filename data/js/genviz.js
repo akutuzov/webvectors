@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var delta = 0;
   var radius = 10;
 
-  // create data to show using list of words created by filter.js
+  // create data to show: only words in list created by filter.js
   function formData(allData, chosenWords){
     var dataToDraw = [];
     $.each(allData, function(index, pair){
@@ -97,12 +97,12 @@ document.addEventListener("DOMContentLoaded", function() {
   // if page has place to show graph - do it
   if ($("div").is("#graph")){
 
+    // set svg parameters
     var svg = d3.select("svg");
     var width = $("svg").parent().width();
     var height = Math.min(width, 400);
     svg.attr("width", width).attr("height", height);
     force.size([width, height]);
-
 
     // model responce data
     var resultsFull = $("#result").data("graph");
@@ -113,41 +113,58 @@ document.addEventListener("DOMContentLoaded", function() {
     // default user parameters and data
     var linkstrokewidth = 1;
     var topn = 10;
-    var threshold = 0;
+    var threshold = 0.6;
     var showPOS = "false";
 
     function getParameters(){
+      /* don't change number of neighbours by user input
       topn = $("input[type=number][id=topn]").val();
       if (topn > 10){
         topn = 10;
       }
+      */
+      topn = 10; // remove in case of user input
       threshold = $("input[type=number][id=threshold]").val();
       showPOS = $("input[type=checkbox][id=separator]").is(":checked");
     }
 
     function drawFiltered(){
       svg.selectAll("*").remove();
+      // check all parameters before every drawing
       getParameters();
       // result of frequency selection
       var resFiltered = JSON.parse(sessionStorage.getItem("shownWords"))[currentModel];
+      // in case of number of elements of selected frequency less than topn
       topn = Math.min(topn, resFiltered.length);
       var dataToDraw = formData(resOfModel, [query].concat(resFiltered.slice(0,topn)));
       var nodesLinks = formNodesLinks(dataToDraw, topn, threshold);
       buildGraph(nodesLinks[0], nodesLinks[1], linkstrokewidth, showPOS, svg);
     }
 
+    // draw graph first time
     drawFiltered();
 
-    /*
     // immediately redraw after frequency change
     $("#frequencyCheck").change(function(){
       drawFiltered();
-    })
-    */
+    });
 
+    // immediately redraw after pos-tag show/hide change
+    $("#separator").change(function(){
+      drawFiltered();
+    });
+
+    // immediately redraw after threshold change
+    $("#threshold").change(function(){
+      drawFiltered();
+    });
+
+    /*
+    // use button "refresh" to redraw graph
     $('#redraw').on("click",function() {
       drawFiltered();
     });
+    */
 
     /*
     // use button with id="switch" to change list and graph
