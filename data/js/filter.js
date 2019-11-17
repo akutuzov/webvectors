@@ -36,19 +36,23 @@ function checkFrequencyMakeOutput(allFilters, frequenciesList, filter){
 };
 
 // show no more than 10 words matching with the resulting array
-function formResultsUsingFilterList(resultArray, maxNumber){ 
-  $("ol").each(function(){ 
+function formResultsUsingFilterList(resultArray, maxNumber){
+  let shownWords = {};
+  $("#result").find("ol").each(function(){
     let currentModel=$(this).attr("id");
+    shownWords[currentModel]=[];
     let counter = 0;
-    $("#"+currentModel).children("li").each(function(){
+    $(this).children("li").each(function(){
       if ($.inArray($(this).data("word"), resultArray[currentModel]) > -1 && counter < maxNumber){
         $(this).fadeIn('slow');
         counter ++;
+        shownWords[currentModel].push($(this).data("word"));
       } else {
         $(this).fadeOut('slow');
       };
     });
   });
+  sessionStorage.setItem("shownWords", JSON.stringify(shownWords));
 };
 
 $(document).ready(function(){
@@ -57,11 +61,11 @@ $(document).ready(function(){
   const MODELS = Object.keys(RESULTS);
   const FREQUENCIES = ['high', 'mid', 'low'];
   const FILTER = 'freq';
-  
+
   let sortedResults = (makeListForEachFrequency(RESULTS, FREQUENCIES, MODELS, FILTER));
   let output = checkFrequencyMakeOutput(sortedResults, FREQUENCIES, FILTER);
   formResultsUsingFilterList(output, MAXNUM);
-  $(".checkbox").change(function(){
+  $("#frequencyCheck").change(function(){
     let output = checkFrequencyMakeOutput(sortedResults, FREQUENCIES, FILTER);
     formResultsUsingFilterList(output, MAXNUM);
   });

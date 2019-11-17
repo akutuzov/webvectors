@@ -13,3 +13,7 @@
 .frequency-item-high, .frequency-item-mid, .frequency-item-low{
   margin: 10px 0;
 }
+
+.form-inline > * {
+   margin:3px;
+}

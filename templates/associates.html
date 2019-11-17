@@ -75,7 +75,7 @@
       ({{ pos }})
     </h3>
     <!-- Checkbox for frequency selection-->
-    <div class="checkbox">
+    <div class="checkbox" id="frequencyCheck">
       <p><em>{{strings['frequency1']}}</em></p>
       <label class="frequency-high" title="{{strings['frequency5']}}">
       <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
@@ -96,7 +96,7 @@
         Tags are shown in the form of subscript indices (sub).
         Similarity is shown to the hundredth.
         If there are relevant images, they are pulled from Wikipedia with the links to the articles. -->
-    <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
+    <div class="row" id="result" data-query="{{ word }}" data-visible="{{ visible_neighbors }}" data-result ='{{ frequencies|tojson }}'>
       {% for model in list_value -%}
       <div class="col-md-5">
         <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
@@ -110,7 +110,7 @@
         {{strings['similar23']}}
         {% else -%}
         </span>
-        <ol id="{{ model }}" style="font-size: larger;" type="1">
+        <ol style="font-size: larger;" type="1" id="{{model}}">
           {%- for res in list_value[model] if res != "Incorrect tag!" %}
           <li data-word="{{res[0]}}" class="frequency-item-{{frequencies[model][res[0]][1]}}">
           <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"

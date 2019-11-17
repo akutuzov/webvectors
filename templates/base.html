@@ -10,6 +10,7 @@
   {%- block metas %}
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="description" content="{{strings['description1']}}">
   {%- endblock metas -%}
   {%- block styles %}
@@ -70,6 +71,7 @@
 </div>
 {%- block scripts %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="{{ url }}data/js/bootstrap.min.js/"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="{{ url }}data/js/ie10-viewport-bug-workaround.js/"></script>
@@ -79,6 +81,7 @@
 <script src="{{ url }}data/js/addfield.js/"></script>
 <script src="{{ url }}data/js/sorttable.js/"></script>
 <script src="{{ url }}data/js/filter.js/"></script>
+<script src="{{ url }}data/js/genviz.js"></script>
 {%- endblock scripts %}
 {%- endblock body %}
 </body>
