@@ -148,9 +148,9 @@ frequency5,Высокочастотные слова: доля в корпусе
 frequency6,Среднечастотные слова: доля в корпусе от 0.0000005 до 0.00001,Mid-frequent words: corpus ratio from 0.0000005 to 0.00001
 frequency7,Низкочастотные слова: доля в корпусе ниже 0.0000005,Rare words: corpus ratio less than 0.0000005
 graph1,Показать граф,Show graph
-graph2,Минимальная близость,Minimum similarity
-graph3,Связи между словами с меньшей косинусной близостью не будут показаны,Links between nodes with lower cosine similarity won't be shown
+graph2,Порог близости,Similarity threshold
+graph3,Связи между парами слов с меньшей косинусной близостью не будут показаны,Edges between word pairs with lower cosine similarity will be hidden
 graph4,Число соседей,Number of neighbours
 graph5,Максимальное число. Может измениться в результате частотной фильтрации,Maximum possible number. It can depend on words' frequency in result
-graph6, Показать тег части речи, Show PoS-tag
-graph7,Перерисовать,Redraw
+graph6, Показать теги, Show tags
+graph7,Обновить,Refresh
