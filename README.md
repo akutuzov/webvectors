@@ -1,13 +1,13 @@
 # webvectors
-_Webvectors_ is a toolkit to serve distributional semantic models (particularly, continuous word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python, and uses _Flask_ and _Gensim_ under the hood.
+_Webvectors_ is a toolkit to serve vector semantic models (particularly, distributional word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python, and uses _Flask_ and _Gensim_ under the hood.
 
 Working demos:
 <ul>
-<li>http://rusvectores.org (for Russian)</li>
+<li>https://rusvectores.org (for Russian)</li>
 <li>http://vectors.nlpl.eu/explore/embeddings/ (for English and Norwegian)</li>
 </ul>
 
-The service can be either integrated into _Apache_ web server as a WSGI application or run as a standalone server using _Gunicorn_.
+The service can be either integrated into _Apache_ web server as a WSGI application or run as a standalone server using _Gunicorn_ (we recommend the latter option).
 
 ![Logo](https://rusvectores.org/data/images/associates_rus.png/)
 
@@ -16,7 +16,7 @@ The service can be either integrated into _Apache_ web server as a WSGI applicat
 0. Clone WebVectors git repository (_git clone https://github.com/akutuzov/webvectors.git_) into a directory acessible by your web server.
 1. Install _Apache_ for Apache integration or _Gunicorn_ for standalone server.
 2. Install all the Python requirements (_pip install -r requirements.txt_)
-3. If you want to use PoS tagging for user queries, install [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/), [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
+3. If you want to use PoS tagging for user queries, install [UDPipe](https://ufal.mff.cuni.cz/udpipe), [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/), [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
 4. Configure the files:
 
 ### For Apache installation variant
@@ -37,8 +37,8 @@ Most important settings are:
 <ul>
 <li> `root` - absolute path to your _WebVectors_ directory (**NB: end it with a slash!**)</li>
 <li> `temp` - absolute path to your temporary files directory </li>
-<li> `font` - absolute path to a TTF font you want to use for plots (otherwise default system font will be used) </li>
-<li> `lemmatize` - whether to use automatic lemmatization </li>
+<li> `font` - absolute path to a TTF font you want to use for plots (otherwise, the default system font will be used) </li>
+<li> `lemmatize` - whether to use automatic PoS tagging </li>
 <li> `default_search` - URL of search engine to use on individual word pages (for example, https://duckduckgo.com/?q=) </li></ul>
 
 **Tags**
@@ -49,7 +49,7 @@ Then, _WebVectors_ will allow users to limit their queries by tags. You also sho
 **Models daemon**
 
 _WebVectors_ uses a daemon, which runs in the background and actually processes all embedding tasks. It can also run on a different machine, if you want. Thus, in `webvectors.cfg` you should specify `host` and `port` that this daemon will listen at.
-After that, start `word2vec_server.py`. It will load the models and open a listening socket. This script must run permanently, so you may want to launch it using _screen_ or something like this.
+After that, start the actual daemon script `word2vec_server.py`. It will load the models and open a listening socket. This daemon must be active permanently, so you may want to launch it using _screen_ or something like this.
 
 **Models**
 
@@ -67,9 +67,10 @@ The list of models you want to use is defined in the file `models.tsv`. It consi
 
 Model identifier will be used as the name for checkboxes, and it is also important that in `strings.csv` the same identifier is used when denoting model names.
 
-Models can currently be of 3 formats:
+Models can currently be of 4 formats:
 <ul>
- <li> binary _word2vec_ models compressed with gzip (ends with `.bin.gz`); </li>
+ <li> plain text _word2vec_ models (ends with `.vec`); </li>
+<li> binary _word2vec_ models (ends with `.bin`); </li>
 <li> Gensim format _word2vec_ models (ends with `.model`); </li>
 <li> Gensim format _fastText_ models (ends with `.model`).</li>
 </ul>
@@ -83,7 +84,7 @@ _WebVectors_ uses `strings.csv` file as the source of localized strings. It is a
 <li> string in language 1 </li>
 <li> string in language 2 </li></ul>
 
-By default, language 1 is Russian and language 2 is English. This can be changed is `webvectors.cfg`.
+By default, language 1 is English and language 2 is Russian. This can be changed is `webvectors.cfg`.
 
 **Templates**
 
@@ -96,7 +97,7 @@ Real URL of this list should be stated in data/hint.js.
 
 **Running WebVectors**
 
-Once you have modified all the settings according to your workflow, made sure the templates are OK for you and launched the models daemon, you are ready to actually start the service.
+Once you have modified all the settings according to your workflow, made sure the templates are OK for you, and launched the models daemon, you are ready to actually start the service.
 If you use _Apache_ integration, simply restart/reload _Apache_.
 If you prefer the standalone option, execute the following command in the root directory of the project:
 
