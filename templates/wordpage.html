@@ -92,7 +92,6 @@
       </label>
     </fieldset>
   </div>
-  </div>
 </div>
   <hr>
   <!-- About the word and vector components on the plot-->
@@ -129,7 +128,9 @@
       </li>
     </ul>
     <hr/>
-    <!-- Illustration -->
+  </div>
+  <div class="col-md-6">
+     <!-- Illustration -->
     {%- if image -%}
     <a href="https://en.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank">
     <img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}"
@@ -137,8 +138,6 @@
     </a>
     <hr/>
     {%- endif %}
-  </div>
-  <div class="col-md-6">
     <!-- Vector plot of the word -->
     <h2>{{strings['synraw16']}}</h2>
     <a href="{{ url }}data/images/singleplots/{{model}}_{{ vectorvis }}.png" target="_blank">
