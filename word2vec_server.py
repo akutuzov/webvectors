@@ -115,6 +115,7 @@ def get_edges(word, model, mostsim):
         )
     return edges
 
+
 # Vector functions
 
 def frequency(word, model):
@@ -138,7 +139,7 @@ def find_synonyms(query):
     pos = query['pos']
     usermodel = query['model']
     nr_neighbors = query['nr_neighbors']
-    results = {'frequencies': {}, 'neighbours_dist':[]}
+    results = {'frequencies': {}, 'neighbours_dist': []}
     qf = q
     model = models_dic[usermodel]
     if qf not in model.wv.vocab:
@@ -396,8 +397,8 @@ print('Socket now listening on port', PORT, file=sys.stderr)
 
 # now keep talking with the client
 while 1:
-    # wait to accept a connection - blocking call
     conn, addr = s.accept()
+    # wait to accept a connection - blocking call
 
     # start new thread takes 1st argument as a function name to be run,
     # 2nd is the tuple of arguments to the function.
