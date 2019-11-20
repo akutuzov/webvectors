@@ -96,11 +96,9 @@ for m in our_models:
 
 # Get pairs of words to create graph
 
-def get_edges(word, model, n):
+def get_edges(word, model, mostsim):
     edges = [{"source": word, "target": word, "value": 1}]
     neighbors_list = []
-
-    mostsim = getattr(model, "similar_by_word")(word, topn=n)
 
     for item in mostsim:
         edges.append({"source": word, "target": item[0], "value": item[1]})
@@ -187,7 +185,7 @@ def find_synonyms(query):
         results['frequencies'][res[0]] = (freq, tier)
     raw_vector = model[qf]
     results['vector'] = raw_vector.tolist()
-    results['edges'] = get_edges(qf, model, nr_neighbors)
+    results['edges'] = get_edges(qf, model, results['neighbors'])
     return results
 
 
