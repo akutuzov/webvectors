@@ -185,7 +185,7 @@ def find_synonyms(query):
         results['frequencies'][res[0]] = (freq, tier)
     raw_vector = model[qf]
     results['vector'] = raw_vector.tolist()
-    results['edges'] = get_edges(qf, model, results['neighbors'])
+    results['edges'] = get_edges(q, model, results['neighbors'])
     return results
 
 
