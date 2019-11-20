@@ -253,6 +253,7 @@ def home(lang):
             images = {query.split('_')[0]: None}
             models_row = {}
             frequencies = {}
+            edges = {}
             if model_props[model]['tags'] == 'False':
                 query = query.split('_')[0]
                 pos = 'ALL'
@@ -278,12 +279,13 @@ def home(lang):
                         pass
                 if 'inferred' in result:
                     inferred.add(model)
+                edges[model] = result['edges']
 
                 return render_template('home.html', list_value=models_row, word=query,
                                        wordimages=images, models=our_models, model=model, tags=tags,
                                        other_lang=other_lang, languages=languages, url=url,
                                        inferred=inferred, frequencies=frequencies,
-                                       visible_neighbors=10)
+                                       visible_neighbors=10, edges=edges)
         else:
             error_value = "Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,

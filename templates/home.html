@@ -19,54 +19,72 @@
 </div>
 <!-- Featuring results -->
 {%- if list_value -%}
-<h3><strong>{{strings['home4']}}
-  <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
-  title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
-  class="frequency-{{frequencies[model][word][1]}}">
-  {{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}}
-  <a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a>)</strong>
-</h3>
-<!-- Checkbox for frequency selection -->
-<div class="checkbox" id="frequencyCheck">
-  <p><em>{{strings['frequency1']}}</em></p>
-  <label class="frequency-high" title="{{strings['frequency5']}}">
-  <input id="high" type="checkbox" checked>{{ strings['frequency2']}}
-  </label>
-  <label class="frequency-mid" title="{{strings['frequency6']}}">
-  <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
-  <label class="frequency-low" title="{{strings['frequency7']}}">
-  <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
-</div>
-<!-- If the word is not present in the model but its embedding is inferred from its characters -->
-{%- if model in inferred %}
-<i>{{strings['similar32']}}</i>
-{%- endif %}
-<!-- Iteration over the results -->
-<div style="max-width:300px;" id="result" data-result='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-  <ol id="{{ model }}" style="font-size: larger;">
-    {%- for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
-    <li class="frequency-item-{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
-    <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
-    class="frequency-{{frequencies[model][res[0]][1]}}">
-    {{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
-    {% if wordimages[res[0].split('_')[0]] -%}
-    <div class="avataricon" style="clear:both;">
-      <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
-      <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
-        title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
-      </a>
+    <h3><strong>{{strings['home4']}}
+      <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
+      title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
+      class="frequency-{{frequencies[model][word][1]}}">
+      {{ word.split("_")[0].replace('::', ' ') }}</a></i> ({{strings['home5']}}
+      <a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]] }}</a>)</strong>
+    </h3>
+    <div class="row" id="result" data-query="{{ word }}" data-visible="{{ visible_neighbors }}" data-result ='{{ frequencies|tojson }}' data-graph='{{ edges|tojson }}'>
+      <div class="col-md-6">
+        <!-- If the word is not present in the model but its embedding is inferred from its characters -->
+        {%- if model in inferred %}
+        <i>{{strings['similar32']}}</i>
+        {%- endif %}
+        <!-- Checkbox for frequency selection -->
+        <div class="checkbox" id="frequencyCheck">
+          <p><em>{{strings['frequency1']}}</em></p>
+          <label class="frequency-high" title="{{strings['frequency5']}}">
+          <input id="high" type="checkbox" checked>{{ strings['frequency2']}}
+          </label>
+          <label class="frequency-mid" title="{{strings['frequency6']}}">
+          <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
+          <label class="frequency-low" title="{{strings['frequency7']}}">
+          <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
+        </div>
+        <!-- Iteration over the results -->
+        <div style="max-width:300px;">
+          <ol id="{{ model }}" style="font-size: larger;">
+            {%- for res in list_value[model] if not "unknown to the model" in list_value[model] and res[0] != "No results" %}
+            <li class="frequency-item-{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
+            <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
+            class="frequency-{{frequencies[model][res[0]][1]}}">
+            {{res[0].split('_')[0].replace('::', ' ')}}</a> {{ "{:.3f} ".format(res[1]) }}
+            {% if wordimages[res[0].split('_')[0]] -%}
+            <div class="avataricon" style="clear:both;">
+              <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+              <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
+                title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
+              </a>
+            </div>
+            {%- endif -%}
+            </li>
+            {%- endfor %}
+          </ol>
+        </div>
+        <hr>
+        <ul>
+          <li>
+            <p><i>{{strings['base19']}}</i></p>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-6" id="graph">
+        <svg></svg>
+        <fieldset class="form-inline" style="text-align: center;">
+          <input class="form-control" style="max-width:75px; display: inline-block;" type="number" id="threshold" min="0" max="1" step="0.1" value="0.6">
+          <label for="threshold" title="{{ strings['graph3'] }}">{{ strings['graph2']}}</label>
+          <!-- number of neighbours
+          <input class="form-control" style="max-width:75px;" type="number" id="topn" min="0" max="10" step="1" value="10">
+          <label for="topn" title="{{ strings['graph5'] }}">{{ strings['graph4']}}</label>
+          -->
+          <label>
+            <input type="checkbox" id="separator"> {{ strings['graph6'] }}
+          </label>
+        </fieldset>
+      </div>
     </div>
-    {%- endif -%}
-    </li>
-    {%- endfor %}
-  </ol>
-</div>
-<hr>
-<ul>
-  <li>
-    <p><i>{{strings['base19']}}</i></p>
-  </li>
-</ul>
 {%- elif error -%}
 <!-- In case of incorrect tag or query-->
 <p> <span style = "font-size:larger;"><strong>
