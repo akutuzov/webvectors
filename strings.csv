@@ -51,7 +51,9 @@ home3,Найти похожие слова!,Find similar words!
 home4,Семантические ассоциаты для,Semantic associates for
 home5,вычисленные на&nbsp;модели,computed&nbsp;on
 home6,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957).,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957)
-home7,computer_NOUN,computer_NOUN
+home7,computer,computer
+home8,1 000 most frequent nouns in the English Wikipedia model,1 000 most frequent nouns in the English Wikipedia model
+home9,5 000 most frequent words in the English Wikipedia model, 5 000 most frequent words in the English Wikipedia model
 similar0,Araneum fastText,Araneum fastText
 similar1,Вычисление семантических ассоциатов,Computing associates
 similar2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). Вы&nbsp;можете приписать к&nbsp;слову знак подчеркивания &laquo;_&raquo; и&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">тэг части речи</a> (<i>&laquo;tea_NOUN&raquo;</i>). Если вы&nbsp;этого не&nbsp;сделаете, <i>WebVectors</i> определит часть речи автоматически.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates (quazy-synonyms). You can optionally end the word with an&nbsp;underscore and a&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">PoS tag</a> (<i>&laquo;tea_NOUN&raquo;</i>). Otherwise, <i>WebVectors</i> will detect&nbsp;it."
