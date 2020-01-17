@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-from __future__ import print_function
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import zip
-from builtins import range
+
 import sys
 import matplotlib
 matplotlib.use('Agg')
@@ -14,7 +9,6 @@ import numpy as np
 from matplotlib import font_manager
 from sklearn.manifold import TSNE
 import configparser
-
 
 config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
@@ -32,7 +26,8 @@ def singularplot(word, modelname, vector, fname):
     plot.title(plot_title, fontproperties=font)
     plot.xlabel('Vector components')
     plot.ylabel('Components values')
-    plot.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plot.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150,
+                 bbox_inches='tight')
     plot.close()
     plot.clf()
 
@@ -56,18 +51,21 @@ def embed(words, matrix, classes, usermodel, fname):
     plot.clf()
 
     for color, word, class_label, x, y in zip(class2color, words, classes, xpositions, ypositions):
-        plot.scatter(x, y, 20, marker='.', color=color, label=class_label if class_label not in seen else "")
+        plot.scatter(x, y, 20, marker='.', color=color,
+                     label=class_label if class_label not in seen else "")
         seen.add(class_label)
 
         lemma = word.split('_')[0].replace('::', ' ')
         mid = len(lemma) / 2
         mid *= 6  # TODO Should really think about how to adapt this variable to the real plot size
-        plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font, color=color)
+        plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font,
+                      color=color)
 
     plot.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
     plot.tick_params(axis='y', which='both', left=False, right=False, labelleft=False)
     plot.legend(loc='best')
 
-    plot.savefig(root + 'data/images/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plot.savefig(root + 'data/images/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150,
+                 bbox_inches='tight')
     plot.close()
     plot.clf()

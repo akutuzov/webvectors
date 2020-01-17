@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from future import standard_library
-
-standard_library.install_aliases()
 from SPARQLWrapper import SPARQLWrapper, JSON
-import codecs
 import configparser
 
 config = configparser.RawConfigParser()
@@ -16,7 +12,7 @@ cachefile = config.get('Files and directories', 'image_cache')
 
 
 def getdbpediaimage(query, cache):
-    query = query.decode('utf-8')
+    query = query
     if '::' in query:
         query = ' '.join([w.capitalize() for w in query.split('::')])
     else:
@@ -36,19 +32,16 @@ def getdbpediaimage(query, cache):
         """ % query)
 
         sparql.setReturnFormat(JSON)
-        try:
-            results = sparql.query().convert()
-        except:
-            return None
+        results = sparql.query().convert()
         if len(results["results"]["bindings"]) > 0:
             image = results["results"]["bindings"][0]["pic"]["value"]
             image = image.replace('http://', 'https://')
-            data = codecs.open(root + cachefile, 'a', 'utf-8')
+            data = open(root + cachefile, 'a')
             data.write(query + '\t' + image + '\n')
             data.close()
             return image
         else:
-            data = codecs.open(root + cachefile, 'a', 'utf-8')
+            data = open(root + cachefile, 'a')
             data.write(query + '\tNone\n')
             data.close()
             return None

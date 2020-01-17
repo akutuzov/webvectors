@@ -6,10 +6,6 @@ this module reads strings.csv, which contains all
 the strings, and lets the main app use it
 """
 
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import next
 import sys
 import csv
 from flask import Markup
@@ -39,6 +35,6 @@ for row in acrobat:
     for i in included_columns:  # range(1, len(row)):
         # Markup() is used to prevent autoescaping in templates
         if sys.version_info[0] < 3:
-            language_dicts[header[i]][row[0]] = Markup(row[i].decode('utf-8'))
+            language_dicts[header[i]][row[0]] = Markup(row[i])
         else:
             language_dicts[header[i]][row[0]] = Markup(row[i])

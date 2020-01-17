@@ -1,15 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from __future__ import print_function
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import zip
-from builtins import map
-from builtins import str
 import configparser
-import codecs
 import hashlib
 import json
 import logging
@@ -172,7 +164,7 @@ def process_query(userquery):
 
 def get_images(images):
     imagecache = {}
-    imagedata = codecs.open(root + cachefile, 'r', 'utf-8')
+    imagedata = open(root + cachefile, 'r')
     for LINE in imagedata:
         result = LINE.strip().split('\t')
         if len(result) == 2:
@@ -185,7 +177,7 @@ def get_images(images):
             continue
     imagedata.close()
     for w in images:
-        image = getdbpediaimage(w.encode('utf-8'), imagecache)
+        image = getdbpediaimage(w, imagecache)
         if image:
             images[w] = image
     return images
@@ -273,10 +265,7 @@ def home(lang):
                     images[word[0].split('_')[0]] = None
                 models_row[model] = result['neighbors']
                 if dbpedia:
-                    try:
-                        images = get_images(images)
-                    except:
-                        pass
+                    images = get_images(images)
                 if 'inferred' in result:
                     inferred.add(model)
                 edges[model] = result['edges']
@@ -459,10 +448,7 @@ def associates_page(lang):
                         images[word[0].split('_')[0]] = None
                     models_row[model] = result['neighbors']
                     if dbpedia:
-                        try:
-                            images = get_images(images)
-                        except:
-                            pass
+                        images = get_images(images)
                     if 'inferred' in result:
                         inferred.add(model)
 
@@ -696,10 +682,7 @@ def finder(lang):
                     images[word[0].split('_')[0]] = None
                 models_row[model] = result['neighbors']
                 if dbpedia:
-                    try:
-                        images = get_images(images)
-                    except:
-                        pass
+                    images = get_images(images)
             return render_template('calculator.html', analogy_value=models_row, pos=pos,
                                    plist=positive_list, userpos=userpos, nlist=negative_list,
                                    wordimages=images, models=our_models, tags=tags,
@@ -771,10 +754,7 @@ def finder(lang):
                     images[word[0].split('_')[0]] = None
                 models_row[model] = result['neighbors']
                 if dbpedia:
-                    try:
-                        images = get_images(images)
-                    except:
-                        pass
+                    images = get_images(images)
             return render_template('calculator.html', calc_value=models_row, pos=pos,
                                    plist2=positive_list, tags2show=exposed_tags,
                                    nlist2=negative_list, wordimages=images, models=our_models,
@@ -845,11 +825,9 @@ def raw_finder(lang, model, userquery):
                 singularplot(query, model, vector, fname)
             models_row[model] = result['neighbors']
             if dbpedia:
-                try:
-                    images = get_images(images)
-                    image = images[query.split('_')[0]]
-                except:
-                    pass
+                images = get_images(images)
+                image = images[query.split('_')[0]]
+
             edges[model] = result['edges']
 
             return render_template('wordpage.html', list_value=models_row, word=query,

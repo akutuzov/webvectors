@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from __future__ import print_function
-from __future__ import division
-from future import standard_library
 import sys
 import os
 import wget
@@ -204,8 +201,6 @@ def process(pipeline, text='Строка', keep_pos=True, keep_punct=False):
         tagged_propn = [word.split('_')[0] for word in tagged_propn]
     return tagged_propn
 
-
-standard_library.install_aliases()
 
 # URL of the UDPipe model
 udpipe_model_url = 'https://rusvectores.org/static/models/udpipe_syntagrus.model'
