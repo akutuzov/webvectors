@@ -1,5 +1,5 @@
 # webvectors
-_Webvectors_ is a toolkit to serve vector semantic models (particularly, distributional word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python, and uses _Flask_ and _Gensim_ under the hood.
+_Webvectors_ is a toolkit to serve vector semantic models (particularly, distributional word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python 3, and uses _Flask_ and _Gensim_ under the hood.
 
 Working demos:
 <ul>
@@ -15,7 +15,7 @@ The service can be either integrated into _Apache_ web server as a WSGI applicat
 
 0. Clone WebVectors git repository (_git clone https://github.com/akutuzov/webvectors.git_) into a directory acessible by your web server.
 1. Install _Apache_ for Apache integration or _Gunicorn_ for standalone server.
-2. Install all the Python requirements (_pip install -r requirements.txt_)
+2. Install all the Python requirements (_pip3 install -r requirements.txt_)
 3. If you want to use PoS tagging for user queries, install [UDPipe](https://ufal.mff.cuni.cz/udpipe), [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/), [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
 4. Configure the files:
 
