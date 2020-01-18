@@ -33,7 +33,7 @@ def singularplot(word, modelname, vector, fname):
 
 
 def embed(words, matrix, classes, usermodel, fname):
-    perplexity = 6.0  # Should be smaller than the number of points!
+    perplexity = int(len(words) ** 0.5)  # We set perplexity to a square root of the words number
     embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500, init='pca')
     y = embedding.fit_transform(matrix)
 
@@ -57,7 +57,7 @@ def embed(words, matrix, classes, usermodel, fname):
 
         lemma = word.split('_')[0].replace('::', ' ')
         mid = len(lemma) / 2
-        mid *= 6  # TODO Should really think about how to adapt this variable to the real plot size
+        mid *= 4  # TODO Should really think about how to adapt this variable to the real plot size
         plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font,
                       color=color)
 
