@@ -114,12 +114,17 @@
           {%- for res in list_value[model] if res != "Incorrect tag!" %}
           <li data-word="{{res[0]}}" class="frequency-item-{{frequencies[model][res[0]][1]}}">
           <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
-          title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
+          title="{% if tags %}{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {% endif%}{{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
           class="frequency-{{frequencies[model][res[0]][1]}}">
+          {% if tags %}
           {{res[0].split('_')[0].replace('::', ' ')}}
           {% if res[0].split('_')|length > 1 -%}
           <sub style="font-size:50%;">{{res[0].split('_')[-1]}}</sub>
-          {% endif %}</a>
+          {% endif %}
+          {% else %}
+          {{res[0].replace('::', ' ')}}
+          {% endif %}
+          </a>
           {{ "{:.2f} ".format(res[1]) }}
           {% if wordimages[res[0].split('_')[0]] -%}
           <div class="avataricon">

@@ -38,7 +38,7 @@ Most important settings are:
 <li> `root` - absolute path to your _WebVectors_ directory (**NB: end it with a slash!**)</li>
 <li> `temp` - absolute path to your temporary files directory </li>
 <li> `font` - absolute path to a TTF font you want to use for plots (otherwise, the default system font will be used) </li>
-<li> `lemmatize` - whether to use automatic PoS tagging </li>
+<li> `detect_tag` - whether to use automatic PoS tagging </li>
 <li> `default_search` - URL of search engine to use on individual word pages (for example, https://duckduckgo.com/?q=) </li></ul>
 
 **Tags**

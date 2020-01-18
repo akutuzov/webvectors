@@ -31,13 +31,12 @@ cachefile = config.get('Files and directories', 'image_cache')
 temp = config.get('Files and directories', 'temp')
 url = config.get('Other', 'url')
 
-lemmatize = config.getboolean('Tags', 'lemmatize')
+detect_tag = config.getboolean('Tags', 'detect_tag')
 dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
 
-if lemmatize:
+if detect_tag:
     from lemmatizer import tagword
-
     tagger_port = config.getint('Sockets', 'tagger_port')
 
 tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
@@ -147,12 +146,10 @@ def process_query(userquery):
     if tags:
         if '_' in userquery:
             query_split = userquery.split('_')
-            if query_split[-1] in taglist:
-                query = ''.join(query_split[:-1]) + '_' + query_split[-1]
-            else:
+            if not query_split[-1] in taglist:
                 return 'Incorrect tag!'
         else:
-            if lemmatize:
+            if detect_tag:
                 poses = tagword(userquery)  # We tag using Stanford CoreNLP
                 if len(poses) == 1:
                     pos_tag = poses[0]
