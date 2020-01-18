@@ -110,12 +110,13 @@ def get_edges(word, model, mostsim):
     return edges
 
 
-def find_variants(word, model):
+def find_variants(word, usermodel):
     # Find variants of query word in the model
+    model = models_dic[usermodel]
     results = None
     candidates_set = set()
     candidates_set.add(word.upper())
-    if tags and our_models[model]['tags'] == 'True':
+    if tags and our_models[usermodel]['tags'] == 'True':
         candidates_set.add(word.split('_')[0] + '_X')
         candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
         candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
@@ -159,7 +160,7 @@ def find_synonyms(query):
     qf = q
     model = models_dic[usermodel]
     if qf not in model.wv.vocab:
-        qf = find_variants(qf, model)
+        qf = find_variants(qf, usermodel)
         if not qf:
             if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q):
                 results['inferred'] = True
@@ -203,7 +204,7 @@ def find_similarity(query):
         qf1 = q1
         qf2 = q2
         if q1 not in model.wv.vocab:
-            qf1 = find_variants(qf1, model)
+            qf1 = find_variants(qf1, usermodel)
             if not qf1:
                 if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q1):
                     results['inferred'] = True
@@ -212,7 +213,7 @@ def find_similarity(query):
                     results["Unknown to the model"] = q1
                     return results
         if q2 not in model.wv.vocab:
-            qf2 = find_variants(qf2, model)
+            qf2 = find_variants(qf2, usermodel)
             if not qf2:
                 if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q2):
                     results['inferred'] = True
@@ -246,7 +247,7 @@ def scalculator(query):
             plist.append(word)
             continue
         else:
-            q = find_variants(word, model)
+            q = find_variants(word, usermodel)
             if not q:
                 if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(word):
                     results['inferred'] = True
@@ -263,7 +264,7 @@ def scalculator(query):
             nlist.append(word)
             continue
         else:
-            q = find_variants(word, model)
+            q = find_variants(word, usermodel)
             if not q:
                 if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(word):
                     results['inferred'] = True
@@ -300,7 +301,7 @@ def vector(query):
     results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
     if q not in model.wv.vocab:
-        qf = find_variants(qf, model)
+        qf = find_variants(qf, usermodel)
         if not qf:
             if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q):
                 results['inferred'] = True
