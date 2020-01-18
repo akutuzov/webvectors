@@ -110,12 +110,32 @@ def get_edges(word, model, mostsim):
     return edges
 
 
-# Vector functions
+def find_variants(word, model):
+    # Find variants of query word in the model
+    results = None
+    candidates_set = set()
+    candidates_set.add(word.upper())
+    if tags and our_models[model]['tags'] == 'True':
+        candidates_set.add(word.split('_')[0] + '_X')
+        candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
+        candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
+    else:
+        candidates_set.add(word.lower())
+        candidates_set.add(word.capitalize())
+    for candidate in candidates_set:
+        if candidate in model.wv.vocab:
+            results = candidate
+            break
+    return results
+
 
 def frequency(word, model):
+    # Find word frequency tier
     corpus_size = our_models[model]['corpus_size']
     if word not in models_dic[model].wv.vocab:
-        return 0, 'low'
+        word = find_variants(word, model)
+        if not word:
+            return 0, 'low'
     if not our_models[model]['vocabulary']:
         return 0, 'mid'
     wordfreq = models_dic[model].wv.vocab[word].count
@@ -128,6 +148,8 @@ def frequency(word, model):
     return wordfreq, tier
 
 
+# Vector functions
+
 def find_synonyms(query):
     q = query['query']
     pos = query['pos']
@@ -137,24 +159,11 @@ def find_synonyms(query):
     qf = q
     model = models_dic[usermodel]
     if qf not in model.wv.vocab:
-        candidates_set = set()
-        candidates_set.add(q.upper())
-        if tags and our_models[usermodel]['tags'] == 'True':
-            candidates_set.add(q.split('_')[0] + '_X')
-            candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
-            candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
-        else:
-            candidates_set.add(q.lower())
-            candidates_set.add(q.capitalize())
-        noresults = True
-        for candidate in candidates_set:
-            if candidate in model.wv.vocab:
-                qf = candidate
-                noresults = False
-                break
-        if noresults:
-            if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(qf):
+        qf = find_variants(qf, model)
+        if not qf:
+            if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q):
                 results['inferred'] = True
+                qf = q
             else:
                 results[q + " is unknown to the model"] = True
                 results['frequencies'][q] = frequency(q, usermodel)
@@ -194,46 +203,20 @@ def find_similarity(query):
         qf1 = q1
         qf2 = q2
         if q1 not in model.wv.vocab:
-            candidates_set = set()
-            candidates_set.add(q1.upper())
-            if tags and our_models[usermodel]['tags'] == 'True':
-                candidates_set.add(q1.split('_')[0] + '_X')
-                candidates_set.add(q1.split('_')[0].lower() + '_' + q1.split('_')[1])
-                candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
-            else:
-                candidates_set.add(q1.lower())
-                candidates_set.add(q1.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model.wv.vocab:
-                    qf1 = candidate
-                    noresults = False
-                    break
-            if noresults:
-                if our_models[usermodel]['algo'] == 'fasttext':
+            qf1 = find_variants(qf1, model)
+            if not qf1:
+                if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q1):
                     results['inferred'] = True
+                    qf1 = q1
                 else:
                     results["Unknown to the model"] = q1
                     return results
         if q2 not in model.wv.vocab:
-            candidates_set = set()
-            candidates_set.add(q2.upper())
-            if tags and our_models[usermodel]['tags'] == 'True':
-                candidates_set.add(q2.split('_')[0] + '_X')
-                candidates_set.add(q2.split('_')[0].lower() + '_' + q2.split('_')[1])
-                candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
-            else:
-                candidates_set.add(q2.lower())
-                candidates_set.add(q2.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model.wv.vocab:
-                    qf2 = candidate
-                    noresults = False
-                    break
-            if noresults:
-                if our_models[usermodel]['algo'] == 'fasttext':
+            qf2 = find_variants(qf2, model)
+            if not qf2:
+                if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q2):
                     results['inferred'] = True
+                    qf2 = q2
                 else:
                     results["Unknown to the model"] = q2
                     return results
@@ -263,24 +246,11 @@ def scalculator(query):
             plist.append(word)
             continue
         else:
-            candidates_set = set()
-            candidates_set.add(word.upper())
-            if tags and our_models[usermodel]['tags'] == 'True':
-                candidates_set.add(word.split('_')[0] + '_X')
-                candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
-                candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
-            else:
-                candidates_set.add(word.lower())
-                candidates_set.add(word.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model.wv.vocab:
-                    q = candidate
-                    noresults = False
-                    break
-            if noresults:
-                if our_models[usermodel]['algo'] == 'fasttext':
+            q = find_variants(word, model)
+            if not q:
+                if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(word):
                     results['inferred'] = True
+                    plist.append(word)
                 else:
                     results["Unknown to the model"] = word
                     return results
@@ -293,24 +263,11 @@ def scalculator(query):
             nlist.append(word)
             continue
         else:
-            candidates_set = set()
-            candidates_set.add(word.upper())
-            if tags and our_models[usermodel]['tags'] == 'True':
-                candidates_set.add(word.split('_')[0] + '_X')
-                candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
-                candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
-            else:
-                candidates_set.add(word.lower())
-                candidates_set.add(word.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model.wv.vocab:
-                    q = candidate
-                    noresults = False
-                    break
-            if noresults:
-                if our_models[usermodel]['algo'] == 'fasttext':
+            q = find_variants(word, model)
+            if not q:
+                if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(word):
                     results['inferred'] = True
+                    nlist.append(word)
                 else:
                     results["Unknown to the model"] = word
                     return results
@@ -343,24 +300,11 @@ def vector(query):
     results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
     if q not in model.wv.vocab:
-        candidates_set = set()
-        candidates_set.add(q.upper())
-        if tags and our_models[usermodel]['tags'] == 'True':
-            candidates_set.add(q.split('_')[0] + '_X')
-            candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
-            candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
-        else:
-            candidates_set.add(q.lower())
-            candidates_set.add(q.capitalize())
-        noresults = True
-        for candidate in candidates_set:
-            if candidate in model.wv.vocab:
-                qf = candidate
-                noresults = False
-                break
-        if noresults:
-            if our_models[usermodel]['algo'] == 'fasttext':
+        qf = find_variants(qf, model)
+        if not qf:
+            if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q):
                 results['inferred'] = True
+                qf = q
             else:
                 results[q + " is unknown to the model"] = True
                 return results
