@@ -76,10 +76,11 @@ for m in our_models:
     if our_models[m]['algo'] == 'fasttext':
         models_dic[m] = gensim.models.KeyedVectors.load(modelfile)
     else:
-        if modelfile.endswith('.bin.gz'):
+        if modelfile.endswith('.bin.gz') or modelfile.endswith('.bin'):
             models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(modelfile, binary=True)
             our_models[m]['vocabulary'] = False
-        elif modelfile.endswith('.vec.gz'):
+        elif modelfile.endswith('.vec.gz') or modelfile.endswith('.txt.gz') or \
+                modelfile.endswith('.vec') or modelfile.endswith('.txt'):
             models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(modelfile, binary=False)
             our_models[m]['vocabulary'] = False
         else:
