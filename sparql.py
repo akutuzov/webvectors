@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from SPARQLWrapper import SPARQLWrapper, JSON
+from SPARQLWrapper import SPARQLWrapper, JSON, SPARQLExceptions
 import configparser
 
 config = configparser.RawConfigParser()
@@ -30,9 +30,11 @@ def getdbpediaimage(query, cache):
             ?e <http://dbpedia.org/ontology/thumbnail> ?pic .
                 }
         """ % query)
-
         sparql.setReturnFormat(JSON)
-        results = sparql.query().convert()
+        try:
+            results = sparql.query().convert()
+        except SPARQLExceptions.QueryBadFormed:
+            return None
         if len(results["results"]["bindings"]) > 0:
             image = results["results"]["bindings"][0]["pic"]["value"]
             image = image.replace('http://', 'https://')

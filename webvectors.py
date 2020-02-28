@@ -576,7 +576,8 @@ def visual_page(lang):
             return render_template('visual.html', languages=languages, visual=models_row,
                                    words=groups, number=len(model_value), models=our_models,
                                    unknown=unknown, url=url, usermodels=model_value, l2c=links_row,
-                                   qwords=querywords, frequencies=frequencies)
+                                   qwords=querywords, frequencies=frequencies,
+                                   other_lang=other_lang)
         else:
             error_value = "Incorrect query!"
             return render_template("visual.html", error=error_value, models=our_models,
