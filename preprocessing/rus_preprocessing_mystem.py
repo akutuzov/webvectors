@@ -44,7 +44,7 @@ def tag_mystem(text='Текст нужно передать функции в в
 
 
 # Таблица преобразования частеречных тэгов Mystem в тэги UPoS:
-mapping_url = 'https://raw.githubusercontent.com/akutuzov/universal-pos-tags/master/ru-rnc.map'
+mapping_url = 'https://raw.githubusercontent.com/akutuzov/universal-pos-tags/4653e8a9154e93fe2f417c7fdb7a357b7d6ce333/ru-rnc.map'
 
 mystem2upos = {}
 r = requests.get(mapping_url, stream=True)
