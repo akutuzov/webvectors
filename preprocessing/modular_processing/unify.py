@@ -101,6 +101,7 @@ def unify_sym(text):  # принимает строку в юникоде
     # по результатам сравнения полученного с алфавитом все остальное выкинуть
     cleaned_text = [sym for sym in text if sym in allowed]
     cleaned_text = ''.join(cleaned_text)
+    cleaned_text = cleaned_text.replace('--', '-')
 
     return cleaned_text
 
