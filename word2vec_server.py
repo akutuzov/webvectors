@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 
 import socket
@@ -10,6 +10,7 @@ import logging
 import json
 import configparser
 import csv
+from simple_elmo import ElmoModel
 
 
 class WebVectorsThread(threading.Thread):
@@ -53,6 +54,10 @@ HOST = config.get('Sockets', 'host')  # Symbolic name meaning all available inte
 PORT = config.getint('Sockets', 'port')  # Arbitrary non-privileged port
 tags = config.getboolean('Tags', 'use_tags')
 
+# Contextualized models:
+token_model_file = config.get('Token', 'token_model')
+type_model_file = config.get('Token', 'type_model')
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 # Loading models
@@ -87,6 +92,12 @@ for m in our_models:
             models_dic[m] = gensim.models.KeyedVectors.load(modelfile)
     models_dic[m].init_sims(replace=True)
     print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
+
+type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file)
+
+token_model = ElmoModel()
+
+token_model.load(token_model_file)
 
 
 # Get pairs of words to create graph
@@ -125,7 +136,7 @@ def find_variants(word, usermodel):
         candidates_set.add(word.lower())
         candidates_set.add(word.capitalize())
     for candidate in candidates_set:
-        if candidate in model.wv.vocab:
+        if candidate in model.vocab:
             results = candidate
             break
     return results
@@ -134,7 +145,7 @@ def find_variants(word, usermodel):
 def frequency(word, model):
     # Find word frequency tier
     corpus_size = our_models[model]['corpus_size']
-    if word not in models_dic[model].wv.vocab:
+    if word not in models_dic[model].vocab:
         word = find_variants(word, model)
         if not word:
             return 0, 'low'
@@ -293,6 +304,19 @@ def scalculator(query):
     return results
 
 
+def contextual(query):
+    q = [query['query']]
+    results = {'frequencies': {w: 0 for w in q[0]}}
+    for word in q[0]:
+        results['frequencies'][word] = frequency(word, "ruscorpora_upos_skipgram_300_5_2018")
+    elmo_vectors = token_model.get_elmo_vectors(q, layers="top")
+    results["neighbors"] = []
+    for word, embedding in zip(q[0], elmo_vectors[0, :, :]):
+        neighbors = type_model.similar_by_vector(embedding)
+        results["neighbors"].append(neighbors)
+    return results
+
+
 def vector(query):
     q = query['query']
     usermodel = query['model']
@@ -316,7 +340,8 @@ def vector(query):
     return results
 
 
-operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': vector}
+operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': vector,
+              '5': contextual}
 
 # Bind socket to local host and port
 
