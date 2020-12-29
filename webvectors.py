@@ -770,6 +770,43 @@ def finder(lang):
                            usermodels=[defaultmodel])
 
 
+@wvectors.route(url + '<lang:lang>/dynamic/', methods=['GET', 'POST'])
+def dynamic_page(lang):
+    g.lang = lang
+    s = set()
+    s.add(lang)
+    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
+    g.strings = language_dicts[lang]
+
+    if request.method == 'POST':
+        sentence = ''
+        try:
+            sentence = request.form['input_sentence']
+        except:
+            pass
+
+        results = {}
+        if sentence != '':
+            message = {'operation':'5', 'query': sentence.split(), 'nr_neighbors': 10}
+            result = json.loads(serverquery(message).decode('utf-8'))
+            #result = {'frequencies': {}, 'neighbors': {}}
+            frequencies = result['frequencies']
+            for word in result['neighbors']:
+                images[word[0].split('_')[0]] = None
+            for word, neighbors in zip(sentence.split(), result['neighbors']):
+                results[word] = neighbors
+            return render_template('dynamic.html', list_value=results, sentence=sentence,
+                                   other_lang=other_lang, languages=languages,
+                                   frequencies=frequencies, url=url)
+        else:
+            error_value = "Incorrect query!"
+            return render_template("dynamic.html", error=error_value, other_lang=other_lang,
+                                   languages=languages, url=url)
+
+    return render_template('dynamic.html', other_lang=other_lang,
+                           languages=languages, url=url)
+
+
 @wvectors.route(url + '<lang:lang>/<model>/<userquery>/', methods=['GET', 'POST'])
 def raw_finder(lang, model, userquery):
     g.lang = lang
