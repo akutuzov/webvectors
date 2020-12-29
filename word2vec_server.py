@@ -55,8 +55,13 @@ PORT = config.getint('Sockets', 'port')  # Arbitrary non-privileged port
 tags = config.getboolean('Tags', 'use_tags')
 
 # Contextualized models:
-token_model_file = config.get('Token', 'token_model')
-type_model_file = config.get('Token', 'type_model')
+contextualized = config.getboolean("Token", "use_contextualized")
+if contextualized:
+    token_model_file = config.get('Token', 'token_model')
+    type_model_file = config.get('Token', 'type_model')
+    type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file)
+    token_model = ElmoModel()
+    token_model.load(token_model_file)
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -94,13 +99,6 @@ for m in our_models:
             models_dic[m] = gensim.models.KeyedVectors.load(modelfile)
     models_dic[m].init_sims(replace=True)
     print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
-
-type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file)
-
-token_model = ElmoModel()
-
-token_model.load(token_model_file)
-
 
 # Get pairs of words to create graph
 
