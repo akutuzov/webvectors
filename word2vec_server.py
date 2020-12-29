@@ -100,6 +100,7 @@ for m in our_models:
     models_dic[m].init_sims(replace=True)
     print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
 
+
 # Get pairs of words to create graph
 
 def get_edges(word, model, mostsim):
@@ -151,7 +152,7 @@ def frequency(word, model):
             return 0, 'low'
     if not our_models[model]['vocabulary']:
         return 0, 'mid'
-    wordfreq = models_dic[model].wv.vocab[word].count
+    wordfreq = models_dic[model].vocab[word].count
     relative = wordfreq / corpus_size
     tier = 'mid'
     if relative > 0.00001:
@@ -171,7 +172,7 @@ def find_synonyms(query):
     results = {'frequencies': {}, 'neighbours_dist': []}
     qf = q
     model = models_dic[usermodel]
-    if qf not in model.wv.vocab:
+    if qf not in model.vocab:
         qf = find_variants(qf, usermodel)
         if not qf:
             if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q):
@@ -184,11 +185,11 @@ def find_synonyms(query):
     results['frequencies'][q] = frequency(qf, usermodel)
     results['neighbors'] = []
     if pos == 'ALL':
-        for i in model.wv.most_similar(positive=qf, topn=nr_neighbors):
+        for i in model.most_similar(positive=qf, topn=nr_neighbors):
             results['neighbors'].append(i)
     else:
         counter = 0
-        for i in model.wv.most_similar(positive=qf, topn=30):
+        for i in model.most_similar(positive=qf, topn=30):
             if counter == nr_neighbors:
                 break
             if i[0].split('_')[-1] == pos:
