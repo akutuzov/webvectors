@@ -72,6 +72,8 @@ with open(root + config.get('Files and directories', 'models'), 'r') as csvfile:
         our_models[row['identifier']]['tags'] = row['tags']
         our_models[row['identifier']]['algo'] = row['algo']
         our_models[row['identifier']]['corpus_size'] = int(row['size'])
+        if row['default'] == 'True':
+            defaultmodel = row['identifier']
 
 models_dic = {}
 
@@ -308,11 +310,12 @@ def contextual(query):
     q = [query['query']]
     results = {'frequencies': {w: 0 for w in q[0]}}
     for word in q[0]:
-        results['frequencies'][word] = frequency(word, "ruscorpora_upos_skipgram_300_5_2018")
+        results['frequencies'][word] = frequency(word, defaultmodel)
     elmo_vectors = token_model.get_elmo_vectors(q, layers="top")
     results["neighbors"] = []
     for word, embedding in zip(q[0], elmo_vectors[0, :, :]):
         neighbors = type_model.similar_by_vector(embedding)
+        neighbors = [n for n in neighbors if n[0] != word]
         results["neighbors"].append(neighbors)
     return results
 
