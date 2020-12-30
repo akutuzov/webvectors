@@ -159,7 +159,10 @@ def find_variants(word, usermodel):
 def frequency(word, model, external=None):
     # Find word frequency tier
     if external:
-        wordfreq = external[word]
+        if word in external:
+            wordfreq = external[word]
+        else:
+            return 0, 'low'
         corpus_size = external["corpus_size"]
     else:
         corpus_size = our_models[model]['corpus_size']
