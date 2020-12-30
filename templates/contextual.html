@@ -2,24 +2,24 @@
 {%- extends "base.html" -%}
 <!-- The "block title" tag changes the title in the browser tab and the header on the page. -->
 {%- block title -%}
-<title>{{strings['base3']}}: {{strings['dynamic1']}}</title>
+<title>{{strings['base3']}}: {{strings['contextual1']}}</title>
 {%- endblock title -%}
 <!-- webpage content -->
 {%- block content %}
 <div class="row">
   <div class="col-md-10">
-    <h2>{{strings['dynamic1']}}</h2>
+    <h2>{{strings['contextual1']}}</h2>
     <!-- Request field -->
     <div id="queryform">
       <form id="inputform" action="#" method=post>
         <div class="form-group">
           <!-- Caption ("Enter a word..." ) -->
-          <p>{{strings['dynamic2']}}</p>
+          <p>{{strings['contextual2']}}</p>
           <!-- If there was a request, it's shown in the field, else the default "computer_NOUN" is shown -->
           {%- if list_value %}
           <input type="text" class="typeahead" id="query" name="input_sentence" value="{{ sentence }}" maxlength=100>
           {%- else %}
-          <input type="text" class="typeahead" id="query" name="input_sentence" value="{{strings['dynamic3']}}" maxlength=100>
+          <input type="text" class="typeahead" id="query" name="input_sentence" value="{{strings['contextual3']}}" maxlength=100>
           {% endif -%}
         </div>
         <!-- Button "Find similar words!" is placed in <form> to be able to send data to the server -->
@@ -30,7 +30,7 @@
     {% if list_value -%}
     <h3>
       <strong>
-        {{strings['dynamic4']}}
+        {{strings['contextual4']}}
       </strong>
     </h3>
     <!-- Featuring list of results -->

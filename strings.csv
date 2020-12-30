@@ -160,7 +160,7 @@ graph4,Число соседей,Number of neighbours
 graph5,Максимальное число. Может измениться в результате частотной фильтрации,Maximum possible number. It can depend on words' frequency in result
 graph6, Показать теги,Show tags
 graph7,Обновить,Refresh
-dynamic1,Визуализация динамических моделей,Visualising dynamic models
-dynamic2,Введите предложение,Input a sentence
-dynamic3,Мама мыла раму,I have a dream
-dynamic4,Результаты для предложения,Results for the given sentence
+contextual1,Визуализация динамических моделей,Visualising dynamic models
+contextual2,Введите предложение,Input a sentence
+contextual3,Мама мыла раму,I have a dream
+contextual4,Лексические подстановки для слов в вашем запросе:,Lexical substitutes for words from your query:

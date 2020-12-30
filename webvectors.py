@@ -770,7 +770,7 @@ def finder(lang):
                            usermodels=[defaultmodel])
 
 
-@wvectors.route(url + '<lang:lang>/dynamic/', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/contextual/', methods=['GET', 'POST'])
 def dynamic_page(lang):
     g.lang = lang
     s = set()
