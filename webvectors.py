@@ -786,15 +786,33 @@ def dynamic_page(lang):
             pass
         images = {}
         results = {}
+        sims = []
         if sentence != '':
             message = {'operation': '5', 'query': sentence.split(), 'nr_neighbors': 10}
             result = json.loads(serverquery(message).decode('utf-8'))
+            print(result)
             frequencies = result['frequencies']
             for word in result['neighbors']:
                 for n in word:
                     images[n[0].split('_')[0]] = None
             for word, neighbors in zip(sentence.split(), result['neighbors']):
+                sims += [x[1] for x in neighbors]
                 results[word] = neighbors
+            print()
+            print(results)
+            max_sim, min_sim = max(sims), min(sims)
+            sim_range = max_sim - min_sim
+            sim_tier = sim_range / 5
+            font_tiers = {(max_sim, max_sim - sim_tier): '16', (max_sim - sim_tier,
+                          max_sim - 2*sim_tier): '14', (max_sim - 2*sim_tier, max_sim - 3*sim_tier): '12',
+                          (max_sim - 3*sim_tier, max_sim - 4*sim_tier): '10',
+                          (max_sim - 4*sim_tier, min_sim): '8'}
+            for word in results:
+                for neighbor in results[word]:
+                    for tier in font_tiers:
+                        if neighbor[1] <= tier[0] and neighbor[1] > tier[1]:
+                            font_size = font_tiers[tier]
+                            neighbor.append(font_size)
             return render_template('dynamic.html', list_value=results, sentence=sentence,
                                    other_lang=other_lang, languages=languages,
                                    frequencies=frequencies, url=url)

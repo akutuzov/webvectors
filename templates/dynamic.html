@@ -37,10 +37,13 @@
     <!-- Featuring list of results -->
     <div class="row">
       {% for word in list_value -%}
-      <div class="col-md-5">
-        <h4><strong>{{ word }}</strong></h4>
-        <ol style="font-size: larger;" type="1" id="{{ word }}">
-        </ol>
+      <div class="col-sm-2">
+        <h3><strong>{{ word }}</strong></h3>
+        <ul class="list-group" style="font-size: larger;" type="1" id="{{ word }}">
+          {%- for res in list_value[word][:5] if res != "Incorrect tag!" %}
+          <li style="font-size: {{res[2]-}}px">{{ res[0] }}  {{ "{:.2f} ".format(res[1]) }}</li>
+          {%- endfor -%}
+        </ul>
       </div>
       {% endfor -%}
     </div>
