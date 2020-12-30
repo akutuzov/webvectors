@@ -10,6 +10,7 @@ import logging
 import json
 import configparser
 import csv
+from smart_open import open
 
 
 class WebVectorsThread(threading.Thread):
@@ -65,12 +66,19 @@ if contextualized:
 
     token_model_file = config.get('Token', 'token_model')
     type_model_file = config.get('Token', 'type_model')
+    frequency_file = config.get("Token", "freq_file")
     type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file)
     graph = tf.compat.v1.get_default_graph()
     with graph.as_default():
         token_model = ElmoModel()
         token_model.load(token_model_file)
-
+    elmo_frequency = {}
+    for line in open(frequency_file, "r"):
+        if "\t" not in line:
+            elmo_frequency["corpus_size"] = int(line.strip())
+        else:
+            (external_word, frequency) = line.strip().split("\t")
+            elmo_frequency[external_word] = int(frequency)
 
 our_models = {}
 with open(root + config.get('Files and directories', 'models'), 'r') as csvfile:
@@ -148,16 +156,20 @@ def find_variants(word, usermodel):
     return results
 
 
-def frequency(word, model):
+def frequency(word, model, external=None):
     # Find word frequency tier
-    corpus_size = our_models[model]['corpus_size']
-    if word not in models_dic[model].vocab:
-        word = find_variants(word, model)
-        if not word:
-            return 0, 'low'
-    if not our_models[model]['vocabulary']:
-        return 0, 'mid'
-    wordfreq = models_dic[model].vocab[word].count
+    if external:
+        wordfreq = external[word]
+        corpus_size = external["corpus_size"]
+    else:
+        corpus_size = our_models[model]['corpus_size']
+        if word not in models_dic[model].vocab:
+            word = find_variants(word, model)
+            if not word:
+                return 0, 'low'
+        if not our_models[model]['vocabulary']:
+            return 0, 'mid'
+        wordfreq = models_dic[model].vocab[word].count
     relative = wordfreq / corpus_size
     tier = 'mid'
     if relative > 0.00001:
@@ -314,7 +326,7 @@ def contextual(query):
     q = [query['query']]
     results = {'frequencies': {w: 0 for w in q[0]}}
     for word in q[0]:
-        results['frequencies'][word] = frequency(word, defaultmodel)
+        results['frequencies'][word] = frequency(word, defaultmodel, external=elmo_frequency)
     with graph.as_default():
         elmo_vectors = token_model.get_elmo_vectors(q, layers="top")
     results["neighbors"] = []
@@ -322,7 +334,8 @@ def contextual(query):
         neighbors = type_model.similar_by_vector(embedding)
         neighbors = [n for n in neighbors if n[0] != word]
         for neighbor in neighbors:
-            results['frequencies'][neighbor[0]] = frequency(neighbor[0], defaultmodel)
+            results['frequencies'][neighbor[0]] = frequency(neighbor[0], defaultmodel,
+                                                            external=elmo_frequency)
         results["neighbors"].append(neighbors)
     return results
 
