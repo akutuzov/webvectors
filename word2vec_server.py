@@ -33,10 +33,7 @@ def clientthread(connect, address):
         if not data:
             break
         query = json.loads(data.decode('utf-8'))
-        if contextual and query["operation"] == "5":
-            output = contextual(query, tmodel=token_model)
-        else:
-            output = operations[query['operation']](query)
+        output = operations[query['operation']](query)
         now = datetime.datetime.now()
         print(now.strftime("%Y-%m-%d %H:%M"), '\t', address[0] + ':' + str(address[1]), '\t',
               data.decode('utf-8'), file=sys.stderr)
@@ -312,13 +309,13 @@ def scalculator(query):
     return results
 
 
-def contextual(query, tmodel=token_model):
+def contextual(query):
     q = [query['query']]
     results = {'frequencies': {w: 0 for w in q[0]}}
     for word in q[0]:
         results['frequencies'][word] = frequency(word, defaultmodel)
     with graph.as_default():
-        elmo_vectors = tmodel.get_elmo_vectors(q, layers="top")
+        elmo_vectors = token_model.get_elmo_vectors(q, layers="top")
     results["neighbors"] = []
     for word, embedding in zip(q[0], elmo_vectors[0, :, :]):
         neighbors = type_model.similar_by_vector(embedding)
