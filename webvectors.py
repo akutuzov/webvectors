@@ -790,7 +790,6 @@ def dynamic_page(lang):
         if sentence != '':
             message = {'operation': '5', 'query': sentence.split(), 'nr_neighbors': 10}
             result = json.loads(serverquery(message).decode('utf-8'))
-            print(result)
             frequencies = result['frequencies']
             for word in result['neighbors']:
                 for n in word:
@@ -798,8 +797,6 @@ def dynamic_page(lang):
             for word, neighbors in zip(sentence.split(), result['neighbors']):
                 sims += [x[1] for x in neighbors]
                 results[word] = neighbors
-            print()
-            print(results)
             max_sim, min_sim = max(sims), min(sims)
             sim_range = max_sim - min_sim
             sim_tier = sim_range / 5
