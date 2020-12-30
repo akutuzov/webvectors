@@ -39,7 +39,7 @@
       <div class="col-sm-2">
         <h3><strong>{{ word }}</strong></h3>
         <ul class="list-unstyled" id="{{ word }}">
-          {%- for res in list_value[word][:5] if res != "Incorrect tag!" and len(res[0]) > 2 %}
+          {%- for res in list_value[word][:5] if res != "Incorrect tag!" and res[0]|length > 2 %}
           <li style="font-size: {{res[2]-}}px">{{ res[0] }}</li>
           {%- endfor -%}
         </ul>
