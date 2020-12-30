@@ -35,11 +35,11 @@
     </h3>
     <!-- Featuring list of results -->
     <div class="row">
-      {% for word in list_value -%}
+      {% for word in list_value if word|length > 2-%}
       <div class="col-sm-2">
         <h3><strong>{{ word }}</strong></h3>
         <ul class="list-unstyled" id="{{ word }}">
-          {%- for res in list_value[word][:5] if res != "Incorrect tag!" and res[0]|length > 2 %}
+          {%- for res in list_value[word][:5] if res != "Incorrect tag!" %}
           <li style="font-size: {{res[2]-}}px">{{ res[0] }}</li>
           {%- endfor -%}
         </ul>
