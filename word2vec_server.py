@@ -53,6 +53,10 @@ HOST = config.get('Sockets', 'host')  # Symbolic name meaning all available inte
 PORT = config.getint('Sockets', 'port')  # Arbitrary non-privileged port
 tags = config.getboolean('Tags', 'use_tags')
 
+# Loading models
+
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+
 # Contextualized models:
 contextualized = config.getboolean("Token", "use_contextualized")
 if contextualized:
@@ -67,9 +71,6 @@ if contextualized:
         token_model = ElmoModel()
         token_model.load(token_model_file)
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
-# Loading models
 
 our_models = {}
 with open(root + config.get('Files and directories', 'models'), 'r') as csvfile:
@@ -320,6 +321,8 @@ def contextual(query):
     for word, embedding in zip(q[0], elmo_vectors[0, :, :]):
         neighbors = type_model.similar_by_vector(embedding)
         neighbors = [n for n in neighbors if n[0] != word]
+        for neighbor in neighbors:
+            results['frequencies'][neighbor[0]] = frequency(neighbor[0], defaultmodel)
         results["neighbors"].append(neighbors)
     return results
 

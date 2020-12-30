@@ -90,6 +90,8 @@ similar31,История запросов близости,Similarity queries hi
 similar32,Слова нет в словаре модели; вектор восстановлен из формы слова.,The word is out of model vocabulary; its embedding is inferred from its characters.
 similar33,Тайга,Taiga
 similar34,"Для каждого слова показана его часть речи (если в модели они размечены).","Parts of speech are shown for each word, if present in the model."
+similar35,Тайга fastText,Taiga fastText
+similar36,GeoWAC fastText,GeoWAC fastText
 synraw1,"Слова, семантически связанные&nbsp;с",Semantically related words for
 synraw2,Какие слова похожи на&nbsp;слово,What words are related&nbsp;to
 synraw3,в,in&nbsp;the
