@@ -10,6 +10,7 @@ import socket  # for sockets
 import sys
 from collections import OrderedDict
 import csv
+import re
 import numpy as np
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
@@ -788,13 +789,13 @@ def dynamic_page(lang):
         results = {}
         sims = []
         if sentence != '':
-            message = {'operation': '5', 'query': sentence.split(), 'nr_neighbors': 10}
+            message = {'operation': '5', 'query': re.findall(r'[.?]|\w+', sentence), 'nr_neighbors': 10}
             result = json.loads(serverquery(message).decode('utf-8'))
             frequencies = result['frequencies']
             for word in result['neighbors']:
                 for n in word:
                     images[n[0].split('_')[0]] = None
-            for word, neighbors in zip(sentence.split(), result['neighbors']):
+            for word, neighbors in zip(re.findall(r'[.?]|\w+', sentence), result['neighbors']):
                 sims += [x[1] for x in neighbors]
                 results[word] = neighbors
             max_sim, min_sim = max(sims), min(sims)
