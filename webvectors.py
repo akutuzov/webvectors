@@ -810,15 +810,15 @@ def dynamic_page(lang):
                         if neighbor[1] <= tier[0] and neighbor[1] > tier[1]:
                             font_size = font_tiers[tier]
                             neighbor.append(font_size)
-            return render_template('dynamic.html', list_value=results, sentence=sentence,
+            return render_template('contextual.html', list_value=results, sentence=sentence,
                                    other_lang=other_lang, languages=languages,
                                    frequencies=frequencies, url=url)
         else:
             error_value = "Incorrect query!"
-            return render_template("dynamic.html", error=error_value, other_lang=other_lang,
+            return render_template("contextual.html", error=error_value, other_lang=other_lang,
                                    languages=languages, url=url)
 
-    return render_template('dynamic.html', other_lang=other_lang,
+    return render_template('contextual.html', other_lang=other_lang,
                            languages=languages, url=url)
 
 
