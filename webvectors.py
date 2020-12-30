@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python
 # coding: utf-8
 
 import configparser
@@ -784,15 +784,15 @@ def dynamic_page(lang):
             sentence = request.form['input_sentence']
         except:
             pass
-
+        images = {}
         results = {}
         if sentence != '':
-            message = {'operation':'5', 'query': sentence.split(), 'nr_neighbors': 10}
+            message = {'operation': '5', 'query': sentence.split(), 'nr_neighbors': 10}
             result = json.loads(serverquery(message).decode('utf-8'))
-            #result = {'frequencies': {}, 'neighbors': {}}
             frequencies = result['frequencies']
             for word in result['neighbors']:
-                images[word[0].split('_')[0]] = None
+                for n in word:
+                    images[n[0].split('_')[0]] = None
             for word, neighbors in zip(sentence.split(), result['neighbors']):
                 results[word] = neighbors
             return render_template('dynamic.html', list_value=results, sentence=sentence,

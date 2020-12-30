@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 # coding: utf-8
 
 import socket
@@ -10,7 +10,6 @@ import logging
 import json
 import configparser
 import csv
-from simple_elmo import ElmoModel
 
 
 class WebVectorsThread(threading.Thread):
@@ -23,7 +22,7 @@ class WebVectorsThread(threading.Thread):
         clientthread(self.connect, self.address)
 
 
-def clientthread(connect, addres):
+def clientthread(connect, address):
     # Sending message to connected client
     connect.send(bytes(b'word2vec model server'))
 
@@ -34,9 +33,12 @@ def clientthread(connect, addres):
         if not data:
             break
         query = json.loads(data.decode('utf-8'))
-        output = operations[query['operation']](query)
+        if contextual and query["operation"] == "5":
+            output = contextual(query, tmodel=token_model)
+        else:
+            output = operations[query['operation']](query)
         now = datetime.datetime.now()
-        print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t',
+        print(now.strftime("%Y-%m-%d %H:%M"), '\t', address[0] + ':' + str(address[1]), '\t',
               data.decode('utf-8'), file=sys.stderr)
         reply = json.dumps(output, ensure_ascii=False)
         connect.sendall(reply.encode('utf-8'))
@@ -57,11 +59,16 @@ tags = config.getboolean('Tags', 'use_tags')
 # Contextualized models:
 contextualized = config.getboolean("Token", "use_contextualized")
 if contextualized:
+    import tensorflow as tf
+    from simple_elmo import ElmoModel
+
     token_model_file = config.get('Token', 'token_model')
     type_model_file = config.get('Token', 'type_model')
     type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file)
-    token_model = ElmoModel()
-    token_model.load(token_model_file)
+    graph = tf.compat.v1.get_default_graph()
+    with graph.as_default():
+        token_model = ElmoModel()
+        token_model.load(token_model_file)
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -305,12 +312,13 @@ def scalculator(query):
     return results
 
 
-def contextual(query):
+def contextual(query, tmodel=token_model):
     q = [query['query']]
     results = {'frequencies': {w: 0 for w in q[0]}}
     for word in q[0]:
         results['frequencies'][word] = frequency(word, defaultmodel)
-    elmo_vectors = token_model.get_elmo_vectors(q, layers="top")
+    with graph.as_default():
+        elmo_vectors = tmodel.get_elmo_vectors(q, layers="top")
     results["neighbors"] = []
     for word, embedding in zip(q[0], elmo_vectors[0, :, :]):
         neighbors = type_model.similar_by_vector(embedding)
