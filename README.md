@@ -1,5 +1,6 @@
 # webvectors
-_Webvectors_ is a toolkit to serve vector semantic models (particularly, distributional word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python 3, and uses _Flask_ and _Gensim_ under the hood.
+_Webvectors_ is a toolkit to serve vector semantic models (particularly, distributional word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. 
+It requires Python >= 3.6, and uses _Flask_ and _Gensim_ under the hood.
 
 Working demos:
 <ul>
