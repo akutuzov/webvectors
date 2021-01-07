@@ -72,7 +72,7 @@ if contextualized:
     token_model_file = config.get("Token", "token_model")
     type_model_file = config.get("Token", "type_model")
     frequency_file = config.get("Token", "freq_file")
-    type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file)
+    type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file, binary=True)
     graph = tf.compat.v1.get_default_graph()
     with graph.as_default():
         token_model = ElmoModel()
@@ -299,7 +299,7 @@ def scalculator(query):
     for word in positive_list:
         if len(word) < 2:
             continue
-        if word in model.wv.vocab:
+        if word in model.vocab:
             plist.append(word)
             continue
         else:
@@ -318,7 +318,7 @@ def scalculator(query):
     for word in negative_list:
         if len(word) < 2:
             continue
-        if word in model.wv.vocab:
+        if word in model.vocab:
             nlist.append(word)
             continue
         else:
@@ -335,12 +335,12 @@ def scalculator(query):
             else:
                 nlist.append(q)
     if pos == "ALL":
-        for w in model.wv.most_similar(
+        for w in model.most_similar(
             positive=plist, negative=nlist, topn=nr_neighbors
         ):
             results["neighbors"].append(w)
     else:
-        for w in model.wv.most_similar(positive=plist, negative=nlist, topn=30):
+        for w in model.most_similar(positive=plist, negative=nlist, topn=30):
             if w[0].split("_")[-1] == pos:
                 results["neighbors"].append(w)
             if len(results["neighbors"]) == nr_neighbors:
