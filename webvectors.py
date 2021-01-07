@@ -1135,6 +1135,8 @@ def dynamic_page(lang):
             for word, neighbors in zip(
                 re.findall(r"[.?]|\w+", sentence), result["neighbors"]
             ):
+                if word in '.,!?-"\':;':
+                    continue
                 sims += [x[1] for x in neighbors]
                 results[word] = neighbors
             max_sim, min_sim = max(sims), min(sims)
