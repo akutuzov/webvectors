@@ -33,19 +33,41 @@
         {{strings['contextual4']}}
       </strong>
     </h3>
+    <!-- Checkbox for frequency selection-->
+    <div class="checkbox" id="frequencyCheck">
+      <p><em>{{strings['frequency1']}}</em></p>
+      <label class="frequency-high" title="{{strings['frequency5']}}">
+      <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
+      <label class="frequency-mid" title="{{strings['frequency6']}}">
+      <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
+      <label class="frequency-low" title="{{strings['frequency7']}}">
+      <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
+    </div>
     <!-- Featuring list of results -->
-    <div class="row">
+    <div class="row" id="result" data-query="{{ sentence }}" data-visible="{{ visible_neighbors }}" data-result ='{{ frequencies|tojson }}'>
       {% for word in list_value -%}
       <div class="col-sm-2">
-        {% if word|length > 2 %}
-        <h3><strong>{{ word }}</strong></h3>
-        <ul class="list-unstyled" id="{{ word }}">
+        {% if (word[0]|length > 2) and (word[1] not in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART'])%}
+        <h3><strong><a href="{{ url }}{{lang}}/{{ model }}/{{word[0]}}/"
+        title="{{strings['synraw14']}} {{ frequencies[word[0]][0]}}">{{ word[0] }}</a></strong></h3>
+        <ul class="list-unstyled" id="{{ word }}" type="1">
           {%- for res in list_value[word][:5] if res != "Incorrect tag!" %}
-          <li style="font-size: {{res[2]-}}px">{{ res[0] }}</li>
+          <li style="font-size: {{res[2]-}}px" data-word="{{res[0]}}" class="frequency-item-{{frequencies[res[0]][1]}}"><a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
+          title="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}"
+          class="frequency-{{frequencies[res[0]][1]}}">{{ res[0] }}</a>
+          {% if wordimages[res[0]] -%}
+          <div class="avataricon">
+            <a href="https://en.wikipedia.org/wiki/{{ res[0] }}" target="_blank">
+            <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0]|capitalize }} {{strings['synraw11']}}"
+              title = "{{ res[0]|capitalize }} {{strings['synraw11']}}" width="30">
+            </a>
+          </div>
+          {% endif -%}
+        </li>
           {%- endfor -%}
         </ul>
         {%- else %}
-        <h3><i>{{ word }}</i></h3>
+        <h3><i>{{ word[0] }}</i></h3>
         {% endif -%}
       </div>
       {% endfor -%}

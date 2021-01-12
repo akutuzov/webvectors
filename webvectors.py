@@ -38,7 +38,7 @@ dbpedia = config.getboolean("Other", "dbpedia_images")
 languages_list = config.get("Languages", "interface_languages").split(",")
 
 if detect_tag:
-    from lemmatizer import tagword
+    from lemmatizer import tagword, tag_ud
 
     tagger_port = config.getint("Sockets", "tagger_port")
 
@@ -1121,6 +1121,8 @@ def dynamic_page(lang):
         images = {}
         results = {}
         sims = []
+        model_inv_wordpage = 'geowac_lemmas_none_fasttextskipgram_300_5_2020'
+        tags = tag_ud(tagger_port, sentence)
         if len(sentence) > 2:
             message = {
                 "operation": "5",
@@ -1129,16 +1131,17 @@ def dynamic_page(lang):
             }
             result = json.loads(serverquery(message).decode("utf-8"))
             frequencies = result["frequencies"]
+            #print(result)
             for word in result["neighbors"]:
                 for n in word:
                     images[n[0].split("_")[0]] = None
-            for word, neighbors in zip(
-                re.findall(r"[.?]|\w+", sentence), result["neighbors"]
+            for word, neighbors, tag in zip(
+                re.findall(r"[.?]|\w+", sentence), result["neighbors"], tags
             ):
                 if word in '.,!?-"\':;':
                     continue
                 sims += [x[1] for x in neighbors]
-                results[word] = neighbors
+                results[(word, tag)] = neighbors
             max_sim, min_sim = max(sims), min(sims)
             sim_range = max_sim - min_sim
             sim_tier = sim_range / 5
@@ -1155,13 +1158,17 @@ def dynamic_page(lang):
                         if tier[0] >= neighbor[1] > tier[1]:
                             font_size = font_tiers[tier]
                             neighbor.append(font_size)
+            if dbpedia:
+                wordimages = get_images(images)
             return render_template(
                 "contextual.html",
                 list_value=results,
                 sentence=sentence,
+                wordimages=wordimages,
                 other_lang=other_lang,
                 languages=languages,
                 frequencies=frequencies,
+                model=model_inv_wordpage,
                 url=url,
             )
         else:
