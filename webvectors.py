@@ -1120,6 +1120,8 @@ def dynamic_page(lang):
 
         images = {}
         results = {}
+        table_results = {}
+        header = []
         sims = []
         model_inv_wordpage = 'geowac_lemmas_none_fasttextskipgram_300_5_2020'
         tags = tag_ud(tagger_port, sentence)
@@ -1131,7 +1133,6 @@ def dynamic_page(lang):
             }
             result = json.loads(serverquery(message).decode("utf-8"))
             frequencies = result["frequencies"]
-            #print(result)
             for word in result["neighbors"]:
                 for n in word:
                     images[n[0].split("_")[0]] = None
@@ -1158,11 +1159,26 @@ def dynamic_page(lang):
                         if tier[0] >= neighbor[1] > tier[1]:
                             font_size = font_tiers[tier]
                             neighbor.append(font_size)
+            for word in results:
+                header.append(word)
+                for row in range(len(results[word])):
+                    if row > 4: # here we determine how many neighbors we want to be shown in the results
+                        break
+                    neighbor = results[word][row]
+                    if len(word[0]) < 3 or word[1] in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART']:
+                        neighbor = 'None'
+                    if str(row) in table_results:
+                        table_results[str(row)].append(neighbor)
+                    else:
+                        table_results[str(row)] = [neighbor]
+            print(table_results)
+            print(frequencies)
             if dbpedia:
                 wordimages = get_images(images)
             return render_template(
-                "contextual.html",
-                list_value=results,
+                "contextual2.html",
+                results=table_results,
+                header=header,
                 sentence=sentence,
                 wordimages=wordimages,
                 other_lang=other_lang,
@@ -1174,7 +1190,7 @@ def dynamic_page(lang):
         else:
             error_value = "Incorrect query!"
             return render_template(
-                "contextual.html",
+                "contextual2.html",
                 error=error_value,
                 other_lang=other_lang,
                 languages=languages,
@@ -1182,7 +1198,7 @@ def dynamic_page(lang):
             )
 
     return render_template(
-        "contextual.html", other_lang=other_lang, languages=languages, url=url
+        "contextual2.html", other_lang=other_lang, languages=languages, url=url
     )
 
 
