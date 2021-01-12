@@ -53,7 +53,7 @@
             {% if (word[0]|length > 1) and (word[1] not in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART'])%}
           <h3><strong>
             <a href="{{ url }}{{lang}}/{{ model }}/{{word[0]}}/"
-          title="{{strings['synraw14']}} {{ frequencies[word[0]][0]}}" class="frequency-{{frequencies[word[0]][1]}}">{{ word[0] }}</a>
+          title="{% if tags %}{{strings['synraw15']}} {{ word[1] }}, {% endif%}{{strings['synraw14']}} {{ frequencies[word[0]][0]}}" class="frequency-{{frequencies[word[0]][1]}}">{{ word[0] }}</a>
           </strong></h3>
           {%- else %}
           <h3><i>{{ word[0] }}</i></h3>
@@ -68,7 +68,7 @@
           {% for res in results[row] %}
           {% if res != 'None' %}
           <td style="font-size: {{res[2]-}}px">
-              <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}" class="frequency-{{frequencies[res[0]][1]}}">
+              <a href="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}" class="frequency-{{frequencies[res[0]][1]}}">
                 {{ res[0] }}
               </a>
         </td>

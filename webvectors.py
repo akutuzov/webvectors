@@ -1109,7 +1109,7 @@ def finder(lang):
 
 
 @wvectors.route(url + "<lang:lang>/contextual/", methods=["GET", "POST"])
-def dynamic_page(lang):
+def contextual_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
@@ -1175,6 +1175,7 @@ def dynamic_page(lang):
                 "contextual.html",
                 results=table_results,
                 header=header,
+                tags=tags,
                 sentence=sentence,
                 other_lang=other_lang,
                 languages=languages,
