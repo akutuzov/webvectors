@@ -1123,7 +1123,7 @@ def dynamic_page(lang):
         table_results = {}
         header = []
         sims = []
-        model_inv_wordpage = config.get("Token", "ref_static_model")
+        model_indv_wordpage = config.get("Token", "ref_static_model")
         sentence_tags = tag_ud(tagger_port, sentence)
         if len(sentence) > 2:
             message = {
@@ -1165,20 +1165,18 @@ def dynamic_page(lang):
                     if row > 4: # here we determine how many neighbors we want to be shown in the results
                         break
                     neighbor = results[word][row]
-                    if len(word[0]) < 3 or word[1] in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART']:
+                    if len(word[0]) < 2 or word[1] in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART']:
                         neighbor = 'None'
                     if str(row) in table_results:
                         table_results[str(row)].append(neighbor)
                     else:
                         table_results[str(row)] = [neighbor]
-            print(table_results)
-            print(frequencies)
             if dbpedia:
                 wordimages = get_images(images)
             else:
                 wordimages = None
             return render_template(
-                "contextual2.html",
+                "contextual.html",
                 results=table_results,
                 header=header,
                 sentence=sentence,
@@ -1186,13 +1184,13 @@ def dynamic_page(lang):
                 other_lang=other_lang,
                 languages=languages,
                 frequencies=frequencies,
-                model=model_inv_wordpage,
+                model=model_indv_wordpage,
                 url=url,
             )
         else:
             error_value = "Incorrect query!"
             return render_template(
-                "contextual2.html",
+                "contextual.html",
                 error=error_value,
                 other_lang=other_lang,
                 languages=languages,
@@ -1200,7 +1198,7 @@ def dynamic_page(lang):
             )
 
     return render_template(
-        "contextual2.html", other_lang=other_lang, languages=languages, url=url
+        "contextual.html", other_lang=other_lang, languages=languages, url=url
     )
 
 

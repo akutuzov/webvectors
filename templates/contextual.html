@@ -16,7 +16,7 @@
           <!-- Caption ("Enter a word..." ) -->
           <p>{{strings['contextual2']}}</p>
           <!-- If there was a request, it's shown in the field, else the default "computer_NOUN" is shown -->
-          {%- if list_value %}
+          {%- if results %}
           <input type="text" class="typeahead" id="query" name="input_sentence" value="{{ sentence }}" maxlength=100>
           {%- else %}
           <input type="text" class="typeahead" id="query" name="input_sentence" value="{{strings['contextual3']}}" maxlength=100>
@@ -27,7 +27,7 @@
       </form>
     </div>
     <!-- Featuring results -->
-    {% if list_value -%}
+    {% if results -%}
     <h3>
       <strong>
         {{strings['contextual4']}}
@@ -44,17 +44,33 @@
       <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
     </div>
     <!-- Featuring list of results -->
-    <div class="row" id="result" data-query="{{ sentence }}" data-visible="{{ visible_neighbors }}" data-result ='{{ frequencies|tojson }}'>
-      {% for word in list_value -%}
-      <div class="col-sm-4">
-        {% if (word[0]|length > 2) and (word[1] not in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART'])%}
-        <h3><strong><a href="{{ url }}{{lang}}/{{ model }}/{{word[0]}}/"
-        title="{{strings['synraw14']}} {{ frequencies[word[0]][0]}}">{{ word[0] }}</a></strong></h3>
-        <ul class="list-unstyled" id="{{ word }}" type="1">
-          {%- for res in list_value[word][:5] if res != "Incorrect tag!" %}
-          <li style="font-size: {{res[2]-}}px" data-word="{{res[0]}}" class="frequency-item-{{frequencies[res[0]][1]}}"><a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
-          title="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}"
-          class="frequency-{{frequencies[res[0]][1]}}">{{ res[0] }}</a>
+    <div class="table-responsive"'>
+      <table class="table table-borderless">
+        <thead>
+          <tr>
+      {% for word in header -%}
+          <th scope="col">
+            {% if (word[0]|length > 1) and (word[1] not in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART'])%}
+          <h3><strong>
+            <a href="{{ url }}{{lang}}/{{ model }}/{{word[0]}}/"
+          title="{{strings['synraw14']}} {{ frequencies[word[0]][0]}}">{{ word[0] }}</a>
+          </strong></h3>
+          {%- else %}
+          <h3><i>{{ word[0] }}</i></h3>
+          {% endif -%}
+          </th>
+      {% endfor -%}
+          </tr>
+        </thead>
+        <tbody>
+          {%- for row in results %}
+            <tr>
+          {% for res in results[row] %}
+          {% if res != 'None' %}
+          <td style="font-size: {{res[2]-}}px">
+              <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}" class="frequency-{{frequencies[res[0]][1]}}">
+                {{ res[0] }}
+              </a>
           {% if wordimages[res[0]] -%}
           <div class="avataricon">
             <a href="https://en.wikipedia.org/wiki/{{ res[0] }}" target="_blank">
@@ -63,14 +79,15 @@
             </a>
           </div>
           {% endif -%}
-        </li>
+        </td>
+        {% else %}
+        <td></td>
+        {% endif %}
           {%- endfor -%}
-        </ul>
-        {%- else %}
-        <h3><i>{{ word[0] }}</i></h3>
-        {% endif -%}
-      </div>
-      {% endfor -%}
+            </tr>
+          {%- endfor -%}
+      </tbody>
+      </table>
     </div>
     {% endif -%}
   </div>
