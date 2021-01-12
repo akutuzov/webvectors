@@ -26,9 +26,11 @@ def tag_ud(port, text="Do not forget to pass some text as a string!"):
     content = [line for line in processed.split("\n") if not line.startswith("#")]
 
     # Extracting lemmas and tags from the processed queries:
-    tagged = [w.split("\t")[2].lower() + "_" + w.split("\t")[3] for w in content if w]
-    poses = [t.split("_")[1] for t in tagged]
-    return poses
+    tagged = [w.split("\t")[1].lower() + '_' + w.split("\t")[2].lower() + "_" + w.split("\t")[3] for w in content if w]
+    poses = [t.split("_")[2] for t in tagged]
+    tokens = [t.split("_")[0] for t in tagged]
+    lemmas = [t.split("_")[1] for t in tagged]
+    return tokens, lemmas, poses
 
 
 def tagword(word):

@@ -68,7 +68,7 @@
           {% for res in results[row] %}
           {% if res != 'None' %}
           <td style="font-size: {{res[2]-}}px">
-              <a href="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}" class="frequency-{{frequencies[res[0]][1]}}">
+              <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}" class="frequency-{{frequencies[res[0]][1]}}">
                 {{ res[0] }}
               </a>
         </td>
