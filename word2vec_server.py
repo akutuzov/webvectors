@@ -214,7 +214,7 @@ def find_synonyms(query):
     if qf not in model.vocab:
         qf = find_variants(qf, usermodel)
         if not qf:
-            if our_models[usermodel]["algo"] == "fasttext" and model.wv.__contains__(q):
+            if our_models[usermodel]["algo"] == "fasttext" and model.__contains__(q):
                 results["inferred"] = True
                 qf = q
             else:
