@@ -1123,8 +1123,8 @@ def dynamic_page(lang):
         table_results = {}
         header = []
         sims = []
-        model_inv_wordpage = 'geowac_lemmas_none_fasttextskipgram_300_5_2020'
-        tags = tag_ud(tagger_port, sentence)
+        model_inv_wordpage = config.get("Token", "ref_static_model")
+        sentence_tags = tag_ud(tagger_port, sentence)
         if len(sentence) > 2:
             message = {
                 "operation": "5",
@@ -1137,7 +1137,7 @@ def dynamic_page(lang):
                 for n in word:
                     images[n[0].split("_")[0]] = None
             for word, neighbors, tag in zip(
-                re.findall(r"[.?]|\w+", sentence), result["neighbors"], tags
+                re.findall(r"[.?]|\w+", sentence), result["neighbors"], sentence_tags
             ):
                 if word in '.,!?-"\':;':
                     continue
@@ -1175,6 +1175,8 @@ def dynamic_page(lang):
             print(frequencies)
             if dbpedia:
                 wordimages = get_images(images)
+            else:
+                wordimages = None
             return render_template(
                 "contextual2.html",
                 results=table_results,
