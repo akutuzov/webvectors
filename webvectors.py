@@ -155,6 +155,7 @@ def process_query(userquery):
                 return "Incorrect tag!"
         else:
             if detect_tag:
+                # tokens, lemmas, poses = tag_ud(tagger_port, userquery) # Tagging with UDPipe
                 poses = tagword(userquery)  # We tag using Stanford CoreNLP
                 if len(poses) == 1:
                     pos_tag = poses[0]
@@ -1124,11 +1125,11 @@ def dynamic_page(lang):
         header = []
         sims = []
         model_indv_wordpage = config.get("Token", "ref_static_model")
-        sentence_tags = tag_ud(tagger_port, sentence)
+        tokens, lemmas, poses = tag_ud(tagger_port, sentence)
         if len(sentence) > 2:
             message = {
                 "operation": "5",
-                "query": re.findall(r"[.?]|\w+", sentence),
+                "query": tokens,
                 "nr_neighbors": 10,
             }
             result = json.loads(serverquery(message).decode("utf-8"))
@@ -1136,8 +1137,7 @@ def dynamic_page(lang):
             for word in result["neighbors"]:
                 for n in word:
                     images[n[0].split("_")[0]] = None
-            for word, neighbors, tag in zip(
-                re.findall(r"[.?]|\w+", sentence), result["neighbors"], sentence_tags
+            for word, neighbors, tag in zip(tokens, result["neighbors"], poses
             ):
                 if word in '.,!?-"\':;':
                     continue
