@@ -1171,16 +1171,11 @@ def dynamic_page(lang):
                         table_results[str(row)].append(neighbor)
                     else:
                         table_results[str(row)] = [neighbor]
-            if dbpedia:
-                wordimages = get_images(images)
-            else:
-                wordimages = None
             return render_template(
                 "contextual.html",
                 results=table_results,
                 header=header,
                 sentence=sentence,
-                wordimages=wordimages,
                 other_lang=other_lang,
                 languages=languages,
                 frequencies=frequencies,
