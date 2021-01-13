@@ -22,6 +22,14 @@
           <input type="text" id="query" name="input_sentence" value="{{strings['contextual3']}}" maxlength=100 size=100  style="max-width:100%;">
           {% endif -%}
         </div>
+        <div class="radio">
+        <p><em>{{strings['contextual9']}}</em></p>
+        {%- for m in all_layers %}
+        <label>
+        <input type="radio" name="elmo_layers" {%if m in user_layer %}checked{% endif %} value="{{ m }}">{{ strings[m] }}
+        </label>
+        {%- endfor %}
+      </div>
         <!-- Button "Find similar words!" is placed in <form> to be able to send data to the server -->
         <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['contextual5']}}</button>
       </form>

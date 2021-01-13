@@ -356,13 +356,14 @@ def scalculator(query):
 
 def contextual(query):
     q = [query["query"]]
+    layer = query["layers"]
     results = {"frequencies": {w: 0 for w in q[0]}}
     for word in q[0]:
         results["frequencies"][word] = frequency(
             word, defaultmodel, external=elmo_frequency
         )
     with graph.as_default():
-        elmo_vectors = token_model.get_elmo_vectors(q, layers="top")
+        elmo_vectors = token_model.get_elmo_vectors(q, layers=layer)
     results["neighbors"] = []
     for word, embedding in zip(q[0], elmo_vectors[0, :, :]):
         neighbors = type_model.similar_by_vector(embedding)

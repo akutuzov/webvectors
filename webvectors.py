@@ -1118,7 +1118,11 @@ def contextual_page(lang):
 
     if request.method == "POST":
         sentence = request.form["input_sentence"]
-
+        layers_value = request.form.getlist("elmo_layers")
+        if len(layers_value) < 1:
+            layer = "top"
+        else:
+            layer = layers_value[0]
         images = {}
         results = {}
         table_results = {}
@@ -1130,6 +1134,7 @@ def contextual_page(lang):
             message = {
                 "operation": "5",
                 "query": tokens,
+                "layers": layer,
                 "nr_neighbors": 10,
             }
             result = json.loads(serverquery(message).decode("utf-8"))
@@ -1182,6 +1187,8 @@ def contextual_page(lang):
                 frequencies=frequencies,
                 model=model_indv_wordpage,
                 url=url,
+                user_layer=layer,
+                all_layers=all_layers,
             )
         else:
             error_value = "Incorrect query!"
@@ -1191,10 +1198,11 @@ def contextual_page(lang):
                 other_lang=other_lang,
                 languages=languages,
                 url=url,
+                all_layers=all_layers
             )
 
     return render_template(
-        "contextual.html", other_lang=other_lang, languages=languages, url=url
+        "contextual.html", other_lang=other_lang, languages=languages, url=url, all_layers=all_layers
     )
 
 
