@@ -1116,6 +1116,8 @@ def contextual_page(lang):
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
 
+    all_layers = ["top", "average"]
+
     if request.method == "POST":
         sentence = request.form["input_sentence"]
         elmo_history = request.form["elmo_history"]
@@ -1147,12 +1149,12 @@ def contextual_page(lang):
             for word in result["neighbors"]:
                 for n in word:
                     images[n[0].split("_")[0]] = None
-            for word, neighbors, tag in zip(tokens, result["neighbors"], poses
+            for num, word, neighbors, tag in zip(range(len(tokens)), tokens, result["neighbors"], poses
             ):
                 if word in '.,!?-"\':;':
                     continue
                 sims += [x[1] for x in neighbors]
-                results[(word, tag)] = neighbors
+                results[(word, tag, num)] = neighbors
             max_sim, min_sim = max(sims), min(sims)
             sim_range = max_sim - min_sim
             sim_tier = sim_range / 5
@@ -1176,7 +1178,7 @@ def contextual_page(lang):
                         break
                     neighbor = results[word][row]
                     if len(word[0]) < 2 or word[1] in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART']:
-                        neighbor = 'None'
+                        neighbor = (word[0], 'None')
                     if str(row) in table_results:
                         table_results[str(row)].append(neighbor)
                     else:
