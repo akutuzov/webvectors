@@ -169,5 +169,6 @@ contextual6,"Мы используем модель ELMo <a href=""https://rusve
 contextual7,"Лексические подстановки иначе называются <i>парадигматические замены</i>. Это слова, которые можно было  подставить на место соответствующего слова в предложении.","Lexical substitutes are also known as <i>paradigmatic replacements</i>. These are the words which can in theory replace the corresponding word in your input sentence."
 contextual8,"<strong>Подстановки будут меняться в зависимости от контекста</strong>, окружающего слово. Чем больше размер шрифта у подстановки, тем более уверена в ней модель.","<strong>Substitutes will change depending on the context</strong>. The larger is the substitute font size, the more certain ELMo is about this word."
 contextual9,"Выберите слой модели","Choose the model layer"
+contextual10,История лексических подстановок, Substitute queries history
 top,"Только верхний слой","Top layer only"
 average,"Среднее всех слоёв","All layers averaged"

@@ -1118,6 +1118,11 @@ def contextual_page(lang):
 
     if request.method == "POST":
         sentence = request.form["input_sentence"]
+        elmo_history = request.form["elmo_history"]
+        if not elmo_history.strip():
+            elmo_history = []
+        else:
+            elmo_history = json.loads(elmo_history)
         layers_value = request.form.getlist("elmo_layers")
         if len(layers_value) < 1:
             layer = "top"
@@ -1176,6 +1181,10 @@ def contextual_page(lang):
                         table_results[str(row)].append(neighbor)
                     else:
                         table_results[str(row)] = [neighbor]
+            elmo_history.append([header, table_results])
+            if len(elmo_history) > 5:
+                 elmo_history = elmo_history[-5:]
+            str_elmo_history = json.dumps(elmo_history, ensure_ascii=False)
             return render_template(
                 "contextual.html",
                 results=table_results,
@@ -1189,6 +1198,8 @@ def contextual_page(lang):
                 url=url,
                 user_layer=layer,
                 all_layers=all_layers,
+                elmo_hist=elmo_history,
+                str_elmo_history=str_elmo_history,
             )
         else:
             error_value = "Incorrect query!"
