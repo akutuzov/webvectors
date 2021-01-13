@@ -17,14 +17,15 @@
           <p>{{strings['contextual2']}}</p>
           <!-- If there was a request, it's shown in the field, else the default "computer_NOUN" is shown -->
           {%- if results %}
-          <input type="text" class="typeahead" id="query" name="input_sentence" value="{{ sentence }}" maxlength=100>
+          <input type="text" id="query" name="input_sentence" value="{{ sentence }}" maxlength=100 size=100  style="max-width:100%;">
           {%- else %}
-          <input type="text" class="typeahead" id="query" name="input_sentence" value="{{strings['contextual3']}}" maxlength=100>
+          <input type="text" id="query" name="input_sentence" value="{{strings['contextual3']}}" maxlength=100 size=100  style="max-width:100%;">
           {% endif -%}
         </div>
         <!-- Button "Find similar words!" is placed in <form> to be able to send data to the server -->
-        <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['similar15']}}</button>
+        <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['contextual5']}}</button>
       </form>
+
     </div>
     <!-- Featuring results -->
     {% if results -%}
@@ -82,6 +83,9 @@
       </table>
     </div>
     {% endif -%}
+    <p>{{strings['contextual6']}} </p>
+    <p>{{strings['contextual7']}} </p>
+    <p>{{strings['contextual8']}} </p>
   </div>
   <!-- class="col-md-10" ends -->
 </div>
