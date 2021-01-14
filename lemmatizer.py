@@ -33,12 +33,12 @@ def tag_ud(port, text="Do not forget to pass some text as a string!"):
     return tokens, lemmas, poses
 
 
-def tagword(word):
+def tagword(word, return_tokens=False):
     # Stanford CoreNLP tagging for English (and other languages)
     # Demands Stanford Core NLP server running on a defined port
     # Start server with something like:
     # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer --port 9999
-    port = 9999
+    port = 29999
 
     corenlp = requests.post(
         "http://localhost:%s/?properties="
@@ -49,9 +49,17 @@ def tagword(word):
     if len(tagged["sentences"]) < 1:
         return "Error!"
     poses = []
+    tokens = []
+    lemmas = []
     for el in tagged["sentences"][0]["tokens"]:
         pos = el["pos"]
+        token = el["word"]
+        lemma = el["lemma"]
+        tokens.append(token)
+        lemmas.append(lemma)
         poses.append(ptb2upos[pos])
+    if return_tokens:
+        return tokens, lemmas, poses
     return poses
 
 
