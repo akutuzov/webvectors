@@ -155,8 +155,8 @@ def process_query(userquery):
                 return "Incorrect tag!"
         else:
             if detect_tag:
-                # tokens, lemmas, poses = tag_ud(tagger_port, userquery) # Tagging with UDPipe
-                poses = tagword(userquery)  # We tag using Stanford CoreNLP
+                tokens, lemmas, poses = tag_ud(tagger_port, userquery) # Tagging with UDPipe
+                # poses = tagword(userquery)  # We tag using Stanford CoreNLP
                 if len(poses) == 1:
                     pos_tag = poses[0]
                 else:
