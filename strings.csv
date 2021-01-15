@@ -158,7 +158,7 @@ graph2,Порог близости,Similarity threshold
 graph3,Связи между парами слов с меньшей косинусной близостью не будут показаны,Edges between word pairs with lower cosine similarity will be hidden
 graph4,Число соседей,Number of neighbours
 graph5,Максимальное число. Может измениться в результате частотной фильтрации,Maximum possible number. It can depend on words' frequency in result
-graph6, Показать теги,Show tags
+graph6,Показать теги,Show tags
 graph7,Обновить,Refresh
 contextual0,Использование контекстуализированных моделей не настроено.,Contextualized embeddings are not configured.
 contextual1,Двумерный текст: визуализация контекстуализированных языковых моделей,Two-dimensional text: visualising contextualized language models

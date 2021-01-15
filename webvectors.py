@@ -1188,7 +1188,7 @@ def contextual_page(lang):
                         table_results[str(row)] = [neighbor]
             elmo_history.append([header, table_results])
             if len(elmo_history) > 5:
-                 elmo_history = elmo_history[-5:]
+                elmo_history = elmo_history[-5:]
             str_elmo_history = json.dumps(elmo_history, ensure_ascii=False)
             return render_template(
                 "contextual.html",
@@ -1220,7 +1220,8 @@ def contextual_page(lang):
         return render_template("contextual.html", error="misconfiguration",
         other_lang=other_lang, languages=languages,url=url)
     return render_template(
-        "contextual.html", other_lang=other_lang, languages=languages, url=url, all_layers=all_layers
+        "contextual.html", other_lang=other_lang, languages=languages, url=url,
+        all_layers=all_layers
     )
 
 
