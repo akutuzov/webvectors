@@ -21,7 +21,7 @@ if __name__ == "__main__":
     arg("--input", "-i", help="Path to input text", required=True)
     arg("--elmo", "-e", help="Path to ELMo model", required=True)
     arg("--outfile", "-o", help="Output file to save embeddings", default="type_embeddings.vec.gz")
-    arg("--outvocab", help="Where to store real vocabulary", required=True),
+    arg("--outvocab", help="Where to store real vocabulary", default="real_vocab.json"),
     arg("--vocab", "-v", help="Path to vocabulary file", required=True)
     arg("--batch", "-b", help="ELMo batch size", default=256, type=int)
     arg(
