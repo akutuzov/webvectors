@@ -18,7 +18,7 @@ base16,Switch language,Сменить язык
 base17,Различные операции,Miscellaneous
 base18,"Слова, выделенные <span style='color: green;'>зеленым</span>, являются высокочастотными (доля в корпусе выше 0.00001); слова, выделенные <span style='color: red;'>красным</span>, являются низкочастотными (доля в корпусе ниже 0.0000005).","Words in <span style='color: green;'>green</span> are top frequent (corpus ratio higher than 0.00001); words in <span style='color: red;'>red</span>, are low frequent (corpus ratio less than 0.0000005)."
 base19,"Показаны только ассоциаты той же части речи, что и слово в запросе. Изменить этот фильтр можно на вкладке <a href=""/associates/"">Похожие слова</a>.","We show only the associates of the same part of speech as your query. All associates can be found at the <a href=""/associates/"">Similar Words</a> tab."
-base20,Динамические модели,Dynamic models
+base20,2D-текст,2D text
 calc1,Семантический калькулятор,Semantic Calculator
 calc2,Алгебраические операции,Algebraic operations
 calc3,"Введите в&nbsp;&laquo;<strong>положительную</strong>&raquo; и&nbsp;&laquo;<strong>отрицательную</strong>&raquo; формы не&nbsp;более 10&nbsp;слов через пробел. <i>WebVectors</i> сложит вектора положительных слов и&nbsp;вычтет из&nbsp;них отрицательные. Затем он&nbsp;выдаст слова, наиболее близкие к&nbsp;получившемуся вектору. Если вы&nbsp;оставите отрицательное поле пустым, <i>WebVectors</i> просто найдет центр лексического кластера, образованного положительными словами.","Enter not more than 10&nbsp;space-separated words into <strong>positive</strong> and <strong>negative</strong> forms. <i>WebVectors</i> will sum up&nbsp;vectors for the positive words and subtract vectors from the negative ones. Then it&nbsp;will output the word closest to&nbsp;the resulting vector. If&nbsp;you leave negative form empty, <i>WebVectors</i> will simply find the center of&nbsp;word cluster formed by&nbsp;your positive words."
@@ -160,6 +160,7 @@ graph4,Число соседей,Number of neighbours
 graph5,Максимальное число. Может измениться в результате частотной фильтрации,Maximum possible number. It can depend on words' frequency in result
 graph6, Показать теги,Show tags
 graph7,Обновить,Refresh
+contextual0,Использование контекстуализированных моделей не настроено.,Contextualized embeddings are not configured.
 contextual1,Двумерный текст: визуализация контекстуализированных языковых моделей,Two-dimensional text: visualising contextualized language models
 contextual2,Введите фразу или предложение (5-15 слов):,Input a phrase or a sentence (5-15 words):
 contextual3,Сосновый бор тянется на многие километры,Сосновый бор тянется на многие километры

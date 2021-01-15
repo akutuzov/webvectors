@@ -60,6 +60,9 @@ except socket.gaierror:
     print("Hostname could not be resolved. Exiting", file=sys.stderr)
     sys.exit()
 
+# Contextualized models:
+contextual = config.getboolean("Token", "use_contextualized")
+
 
 def serverquery(d_message):
     # create an INET, STREAMing socket
@@ -1213,7 +1216,9 @@ def contextual_page(lang):
                 url=url,
                 all_layers=all_layers
             )
-
+    if not contextual:
+        return render_template("contextual.html", error="misconfiguration",
+        other_lang=other_lang, languages=languages,url=url)
     return render_template(
         "contextual.html", other_lang=other_lang, languages=languages, url=url, all_layers=all_layers
     )
@@ -1498,6 +1503,7 @@ def about_page(lang):
 @wvectors.route(url + "calculator/", methods=["GET", "POST"])
 @wvectors.route(url + "similar/", methods=["GET", "POST"])
 @wvectors.route(url + "associates/", methods=["GET", "POST"])
+@wvectors.route(url + "contextual/", methods=['GET', 'POST'])
 @wvectors.route(url + "visual/", methods=["GET", "POST"])
 @wvectors.route(url + "models/", methods=["GET", "POST"])
 @wvectors.route(url, methods=["GET", "POST"])

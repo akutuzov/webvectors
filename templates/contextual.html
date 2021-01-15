@@ -137,6 +137,17 @@
     {%- endif %}
 
     {% endif -%}
+
+    {% if error %}
+
+    {% if "misconfiguration" in error %}
+        <p>{{strings['contextual0']}} </p>
+    {% else %}
+        <p>{{ error }}</p>
+    {% endif -%}
+
+    {% endif -%}
+
     <p>{{strings['contextual6']}} </p>
     <p>{{strings['contextual7']}} </p>
     <p>{{strings['contextual8']}} </p>
