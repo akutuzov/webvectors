@@ -20,7 +20,7 @@ if __name__ == "__main__":
     arg = parser.add_argument
     arg("--input", "-i", help="Path to input text", required=True)
     arg("--elmo", "-e", help="Path to ELMo model", required=True)
-    arg("--outfile", "-o", help="Output file to save embeddings", required=True)
+    arg("--outfile", "-o", help="Output file to save embeddings", default="type_embeddings.vec.gz")
     arg("--outvocab", help="Where to store real vocabulary", required=True),
     arg("--vocab", "-v", help="Path to vocabulary file", required=True)
     arg("--batch", "-b", help="ELMo batch size", default=256, type=int)
@@ -110,9 +110,9 @@ if __name__ == "__main__":
 
     logger.info("Saving...")
 
-    np.savez_compressed(args.outfile, vect_dict)
+    np.savez_compressed("type_vectors.npz", vect_dict)
 
+    a = save_word2vec_format(args.outfile, word_list, vect_dict, binary=False)
+    
     logger.info(f"Vectors saved to {args.outfile}")
-
-    a = save_word2vec_format(args.outfile + ".txt", word_list, vect_dict, binary=False)
 
