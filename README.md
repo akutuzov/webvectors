@@ -1,6 +1,6 @@
 # webvectors
-_Webvectors_ is a toolkit to serve vector semantic models (particularly, distributional word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. 
-It requires Python >= 3.6, and uses _Flask_ and _Gensim_ under the hood.
+_Webvectors_ is a toolkit to serve vector semantic models (particularly, prediction-based word embeddings, as in _word2vec_ or _ELMo_) over the web, making it easy to demonstrate their abilities to general public. 
+It requires Python >= 3.6, and uses _Flask_, _Gensim_ and _simple_elmo_ under the hood.
 
 Working demos:
 <ul>
@@ -45,11 +45,11 @@ Most important settings are:
 **Tags**
 
 Models can use arbitrary tags assigned to words (for example, part-of-speech tags, as in _boot_NOUN_). If your models are trained on words with tags, you should switch this on in `webvectors.cfg` (`use_tags` variable).
-Then, _WebVectors_ will allow users to limit their queries by tags. You also should specify the list of allowed tags (`tags_list` variable in `webvectors.cfg`) and the list of tags which will be shown to the user (`tags.tsv` file).
+Then, _WebVectors_ will allow users to filter their queries by tags. You also should specify the list of allowed tags (`tags_list` variable in `webvectors.cfg`) and the list of tags which will be shown to the user (`tags.tsv` file).
 
 **Models daemon**
 
-_WebVectors_ uses a daemon, which runs in the background and actually processes all embedding tasks. It can also run on a different machine, if you want. Thus, in `webvectors.cfg` you should specify `host` and `port` that this daemon will listen at.
+_WebVectors_ uses a daemon, which runs in the background and actually processes all embedding-related tasks. It can also run on a different machine, if you want. Thus, in `webvectors.cfg` you should specify `host` and `port` that this daemon will listen at.
 After that, start the actual daemon script `word2vec_server.py`. It will load the models and open a listening socket. This daemon must be active permanently, so you may want to launch it using _screen_ or something like this.
 
 **Models**
@@ -66,11 +66,11 @@ The list of models you want to use is defined in the file `models.tsv`. It consi
 <li> size of the training corpus in words</li>
 </ul>
 
-Model identifier will be used as the name for checkboxes, and it is also important that in `strings.csv` the same identifier is used when denoting model names.
+Model identifier will be used as the name for checkboxes in the web pages, and it is also important that in the `strings.csv` file the same identifier is used when denoting model names.
 
-Models can currently be of 4 formats:
+Models can currently be in 4 formats:
 <ul>
- <li> plain text _word2vec_ models (ends with `.vec`); </li>
+<li> plain text _word2vec_ models (ends with `.vec`); </li>
 <li> binary _word2vec_ models (ends with `.bin`); </li>
 <li> Gensim format _word2vec_ models (ends with `.model`); </li>
 <li> Gensim format _fastText_ models (ends with `.model`).</li>
@@ -80,12 +80,12 @@ _WebVectors_ will automatically detect models format and load all of them into m
 
 **Localization**
 
-_WebVectors_ uses `strings.csv` file as the source of localized strings. It is a comma-separated file with 3 fields:
+_WebVectors_ uses the `strings.csv` file as the source of localized strings. It is a comma-separated file with 3 fields:
 <ul><li> identifier </li>
 <li> string in language 1 </li>
 <li> string in language 2 </li></ul>
 
-By default, language 1 is English and language 2 is Russian. This can be changed is `webvectors.cfg`.
+By default, language 1 is English and language 2 is Russian. This can be changed in `webvectors.cfg`.
 
 **Templates**
 
@@ -93,8 +93,8 @@ Actual web pages shown to user are defined in the files `templates/*.html`.
 Tune them as you wish. The main menu is defined at `base.html`.
 
 **Query hints**
-If you want query hints to work, do not forget to compile your own list of hints (JSON format). Example of such a list is given in data/example_vocab.json.
-Real URL of this list should be stated in data/hint.js.
+If you want query hints to work, do not forget to compile your own list of hints (JSON format). Example of such a list is given in `data/example_vocab.json`.
+Real URL of this list should be stated in `data/hint.js`.
 
 **Running WebVectors**
 
@@ -105,6 +105,26 @@ If you prefer the standalone option, execute the following command in the root d
 `gunicorn run_syn:app_syn -b address:port`
 
 where _address_ is the address on which the service should be active (can be localhost), and _port_ is, well, port to listen (for example, 9999).
+
+**Support for contextualized embeddings**
+You can turn on support for contextualized embedding models (currently [ELMo](https://allennlp.org/elmo) is supported). In order to do that:
+1. Install [simple_elmo](https://pypi.org/project/simple-elmo/) package
+
+2. Download an ELMo model of your choice (for example, [here](http://vectors.nlpl.eu/repository/)).
+
+3. Create a type-based projection in the `word2vec` format for a limited set of words (for example 10 000), given the ELMo model and a reference corpus. For this, use the [`extract_elmo.py`](https://github.com/akutuzov/webvectors/blob/master/elmo/extract_elmo.py) script we provide:
+
+`python3 extract_elmo.py --input CORPUS --elmo PATH_TO_ELMO --outfile TYPE_EMBEDDING_FILE --vocab WORD_SET_FILE`
+
+It will run the ELMo model over the provided corpus and generate static averaged type embeddings for each word in the word set. They will be used as lexical substitutes.
+
+4. Prepare a frequency dictionary to use with the contextualized visualizations, as a plain-text tab-separated file, where the first column contains words and the second column contains their frequencies in the reference dictionary of your choice. The first line of this file should contain one integer matching the size of the corpus in word tokens.
+
+5. In the `[Token]` section of the `webvectors.cfg` configuration file, switch `use_contextualized` to True and state the paths to your `token_model` (pre-trained ELMo), `type_model` (the type-based projection you created with our script) and `freq_file` which is your frequency dictionary.
+
+6. In the `ref_static_model` field, specify any of your static word embedding models (just its name), which you want to use as the target of hyperlinks from words in the contextualized visualization pages.
+
+7. The page with ELMo lexical substitutes will be available at http://YOUR_ROOT_URL/contextual/
 
 
 ## Contacts
