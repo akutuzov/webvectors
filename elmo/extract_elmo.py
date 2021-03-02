@@ -6,7 +6,7 @@ import numpy as np
 from smart_open import open
 from simple_elmo import ElmoModel
 import logging
-import json
+from collections import Counter
 import time
 from helpers import save_word2vec_format
 
@@ -18,11 +18,20 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     arg = parser.add_argument
-    arg("--input", "-i", help="Path to input text", required=True)
+    arg("--input", "-i", help="Path to the input corpus", required=True)
     arg("--elmo", "-e", help="Path to ELMo model", required=True)
-    arg("--outfile", "-o", help="Output file to save embeddings", default="type_embeddings.vec.gz")
-    arg("--outvocab", help="Where to store real vocabulary", default="real_vocab.json"),
-    arg("--vocab", "-v", help="Path to vocabulary file", required=True)
+    arg("--outfile", "-o", help="Output file to save type embeddings",
+        default="type_embeddings.vec.gz")
+    arg("--vocab", "-v", help="Path to frequency dictionary file. "
+                              "Format: tab-separated, with word in the first column and absolute "
+                              "frequency in the second column. "
+                              "One word per line, sorted by decreasing frequency."
+                              "Corpus size in word tokens must be given in the first line "
+                              "(without tabs). "
+                              "If vocabulary is not provided, "
+                              "it will be inferred from the input corpus. ")
+    arg("--vocab_size", "-v", help="How many top frequent words to create type embeddings for",
+        type=int, default=10000)
     arg("--batch", "-b", help="ELMo batch size", default=256, type=int)
     arg(
         "--layers",
@@ -42,24 +51,46 @@ if __name__ == "__main__":
     args = parser.parse_args()
     data_path = args.input
     batch_size = args.batch
-    vocab_path = args.vocab
+    if args.vocab:
+        vocab_path = args.vocab
+    else:
+        vocab_path = None
     WORD_LIMIT = 400
 
     word_list = []
-    with open(vocab_path, "r") as f:
-        for line in f.readlines():
-            word = line.strip()
-            if word.isdigit():
-                continue
-            if len(word) < 2:
-                continue
-            word_list.append(word)
+    if vocab_path:
+        with open(vocab_path, "r") as f:
+            for line in f.readlines():
+                word = line.strip()
+                if word.isdigit():
+                    continue
+                if len(word) < 2:
+                    continue
+                word_list.append(word)
+                if len(word_list) == args.vocab_size:
+                    break
+
+    else:
+        logger.info("No vocabulary provided; inferring it from the corpus.")
+        inferred_voc = Counter()
+        total_word_count = 0
+        with open(data_path, "r") as corpus:
+            for line in corpus:
+                tokenized = line.strip().split()
+                total_word_count += len(tokenized)
+                inferred_voc.update(tokenized)
+        top_frequent = inferred_voc.most_common(args.vocab_size)
+        for w in top_frequent:
+            word_list.append(w)
+        logger.info("Vocabulary inferred.")
+        outvocab = "freq_vocab.tsv.gz"
+        with open(outvocab, "w") as f:
+            f.write(f"{total_word_count}\n")
+            for w in inferred_voc:
+                f.write(f"{w[0]}\t{w[1]}\n")
+        logger.info(f"Inferred vocabulary saved to {outvocab}. Use it in the WebVectors config.")
 
     logger.info(f"Words to test: {len(word_list)}")
-
-    with open(args.outvocab, "w") as f:
-        out = json.dumps(word_list, ensure_ascii=False)
-        f.write(out)
 
     # Loading a pre-trained ELMo model:
     model = ElmoModel()
@@ -113,6 +144,8 @@ if __name__ == "__main__":
     np.savez_compressed("type_vectors.npz", vect_dict)
 
     a = save_word2vec_format(args.outfile, word_list, vect_dict, binary=False)
+    binary_file = args.outfile.split(".")[0] + ".bin"
+    b = save_word2vec_format(binary_file, word_list, vect_dict, binary=True)
     
-    logger.info(f"Vectors saved to {args.outfile}")
+    logger.info(f"Vectors saved to {args.outfile} and {binary_file}")
 

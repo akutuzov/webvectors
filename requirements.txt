@@ -1,4 +1,3 @@
-pylab
 flask
 requests
 gensim > 3.2
