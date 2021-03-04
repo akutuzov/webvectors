@@ -30,7 +30,7 @@ if __name__ == "__main__":
                               "(without tabs). "
                               "If vocabulary is not provided, "
                               "it will be inferred from the input corpus. ")
-    arg("--vocab_size", "-v", help="How many top frequent words to create type embeddings for",
+    arg("--vocab_size", "-vs", help="How many top frequent words to create type embeddings for",
         type=int, default=10000)
     arg("--batch", "-b", help="ELMo batch size", default=256, type=int)
     arg(
@@ -146,6 +146,6 @@ if __name__ == "__main__":
     a = save_word2vec_format(args.outfile, word_list, vect_dict, binary=False)
     binary_file = args.outfile.split(".")[0] + ".bin"
     b = save_word2vec_format(binary_file, word_list, vect_dict, binary=True)
-    
+
     logger.info(f"Vectors saved to {args.outfile} and {binary_file}")
 
