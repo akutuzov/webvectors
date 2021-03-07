@@ -61,7 +61,7 @@ if __name__ == "__main__":
     if vocab_path:
         with open(vocab_path, "r") as f:
             for line in f.readlines():
-                word = line.strip()
+                word, frequency = line.strip().split("\t")
                 if word.isdigit():
                     continue
                 if len(word) < 2:
@@ -81,13 +81,16 @@ if __name__ == "__main__":
                 inferred_voc.update(tokenized)
         top_frequent = inferred_voc.most_common(args.vocab_size)
         for w in top_frequent:
-            word_list.append(w)
+            if len(w[0]) > 2:
+                word_list.append(w[0])
         logger.info("Vocabulary inferred.")
         outvocab = "freq_vocab.tsv.gz"
+        all_words = inferred_voc.most_common(len(inferred_voc))
         with open(outvocab, "w") as f:
             f.write(f"{total_word_count}\n")
-            for w in inferred_voc:
-                f.write(f"{w[0]}\t{w[1]}\n")
+            for w in all_words:
+                if w[1] > 1:
+                    f.write(f"{w[0]}\t{w[1]}\n")
         logger.info(f"Inferred vocabulary saved to {outvocab}. Use it in the WebVectors config.")
 
     logger.info(f"Words to test: {len(word_list)}")
@@ -104,7 +107,7 @@ if __name__ == "__main__":
     # Actually producing ELMo embeddings for our data:
     start = time.time()
 
-    CACHE = 12800
+    CACHE = 5120
 
     lines_processed = 0
     lines_cache = []

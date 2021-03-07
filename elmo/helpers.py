@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import numpy as np
+from numpy import float32 as real
 from smart_open import open
 
 def any2utf8(text, errors='strict', encoding='utf8'):
