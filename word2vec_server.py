@@ -48,6 +48,21 @@ def clientthread(connect, address):
     # came out of loop
     connect.close()
 
+def create_model_graph(m, token_model_file, frequency_file):
+    graph = tf.compat.v1.get_default_graph()
+    with graph.as_default() as g:
+        with g.name_scope(m) as scope:
+            token_model = ElmoModel()
+            token_model.load(token_model_file)
+            elmo_frequency = {}
+            for line in open(frequency_file, "r"):
+                if "\t" not in line:
+                    elmo_frequency["corpus_size"] = int(line.strip())
+                else:
+                    (external_word, frequency) = line.strip().split("\t")
+                    elmo_frequency[external_word] = int(frequency)
+    return token_model, elmo_frequency, g
+
 
 config = configparser.RawConfigParser()
 config.read("webvectors.cfg")
@@ -90,18 +105,9 @@ if contextualized:
         frequency_file = contextual_models[m]["freq_path"]
 
         type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file, binary=True)
-        graph = tf.compat.v1.get_default_graph()
-        with graph.as_default():
-            token_model = ElmoModel()
-            token_model.load(token_model_file)
-            elmo_frequency = {}
-            for line in open(frequency_file, "r"):
-                if "\t" not in line:
-                    elmo_frequency["corpus_size"] = int(line.strip())
-                else:
-                    (external_word, frequency) = line.strip().split("\t")
-                    elmo_frequency[external_word] = int(frequency)
-        contextual_models_dic[m] = (token_model, type_model, elmo_frequency)
+        token_model, elmo_frequency, g = create_model_graph(m, token_model_file, frequency_file)
+        contextual_models_dic[m] = (token_model, type_model, elmo_frequency, g)
+        tf.compat.v1.get_variable_scope().reuse_variables()
 
 our_models = {}
 with open(root + config.get("Files and directories", "models"), "r") as csvfile:
@@ -379,6 +385,7 @@ def contextual(query):
     token_model = contextual_models_dic[usermodel][0]
     type_model = contextual_models_dic[usermodel][1]
     elmo_frequency = contextual_models_dic[usermodel][2]
+    graph = contextual_models_dic[usermodel][3]
     results = {"frequencies": {w: 0 for w in q[0]}}
     for word in q[0]:
         results["frequencies"][word] = frequency(
