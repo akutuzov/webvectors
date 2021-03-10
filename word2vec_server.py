@@ -50,7 +50,7 @@ def clientthread(connect, address):
 
 
 def create_model_graph(model_identifier, tmodelfile, ffile):
-    graph = tf.compat.v1.get_default_graph()
+    graph = tf.Graph()
     with graph.as_default() as current_graph:
         with current_graph.name_scope(model_identifier) as scope:
             tmodel = ElmoModel()
@@ -108,7 +108,6 @@ if contextualized:
         type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file, binary=True)
         token_model, elmo_frequency, g = create_model_graph(m, token_model_file, frequency_file)
         contextual_models_dic[m] = (token_model, type_model, elmo_frequency, g)
-        tf.compat.v1.get_variable_scope().reuse_variables()
 
 our_models = {}
 with open(root + config.get("Files and directories", "models"), "r") as csvfile:

@@ -37,8 +37,7 @@ dbpedia = config.getboolean("Other", "dbpedia_images")
 languages_list = config.get("Languages", "interface_languages").split(",")
 
 if detect_tag:
-    from lemmatizer import tag_ud
-
+    from lemmatizer import tagword, tag_ud
     tagger_port = config.getint("Sockets", "tagger_port")
 
 tensorflow_integration = config.getboolean("Other", "tensorflow_projector")
@@ -1158,7 +1157,8 @@ def contextual_page(lang):
         header = []
         sims = []
         model_indv_wordpage = contextual_model_props[model]["ref_static"]
-        tokens, lemmas, poses = tag_ud(tagger_port, sentence)
+        tokens, lemmas, poses = tag_ud(tagger_port, sentence)  # For UDPipe
+        # tokens, lemmas, poses = tagword(sentence, return_tokens=True)  # For CoreNLP
         if len(sentence) > 2:
             message = {
                 "operation": "5",
@@ -1530,7 +1530,7 @@ def about_page(lang):
 @wvectors.route(url + "calculator/", methods=["GET", "POST"])
 @wvectors.route(url + "similar/", methods=["GET", "POST"])
 @wvectors.route(url + "associates/", methods=["GET", "POST"])
-@wvectors.route(url + "contextual/", methods=['GET', 'POST'])
+@wvectors.route(url + "contextual/", methods=["GET", "POST"])
 @wvectors.route(url + "visual/", methods=["GET", "POST"])
 @wvectors.route(url + "models/", methods=["GET", "POST"])
 @wvectors.route(url, methods=["GET", "POST"])
