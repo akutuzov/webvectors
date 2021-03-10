@@ -48,20 +48,21 @@ def clientthread(connect, address):
     # came out of loop
     connect.close()
 
-def create_model_graph(m, token_model_file, frequency_file):
+
+def create_model_graph(model_identifier, tmodelfile, ffile):
     graph = tf.compat.v1.get_default_graph()
-    with graph.as_default() as g:
-        with g.name_scope(m) as scope:
-            token_model = ElmoModel()
-            token_model.load(token_model_file)
-            elmo_frequency = {}
-            for line in open(frequency_file, "r"):
+    with graph.as_default() as current_graph:
+        with current_graph.name_scope(model_identifier) as scope:
+            tmodel = ElmoModel()
+            tmodel.load(tmodelfile)
+            freqdic = {}
+            for line in open(ffile, "r"):
                 if "\t" not in line:
-                    elmo_frequency["corpus_size"] = int(line.strip())
+                    freqdic["corpus_size"] = int(line.strip())
                 else:
-                    (external_word, frequency) = line.strip().split("\t")
-                    elmo_frequency[external_word] = int(frequency)
-    return token_model, elmo_frequency, g
+                    (external_word, corp_frequency) = line.strip().split("\t")
+                    freqdic[external_word] = int(corp_frequency)
+    return tmodel, freqdic, current_graph
 
 
 config = configparser.RawConfigParser()
@@ -136,10 +137,10 @@ for m in our_models:
             )
             our_models[m]["vocabulary"] = False
         elif (
-            modelfile.endswith(".vec.gz")
-            or modelfile.endswith(".txt.gz")
-            or modelfile.endswith(".vec")
-            or modelfile.endswith(".txt")
+                modelfile.endswith(".vec.gz")
+                or modelfile.endswith(".txt.gz")
+                or modelfile.endswith(".vec")
+                or modelfile.endswith(".txt")
         ):
             models_dic[m] = gensim.models.KeyedVectors.load_word2vec_format(
                 modelfile, binary=False
@@ -360,7 +361,7 @@ def scalculator(query):
                 nlist.append(q)
     if pos == "ALL":
         for w in model.most_similar(
-            positive=plist, negative=nlist, topn=nr_neighbors
+                positive=plist, negative=nlist, topn=nr_neighbors
         ):
             results["neighbors"].append(w)
     else:
@@ -382,24 +383,24 @@ def contextual(query):
     q = [query["query"]]
     layer = query["layers"]
     usermodel = query["model"]
-    token_model = contextual_models_dic[usermodel][0]
-    type_model = contextual_models_dic[usermodel][1]
-    elmo_frequency = contextual_models_dic[usermodel][2]
+    tmodel = contextual_models_dic[usermodel][0]
+    tp_model = contextual_models_dic[usermodel][1]
+    freqdic = contextual_models_dic[usermodel][2]
     graph = contextual_models_dic[usermodel][3]
     results = {"frequencies": {w: 0 for w in q[0]}}
     for word in q[0]:
         results["frequencies"][word] = frequency(
-            word, defaultmodel, external=elmo_frequency
+            word, defaultmodel, external=freqdic
         )
     with graph.as_default():
-        elmo_vectors = token_model.get_elmo_vectors(q, layers=layer)
+        elmo_vectors = tmodel.get_elmo_vectors(q, layers=layer)
     results["neighbors"] = []
     for word, embedding in zip(q[0], elmo_vectors[0, :, :]):
-        neighbors = type_model.similar_by_vector(embedding)
+        neighbors = tp_model.similar_by_vector(embedding)
         neighbors = [n for n in neighbors if n[0] != word]
         for neighbor in neighbors:
             results["frequencies"][neighbor[0]] = frequency(
-                neighbor[0], defaultmodel, external=elmo_frequency
+                neighbor[0], defaultmodel, external=freqdic
             )
         results["neighbors"].append(neighbors)
     return results
