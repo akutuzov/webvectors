@@ -92,7 +92,12 @@ By default, language 1 is English and language 2 is Russian. This can be changed
 Actual web pages shown to user are defined in the files `templates/*.html`.
 Tune them as you wish. The main menu is defined at `base.html`.
 
+**Statis files**
+
+If your application does not find the static files (bootstrap and js scripts), edit the variable `static_url_path` in `run_syn.py`. You should put there the absolute path to the `data` folder.
+
 **Query hints**
+
 If you want query hints to work, do not forget to compile your own list of hints (JSON format). Example of such a list is given in `data/example_vocab.json`.
 Real URL of this list should be stated in `data/hint.js`.
 
