@@ -69,21 +69,39 @@ if contextualized:
     import tensorflow as tf
     from simple_elmo import ElmoModel
 
-    token_model_file = config.get("Token", "token_model")
-    type_model_file = config.get("Token", "type_model")
-    frequency_file = config.get("Token", "freq_file")
-    type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file, binary=True)
-    graph = tf.compat.v1.get_default_graph()
-    with graph.as_default():
-        token_model = ElmoModel()
-        token_model.load(token_model_file)
-    elmo_frequency = {}
-    for line in open(frequency_file, "r"):
-        if "\t" not in line:
-            elmo_frequency["corpus_size"] = int(line.strip())
-        else:
-            (external_word, frequency) = line.strip().split("\t")
-            elmo_frequency[external_word] = int(frequency)
+    contextual_models = {}
+    with open(root + config.get("Files and directories", "contextualized_models"), "r") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter="\t")
+        for row in reader:
+            contextual_models[row["identifier"]] = {}
+            contextual_models[row["identifier"]]["type_path"] = row["type_path"]
+            contextual_models[row["identifier"]]["token_path"] = row["token_path"]
+            contextual_models[row["identifier"]]["freq_path"] = row["freq_path"]
+            contextual_models[row["identifier"]]["default"] = row["default"]
+            contextual_models[row["identifier"]]["algo"] = row["algo"]
+            contextual_models[row["identifier"]]["ref_static"] = row["ref_static"]
+            contextual_models[row["identifier"]]["string"] = row["string"]
+
+    contextual_models_dic = {}
+
+    for m in contextual_models:
+        token_model_file = contextual_models[m]["token_path"]
+        type_model_file = contextual_models[m]["type_path"]
+        frequency_file = contextual_models[m]["freq_path"]
+
+        type_model = gensim.models.KeyedVectors.load_word2vec_format(type_model_file, binary=True)
+        graph = tf.compat.v1.get_default_graph()
+        with graph.as_default():
+            token_model = ElmoModel()
+            token_model.load(token_model_file)
+            elmo_frequency = {}
+            for line in open(frequency_file, "r"):
+                if "\t" not in line:
+                    elmo_frequency["corpus_size"] = int(line.strip())
+                else:
+                    (external_word, frequency) = line.strip().split("\t")
+                    elmo_frequency[external_word] = int(frequency)
+        contextual_models_dic[m] = (token_model, type_model, elmo_frequency)
 
 our_models = {}
 with open(root + config.get("Files and directories", "models"), "r") as csvfile:
@@ -357,6 +375,10 @@ def scalculator(query):
 def contextual(query):
     q = [query["query"]]
     layer = query["layers"]
+    usermodel = query["model"]
+    token_model = contextual_models_dic[usermodel][0]
+    type_model = contextual_models_dic[usermodel][1]
+    elmo_frequency = contextual_models_dic[usermodel][2]
     results = {"frequencies": {w: 0 for w in q[0]}}
     for word in q[0]:
         results["frequencies"][word] = frequency(

@@ -1,0 +1,2 @@
+identifier	name	type_path	token_path	freq_path	ref_static	default	algo	string
+rwrnc	Russian Wikipedia RNC	~/webvectors/elmo/rwrnc_type.bin	~/webvectors/models/rus_elmo	~/webvectors/data/rwrnc_vocab.tsv.gz	ruscorpora_upos_skipgram_300_5_2018	True	elmo	contextual11

@@ -24,6 +24,14 @@
           <input id="elmo_history" name="elmo_history" type="hidden" value="{% if results %} {{ str_elmo_history }} {% endif %}">
         </div>
         <div class="radio">
+        <p><em>{{strings['contextual13']}}</em></p>
+        {%- for m in elmo_models %}
+        <label>
+        <input type="radio" name="elmo_models" {%if m in model %}checked{% endif %} value="{{ m }}">{{ strings[elmo_models[m]] }}
+        </label>
+        {%- endfor %}
+      </div>
+        <div class="radio">
         <p><em>{{strings['contextual9']}}</em></p>
         {%- for m in all_layers %}
         <label>
@@ -62,7 +70,7 @@
           <th scope="col">
             {% if (word[0]|length > 1) and (word[1] not in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART'])%}
           <h3><strong>
-            <a href="{{ url }}{{lang}}/{{ model }}/{{word[0]}}/"
+            <a href="{{ url }}{{lang}}/{{ static_model }}/{{word[0]}}/"
           title="{% if tags %}{{strings['synraw15']}} {{ word[1] }}, {% endif%}{{strings['synraw14']}} {{ frequencies[word[0]][0]}}" class="frequency-{{frequencies[word[0]][1]}}">{{ word[0] }}</a>
           </strong></h3>
           {%- else %}
@@ -78,7 +86,7 @@
           {% for res in results[row] %}
           {% if res[1] != 'None' %}
           <td style="font-size: {{res[2]-}}px">
-              <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/" title="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}" class="frequency-{{frequencies[res[0]][1]}}">
+              <a href="{{ url }}{{lang}}/{{ static_model }}/{{res[0]}}/" title="{{strings['synraw14']}} {{ frequencies[res[0]][0]}}" class="frequency-{{frequencies[res[0]][1]}}">
                 {{ res[0] }}
               </a>
         </td>
@@ -103,7 +111,7 @@
           <th scope="col">
             {% if (word[0]|length > 1) and (word[1] not in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET', 'SCONJ', 'PART'])%}
           <h3><strong>
-            <a href="{{ url }}{{lang}}/{{ model }}/{{word[0]}}/"
+            <a href="{{ url }}{{lang}}/{{ static_model }}/{{word[0]}}/"
           title="{% if tags %}{{strings['synraw15']}} {{ word[1] }}, {% endif%}">{{ word[0] }}</a>
           </strong></h3>
           {%- else %}
@@ -119,7 +127,7 @@
           {% for res in el[1][row] %}
           {% if res != 'None' %}
           <td style="font-size: {{res[2]-}}px">
-              <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/">
+              <a href="{{ url }}{{lang}}/{{ static_model }}/{{res[0]}}/">
                 {{ res[0] }}
               </a>
         </td>

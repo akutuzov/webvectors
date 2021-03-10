@@ -29,6 +29,7 @@ config.read("webvectors.cfg")
 
 root = config.get("Files and directories", "root")
 modelsfile = config.get("Files and directories", "models")
+contextual_modelsfile = config.get("Files and directories", "contextualized_models")
 cachefile = config.get("Files and directories", "image_cache")
 temp = config.get("Files and directories", "temp")
 url = config.get("Other", "url")
@@ -124,6 +125,19 @@ with open(root + config.get("Files and directories", "models"), "r") as csvfile:
         model_props[row["identifier"]]["default"] = row["default"]
         if row["default"] == "True":
             defaultmodel = row["identifier"]
+
+contextual_models = {}
+contextual_model_props = {}
+with open(root + config.get("Files and directories", "contextualized_models"), "r") as csvfile:
+    reader = csv.DictReader(csvfile, delimiter="\t")
+    for row in reader:
+        contextual_models[row["identifier"]] = row["string"]
+        contextual_model_props[row["identifier"]] = {}
+        contextual_model_props[row["identifier"]]["algo"] = row["algo"]
+        contextual_model_props[row["identifier"]]["ref_static"] = row["ref_static"]
+        contextual_model_props[row["identifier"]]["default"] = row["default"]
+        if row["default"] == "True":
+            contextual_defaultmodel = row["identifier"]
 
 defaultsearchengine = config.get("Other", "default_search")
 
@@ -1133,18 +1147,24 @@ def contextual_page(lang):
             layer = "top"
         else:
             layer = layers_value[0]
+        model_value = request.form.getlist("elmo_models")
+        if len(model_value) < 1:
+            model = contextual_defaultmodel
+        else:
+            model = model_value[0]
         images = {}
         results = {}
         table_results = {}
         header = []
         sims = []
-        model_indv_wordpage = config.get("Token", "ref_static_model")
+        model_indv_wordpage = contextual_model_props[model]["ref_static"]
         tokens, lemmas, poses = tag_ud(tagger_port, sentence)
         if len(sentence) > 2:
             message = {
                 "operation": "5",
                 "query": tokens,
                 "layers": layer,
+                "model": model,
                 "nr_neighbors": 10,
             }
             result = json.loads(serverquery(message).decode("utf-8"))
@@ -1199,7 +1219,9 @@ def contextual_page(lang):
                 other_lang=other_lang,
                 languages=languages,
                 frequencies=frequencies,
-                model=model_indv_wordpage,
+                static_model=model_indv_wordpage,
+                model=model,
+                elmo_models=contextual_models,
                 url=url,
                 user_layer=layer,
                 all_layers=all_layers,
@@ -1214,6 +1236,7 @@ def contextual_page(lang):
                 other_lang=other_lang,
                 languages=languages,
                 url=url,
+                elmo_models=contextual_models,
                 all_layers=all_layers
             )
     if not contextual:
@@ -1221,7 +1244,7 @@ def contextual_page(lang):
         other_lang=other_lang, languages=languages,url=url)
     return render_template(
         "contextual.html", other_lang=other_lang, languages=languages, url=url,
-        all_layers=all_layers
+        elmo_models=contextual_models, all_layers=all_layers
     )
 
 
