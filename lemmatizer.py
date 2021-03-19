@@ -11,7 +11,7 @@ def tag_ud(port, text="Do not forget to pass some text as a string!"):
     # Demands UDPipe REST server (https://ufal.mff.cuni.cz/udpipe/users-manual#udpipe_server)
     # running on a port defined in webvectors.cfg
     # Start the server with something like:
-    # udpipe_server --daemon 66666 MyModel MyModel /opt/my.model UD
+    # udpipe_server --daemon 46666 MyModel MyModel /opt/my.model UD
 
     # Sending user query to the server:
     ud_reply = requests.post(
