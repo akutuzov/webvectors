@@ -159,7 +159,7 @@ def per_request_callbacks(response):
     return response
 
 
-def process_query(userquery):
+def process_query(userquery, language="english"):
     userquery = userquery.strip()
     query = userquery
     if tags:
@@ -169,7 +169,7 @@ def process_query(userquery):
                 return "Incorrect tag!"
         else:
             if detect_tag:
-                tokens, lemmas, poses = tag_ud(tagger_port, userquery)  # Tagging with UDPipe
+                tokens, lemmas, poses = tag_ud(tagger_port, userquery, lang=language)  # Tagging with UDPipe
                 # poses = tagword(userquery)  # We tag using Stanford CoreNLP
                 if len(poses) == 1:
                     pos_tag = poses[0]
@@ -1157,7 +1157,7 @@ def contextual_page(lang):
         header = []
         sims = []
         model_indv_wordpage = contextual_model_props[model]["ref_static"]
-        tokens, lemmas, poses = tag_ud(tagger_port, sentence)  # For UDPipe
+        tokens, lemmas, poses = tag_ud(tagger_port, sentence, lang=language)  # For UDPipe
         # tokens, lemmas, poses = tagword(sentence, return_tokens=True)  # For CoreNLP
         if len(sentence) > 2:
             message = {
