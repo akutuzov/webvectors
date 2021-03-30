@@ -174,5 +174,6 @@ contextual10,История лексических подстановок, Subst
 contextual11,Английская Википедия,"English Wikipedia"
 contextual12,Норвежский новостной корпус,Norwegian Wikipedia and News
 contextual13,Выберите модель:,Choose the model:
+contextual14,Скачать модель ELMo,Download the ELMo model
 top,"Только верхний слой","Top layer only"
 average,"Среднее всех слоёв","All layers averaged"
