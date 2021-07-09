@@ -6,17 +6,17 @@ import requests
 import json
 
 
-def tag_ud(port, text="Do not forget to pass some text as a string!"):
+def tag_ud(port, text="Do not forget to pass some text as a string!", lang="english"):
     # UDPipe tagging for any language you have a model for.
     # Demands UDPipe REST server (https://ufal.mff.cuni.cz/udpipe/users-manual#udpipe_server)
     # running on a port defined in webvectors.cfg
     # Start the server with something like:
-    # udpipe_server --daemon 66666 MyModel MyModel /opt/my.model UD
+    # udpipe_server --daemon 46666 english english /opt/my.model UD
 
     # Sending user query to the server:
     ud_reply = requests.post(
         "http://localhost:%s/process" % port,
-        data={"tokenizer": "", "tagger": "", "data": text},
+        data={"tokenizer": "", "tagger": "", "data": text, "model": lang},
     ).content
 
     # Getting the result in the CONLLU format:
@@ -26,7 +26,7 @@ def tag_ud(port, text="Do not forget to pass some text as a string!"):
     content = [line for line in processed.split("\n") if not line.startswith("#")]
 
     # Extracting lemmas and tags from the processed queries:
-    tagged = [w.split("\t")[1].lower() + '_' + w.split("\t")[2].lower() + "_" + w.split("\t")[3] for w in content if w]
+    tagged = [w.split("\t")[1] + '_' + w.split("\t")[2].lower() + "_" + w.split("\t")[3] for w in content if w]
     poses = [t.split("_")[2] for t in tagged]
     tokens = [t.split("_")[0] for t in tagged]
     lemmas = [t.split("_")[1] for t in tagged]

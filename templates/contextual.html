@@ -51,6 +51,7 @@
         {{strings['contextual4']}}
       </strong>
     </h3>
+    <i>(<a title="{{strings['contextual14']}}" href="http://vectors.nlpl.eu/repository/latest/{{ model }}.zip">{{ strings[elmo_models[model]] }}</a>)</i>
     <!-- Checkbox for frequency selection-->
     <div class="checkbox" id="frequencyCheck">
       <p><em>{{strings['frequency1']}}</em></p>
@@ -103,7 +104,7 @@
     <hr/>
     <h3>{{strings['contextual10']}}</h3>
       {% for el in elmo_hist[:-1]|reverse -%}
-      <h4><b>{{strings['contextual14']}}</b> - {{ el[-1]}}</h4>
+      <h4><b>{{strings['contextual15']}}</b> - {{ el[-1]}}</h4>
       <div class="table-responsive">
       <table class="table table-borderless">
 	<thead>

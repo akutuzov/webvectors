@@ -1,3 +1,3 @@
 identifier	name	type_path	token_path	freq_path	ref_static	default	algo	string
-rwrnc	Russian Wikipedia RNC	~/webvectors/elmo/rwrnc_type.bin	~/webvectors/models/rus_elmo	~/webvectors/data/rwrnc_vocab.tsv.gz	ruscorpora_upos_skipgram_300_5_2018	True	elmo	contextual11
-nowiki	Norwegian Wikipedia	~/webvectors/models/norwegian_elmo/avis_nowiki.bin	~/webvectors/models/norwegian_elmo/217	~/webvectors/models/norwegian_elmo/nor_freq.tsv.gz	naknowac_upos_skipgram_300_5_2017	False	elmo	contextual12
+217	Norwegian Wikipedia and News	elmo/avis_nowiki.bin	elmo/217/	elmo/nor_freq.tsv.gz	MOD_naknowac_upos_skipgram_300_5_2017	True	elmo	contextual12
+193	English Wikipedia	elmo/enwiki_type.bin	elmo/193/	elmo/enwiki_vocab.tsv.gz	MOD_enwiki_upos_skipgram_300_3_2019	False	elmo	contextual11
