@@ -1206,7 +1206,7 @@ def contextual_page(lang):
                         table_results[str(row)].append(neighbor)
                     else:
                         table_results[str(row)] = [neighbor]
-            elmo_history.append([header, table_results])
+            elmo_history.append([header, table_results, model])
             if len(elmo_history) > 5:
                 elmo_history = elmo_history[-5:]
             str_elmo_history = json.dumps(elmo_history, ensure_ascii=False)

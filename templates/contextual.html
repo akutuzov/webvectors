@@ -103,6 +103,7 @@
     <hr/>
     <h3>{{strings['contextual10']}}</h3>
       {% for el in elmo_hist[:-1]|reverse -%}
+      <h4><b>{{strings['contextual14']}}</b> - {{ el[-1]}}</h4>
       <div class="table-responsive">
       <table class="table table-borderless">
 	<thead>
@@ -125,14 +126,14 @@
           {%- for row in el[1] %}
             <tr>
           {% for res in el[1][row] %}
-          {% if res != 'None' %}
+          {% if res != 'None' and res[1] != 'None'%}
           <td style="font-size: {{res[2]-}}px">
               <a href="{{ url }}{{lang}}/{{ static_model }}/{{res[0]}}/">
                 {{ res[0] }}
               </a>
         </td>
         {% else %}
-        <td></td>
+        <td>{{ res[0] }}</td>
         {% endif %}
           {%- endfor -%}
             </tr>
