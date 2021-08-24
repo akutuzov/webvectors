@@ -173,7 +173,7 @@ contextual7,"Лексические подстановки иначе назыв
 contextual8,"<strong>Подстановки будут меняться в зависимости от контекста</strong>, окружающего слово. Чем больше размер шрифта у подстановки, тем более уверена в ней модель.","<strong>Substitutes will change depending on the context</strong>. The larger is the substitute font size, the more certain ELMo is about this word."
 contextual9,"Выберите слой модели:","Choose the model layer:"
 contextual10,История лексических подстановок, Substitute queries history
-contextual11,Русская Википедия,"Russian Wikipedia"
+contextual11,Английская Википедия,"English Wikipedia"
 contextual12,Норвежский новостной корпус,Norwegian Wikipedia and News
 contextual13,Выберите модель:,Choose the model:
 contextual14,Скачать модель ELMo,Download the ELMo model
