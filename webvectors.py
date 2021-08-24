@@ -17,6 +17,7 @@ from flask import request
 from plotting import embed
 from plotting import singularplot
 from sparql import getdbpediaimage
+
 # import strings data from respective module
 from strings_reader import language_dicts
 
@@ -38,6 +39,7 @@ languages_list = config.get("Languages", "interface_languages").split(",")
 
 if detect_tag:
     from lemmatizer import tagword, tag_ud
+
     tagger_port = config.getint("Sockets", "tagger_port")
 
 tensorflow_integration = config.getboolean("Other", "tensorflow_projector")
@@ -125,7 +127,9 @@ with open(root + config.get("Files and directories", "models"), "r") as csvfile:
 
 contextual_models = {}
 contextual_model_props = {}
-with open(root + config.get("Files and directories", "contextualized_models"), "r") as csvfile:
+with open(
+    root + config.get("Files and directories", "contextualized_models"), "r"
+) as csvfile:
     reader = csv.DictReader(csvfile, delimiter="\t")
     for row in reader:
         contextual_models[row["identifier"]] = row["string"]
@@ -169,7 +173,8 @@ def process_query(userquery, language="english"):
                 return "Incorrect tag!"
         else:
             if detect_tag:
-                tokens, lemmas, poses = tag_ud(tagger_port, userquery, lang=language)  # Tagging with UDPipe
+                # Tagging with UDPipe
+                tokens, lemmas, poses = tag_ud(tagger_port, userquery, lang=language)
                 # poses = tagword(userquery)  # We tag using Stanford CoreNLP
                 if len(poses) == 1:
                     pos_tag = poses[0]
@@ -256,11 +261,11 @@ def home(lang):
     if request.method == "POST":
         list_data = request.form["list_query"]
         if (
-                list_data.replace("_", "")
-                        .replace("-", "")
-                        .replace("::", "")
-                        .replace(" ", "")
-                        .isalnum()
+            list_data.replace("_", "")
+            .replace("-", "")
+            .replace("::", "")
+            .replace(" ", "")
+            .isalnum()
         ):
             query = process_query(list_data)
             if query == "Incorrect tag!":
@@ -389,10 +394,10 @@ def misc_page(lang):
                     words = []
                     for w in query[:2]:
                         if (
-                                w.replace("_", "")
-                                        .replace("-", "")
-                                        .replace("::", "")
-                                        .isalnum()
+                            w.replace("_", "")
+                            .replace("-", "")
+                            .replace("::", "")
+                            .isalnum()
                         ):
                             w = process_query(w)
                             if "Incorrect tag!" in w:
@@ -498,12 +503,12 @@ def associates_page(lang):
 
         # Nearest associates queries
         if (
-                list_data != "dummy"
-                and list_data.replace("_", "")
-                .replace("-", "")
-                .replace("::", "")
-                .replace(" ", "")
-                .isalnum()
+            list_data != "dummy"
+            and list_data.replace("_", "")
+            .replace("-", "")
+            .replace("::", "")
+            .replace(" ", "")
+            .isalnum()
         ):
             list_data = list_data.strip()
             query = process_query(list_data)
@@ -641,6 +646,7 @@ def visual_page(lang):
 
     if request.method == "POST":
         list_data = request.form.getlist("list_query")
+        viz_method = request.form.getlist("viz_method")[0]
         if list_data:
             model_value = request.form.getlist("model")
             if len(model_value) < 1:
@@ -653,11 +659,11 @@ def visual_page(lang):
                         process_query(w)
                         for w in inputform.split(",")
                         if len(w) > 1
-                           and w.replace("_", "")
-                               .replace("-", "")
-                               .replace("::", "")
-                               .replace(" ", "")
-                               .isalnum()
+                        and w.replace("_", "")
+                        .replace("-", "")
+                        .replace("::", "")
+                        .replace(" ", "")
+                        .isalnum()
                     ][:30]
                 )
                 groups.append(group)
@@ -725,7 +731,7 @@ def visual_page(lang):
                 name = name.encode("ascii", "backslashreplace")
                 m.update(name)
                 fname = m.hexdigest()
-                plotfile = "%s_%s.png" % (model, fname)
+                plotfile = f"{model}_{fname}_{viz_method}.png"
                 identifier = plotfile[:-4]
                 models_row[model] = plotfile
                 labels = []
@@ -749,8 +755,8 @@ def visual_page(lang):
                         result = json.loads(serverquery(message).decode("utf-8"))
                         frequencies[model].update(result["frequencies"])
                         if (
-                                w.split("_")[0] in frequencies[model]
-                                and w not in frequencies[model]
+                            w.split("_")[0] in frequencies[model]
+                            and w not in frequencies[model]
                         ):
                             frequencies[model][w] = frequencies[model][w.split("_")[0]]
                         if w + " is unknown to the model" in result:
@@ -762,10 +768,15 @@ def visual_page(lang):
                     if len(vectors) > 5:
                         if len(list_data) == 1 and model_props[model]["tags"] == "True":
                             classes = [word.split("_")[-1] for word in labels]
-                        print("Embedding...", file=sys.stderr)
+                        print(f"Embedding with {viz_method}...", file=sys.stderr)
                         matrix2vis = np.vstack(([v for v in vectors]))
                         embed(
-                            labels, matrix2vis.astype("float64"), classes, model, fname
+                            labels,
+                            matrix2vis.astype("float64"),
+                            classes,
+                            model,
+                            fname,
+                            method=viz_method,
                         )
                         models_row[model] = plotfile
                         if tensorflow_integration:
@@ -778,7 +789,7 @@ def visual_page(lang):
                 else:
                     if tensorflow_integration:
                         links_row[model] = open(
-                            root + "data/images/tsneplots/" + identifier + ".url", "r"
+                            f"{root}data/images/tsneplots/{identifier}.url", "r"
                         ).read()
                     else:
                         links_row[model] = None
@@ -796,6 +807,7 @@ def visual_page(lang):
                 qwords=querywords,
                 frequencies=frequencies,
                 other_lang=other_lang,
+                viz_method=viz_method,
             )
         else:
             error_value = "Incorrect query!"
@@ -849,24 +861,24 @@ def finder(lang):
             negative_list = []
             if len(negative_data.strip()) > 1:
                 if (
-                        negative_data.strip()
-                                .replace("_", "")
-                                .replace("-", "")
-                                .replace("::", "")
-                                .replace(" ", "")
-                                .isalnum()
+                    negative_data.strip()
+                    .replace("_", "")
+                    .replace("-", "")
+                    .replace("::", "")
+                    .replace(" ", "")
+                    .isalnum()
                 ):
                     negative_list = [process_query(negative_data)]
 
             positive_list = []
             for w in positive_data_list:
                 if (
-                        len(w) > 1
-                        and w.replace("_", "")
-                        .replace("-", "")
-                        .replace("::", "")
-                        .replace(" ", "")
-                        .isalnum()
+                    len(w) > 1
+                    and w.replace("_", "")
+                    .replace("-", "")
+                    .replace("::", "")
+                    .replace(" ", "")
+                    .isalnum()
                 ):
                     positive_list.append(process_query(w))
 
@@ -979,19 +991,17 @@ def finder(lang):
         # Calculator
         if positive1_data != "":
             negative_list = [
-                                process_query(w)
-                                for w in negative1_data.split()
-                                if len(w) > 1
-                                   and w.replace("_", "").replace("-", "").replace("::",
-                                                                                   "").isalnum()
-                            ][:10]
+                process_query(w)
+                for w in negative1_data.split()
+                if len(w) > 1
+                and w.replace("_", "").replace("-", "").replace("::", "").isalnum()
+            ][:10]
             positive_list = [
-                                process_query(w)
-                                for w in positive1_data.split()
-                                if len(w) > 1
-                                   and w.replace("_", "").replace("-", "").replace("::",
-                                                                                   "").isalnum()
-                            ][:10]
+                process_query(w)
+                for w in positive1_data.split()
+                if len(w) > 1
+                and w.replace("_", "").replace("-", "").replace("::", "").isalnum()
+            ][:10]
 
             calcmodel_value = request.form.getlist("calcmodel")
             if len(calcmodel_value) < 1:
@@ -1157,7 +1167,7 @@ def contextual_page(lang):
         header = []
         sims = []
         model_indv_wordpage = contextual_model_props[model]["ref_static"]
-        tokens, lemmas, poses = tag_ud(tagger_port, sentence, lang=language)  # For UDPipe
+        tokens, lemmas, poses = tag_ud(tagger_port, sentence)  # For UDPipe
         # tokens, lemmas, poses = tagword(sentence, return_tokens=True)  # For CoreNLP
         if len(sentence) > 2:
             message = {
@@ -1172,10 +1182,10 @@ def contextual_page(lang):
             for word in result["neighbors"]:
                 for n in word:
                     images[n[0].split("_")[0]] = None
-            for num, word, neighbors, tag in zip(range(len(tokens)), tokens, result["neighbors"],
-                                                 poses
-                                                 ):
-                if word in '.,!?-"\':;':
+            for num, word, neighbors, tag in zip(
+                range(len(tokens)), tokens, result["neighbors"], poses
+            ):
+                if word in ".,!?-\"':;":
                     continue
                 sims += [x[1] for x in neighbors]
                 results[(word, tag, num)] = neighbors
@@ -1202,9 +1212,16 @@ def contextual_page(lang):
                     if substitute > 4:
                         break
                     neighbor = results[word][substitute]
-                    if len(word[0]) < 2 or word[1] in ['ADP', 'CCONJ', 'PRON', 'AUX', 'DET',
-                                                       'SCONJ', 'PART']:
-                        neighbor = (word[0], 'None')
+                    if len(word[0]) < 2 or word[1] in [
+                        "ADP",
+                        "CCONJ",
+                        "PRON",
+                        "AUX",
+                        "DET",
+                        "SCONJ",
+                        "PART",
+                    ]:
+                        neighbor = (word[0], "None")
                     if str(substitute) in table_results:
                         table_results[str(substitute)].append(neighbor)
                     else:
@@ -1240,14 +1257,23 @@ def contextual_page(lang):
                 languages=languages,
                 url=url,
                 elmo_models=contextual_models,
-                all_layers=all_layers
+                all_layers=all_layers,
             )
     if not contextual:
-        return render_template("contextual.html", error="misconfiguration",
-                               other_lang=other_lang, languages=languages, url=url)
+        return render_template(
+            "contextual.html",
+            error="misconfiguration",
+            other_lang=other_lang,
+            languages=languages,
+            url=url,
+        )
     return render_template(
-        "contextual.html", other_lang=other_lang, languages=languages, url=url,
-        elmo_models=contextual_models, all_layers=all_layers
+        "contextual.html",
+        other_lang=other_lang,
+        languages=languages,
+        url=url,
+        elmo_models=contextual_models,
+        all_layers=all_layers,
     )
 
 
@@ -1455,7 +1481,7 @@ def api(model, word, api_format):
         mimetype=mime,
         headers={
             "Content-Disposition": "attachment;filename=%s.%s"
-                                   % (cleanword.encode("utf-8"), api_format.encode("utf-8"))
+            % (cleanword.encode("utf-8"), api_format.encode("utf-8"))
         },
     )
 
