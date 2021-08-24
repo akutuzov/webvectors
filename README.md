@@ -64,9 +64,10 @@ The list of models you want to use is defined in the file `models.tsv`. It consi
 <li> does the model contain PoS tags</li>
 <li> training algorithm of the model (word2vec/fastText/etc)</li>
 <li> size of the training corpus in words</li>
+<li> language of the model </li>
 </ul>
 
-Model identifier will be used as the name for checkboxes in the web pages, and it is also important that in the `strings.csv` file the same identifier is used when denoting model names.
+Model identifier will be used as the name for checkboxes in the web pages, and it is also important that in the `strings.csv` file the same identifier is used when denoting model names. Language of the model is used as an argument passed to the lemmatizer function, it is a simple string with the name of the language (e.g. "english", "russian", "french").
 
 Models can currently be in 4 formats:
 <ul>
