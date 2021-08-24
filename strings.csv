@@ -146,6 +146,8 @@ visual21,Тысяча наиболее частотных существител
 visual22,Визуализировать в&nbsp;TensorFlow Projector,Visualize in&nbsp;TensorFlow Projector
 visual23,Показать трёхмерную проекцию взаимного расположения выбранных слов в&nbsp;TensorFlow Projector от&nbsp;Google,Show 3D&nbsp;projection of&nbsp;the chosen words in&nbsp;Google&#8217;s TensorFlow Projector
 visual24,"Вы&nbsp;можете добавлять новые группы слов кнопкой &#8217;(+)&#8217;; они отобразятся на&nbsp;визуализации разными цветами (если группа одна, цвета соответствуют частям речи). Оптимальное общее количество слов&nbsp;&#8212; от&nbsp;7&nbsp;до&nbsp;20.","You can add new groups of&nbsp;words with the &#8217;(+)&#8217; button. They will be&nbsp;visualized with different colors (if&nbsp;there is&nbsp;only 1&nbsp;group, the colors marks parts of&nbsp;speech). Optimal total number of&nbsp;words is&nbsp;from 7&nbsp;to&nbsp;20."
+visual25,Выберите способ визуализации,Choose the method of visualization
+visual26,Визуализация взаимного расположения слов при помощи PCA,Visual representation of&nbsp;word relations using PCA
 frequency1,Частотность слова,Word frequency
 frequency2,Высокая,High
 frequency3,Средняя,Medium

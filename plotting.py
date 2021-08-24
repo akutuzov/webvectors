@@ -9,6 +9,7 @@ import pylab as plot
 import numpy as np
 from matplotlib import font_manager
 from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 import configparser
 
 config = configparser.RawConfigParser()
@@ -23,7 +24,7 @@ def singularplot(word, modelname, vector, fname):
     xlocations = np.array(list(range(len(vector))))
     plot.clf()
     plot.bar(xlocations, vector)
-    plot_title = word.split("_")[0].replace("::", " ") + "\n" + modelname + u" model"
+    plot_title = word.split("_")[0].replace("::", " ") + "\n" + modelname + " model"
     plot.title(plot_title, fontproperties=font)
     plot.xlabel("Vector components")
     plot.ylabel("Components values")
@@ -36,13 +37,20 @@ def singularplot(word, modelname, vector, fname):
     plot.clf()
 
 
-def embed(words, matrix, classes, usermodel, fname):
+def embed(words, matrix, classes, usermodel, fname, method="tsne"):
     perplexity = int(
         len(words) ** 0.5
     )  # We set perplexity to a square root of the words number
-    embedding = TSNE(
-        n_components=2, perplexity=perplexity, metric="cosine", n_iter=500, init="pca"
-    )
+    if method == "pca":
+        embedding = PCA(n_components=2, random_state=0)
+    else:
+        embedding = TSNE(
+            n_components=2,
+            perplexity=perplexity,
+            metric="cosine",
+            n_iter=500,
+            init="pca",
+        )
     y = embedding.fit_transform(matrix)
 
     print("2-d embedding finished", file=sys.stderr)
@@ -88,7 +96,7 @@ def embed(words, matrix, classes, usermodel, fname):
     plot.legend(loc="best")
 
     plot.savefig(
-        root + "data/images/tsneplots/" + usermodel + "_" + fname + ".png",
+        f"{root}data/images/tsneplots/{usermodel}_{fname}_{method}.png",
         dpi=150,
         bbox_inches="tight",
     )

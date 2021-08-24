@@ -38,10 +38,23 @@
       {% endfor %}
     </fieldset>
   </div>
+   <div class="checkbox">
+    <p>{{strings['visual25']}}</p>
+    <fieldset>
+      <input type="radio" {%if viz_method != "TSNE" %} checked {% endif %} name="viz_method" id="PCA" value="PCA">
+      <label for="PCA">PCA</label>
+      <input type="radio" {%if viz_method == "TSNE" %} checked {% endif %}name="viz_method" id="TSNE" value="TSNE">
+      <label for="TSNE">TSNE</label>
+    </fieldset>
+  </div>
   <button type="submit" class="btn btn-primary">{{strings['visual15']}}</button>
 </form>
 {% if visual %}
+{% if viz_method == "pca"%}
+<h3>{{strings['visual26']}}</h3>
+{% else %}
 <h3>{{strings['visual3']}}<sup>*</sup></h3>
+{% endif %}
 {% for word in qwords %}
 <a href="{{ url }}{{lang}}/{{ visual|list|first }}/{{word}}/"
 {% if word in frequencies[visual|list|first] %}
