@@ -120,6 +120,7 @@ with open(root + config.get("Files and directories", "models"), "r") as csvfile:
         model_props[row["identifier"]]["algo"] = row["algo"]
         model_props[row["identifier"]]["tags"] = row["tags"]
         model_props[row["identifier"]]["default"] = row["default"]
+        model_props[row["identifier"]]["lang"] = row["lang"]
         if row["default"] == "True":
             defaultmodel = row["identifier"]
 
@@ -133,6 +134,7 @@ with open(root + config.get("Files and directories", "contextualized_models"), "
         contextual_model_props[row["identifier"]]["algo"] = row["algo"]
         contextual_model_props[row["identifier"]]["ref_static"] = row["ref_static"]
         contextual_model_props[row["identifier"]]["default"] = row["default"]
+        contextual_model_props[row["identifier"]]["lang"] = row["lang"]
         if row["default"] == "True":
             contextual_defaultmodel = row["identifier"]
 
@@ -262,7 +264,13 @@ def home(lang):
                         .replace(" ", "")
                         .isalnum()
         ):
-            query = process_query(list_data)
+            model_value = request.form.getlist("model")
+            if len(model_value) < 1:
+                model = defaultmodel
+            else:
+                model = model_value[0]
+            language = model_props[model]["lang"]
+            query = process_query(list_data, language=language)
             if query == "Incorrect tag!":
                 error_value = "Incorrect tag!"
                 return render_template(
@@ -272,11 +280,6 @@ def home(lang):
                     languages=languages,
                     url=url,
                 )
-            model_value = request.form.getlist("model")
-            if len(model_value) < 1:
-                model = defaultmodel
-            else:
-                model = model_value[0]
             images = {query.split("_")[0]: None}
             models_row = {}
             frequencies = {}
@@ -374,6 +377,7 @@ def misc_page(lang):
                     model = defaultmodel
                 else:
                     model = model_value[0]
+                language = model_props[model]["lang"]
                 if not model.strip() in our_models:
                     return render_template(
                         "home.html",
@@ -394,7 +398,7 @@ def misc_page(lang):
                                         .replace("::", "")
                                         .isalnum()
                         ):
-                            w = process_query(w)
+                            w = process_query(w, language=language)
                             if "Incorrect tag!" in w:
                                 error_value = "Incorrect tag!"
                                 return render_template(
@@ -505,12 +509,12 @@ def associates_page(lang):
                 .replace(" ", "")
                 .isalnum()
         ):
-            list_data = list_data.strip()
-            query = process_query(list_data)
-
             model_value = request.form.getlist("model")
             if len(model_value) < 1:
                 model_value = [defaultmodel]
+            language = model_props[defaultmodel]["lang"]
+            list_data = list_data.strip()
+            query = process_query(list_data, language)
 
             if query == "Incorrect tag!":
                 error_value = "Incorrect tag!"
@@ -645,12 +649,12 @@ def visual_page(lang):
             model_value = request.form.getlist("model")
             if len(model_value) < 1:
                 model_value = [defaultmodel]
-
+            language = model_props[defaultmodel]["lang"]
             groups = []
             for inputform in list_data[:10]:
                 group = set(
                     [
-                        process_query(w)
+                        process_query(w, language)
                         for w in inputform.split(",")
                         if len(w) > 1
                            and w.replace("_", "")
@@ -845,6 +849,10 @@ def finder(lang):
             pass
         # Analogical inference
         if negative_data != "" and positive_data != "" and positive2_data != "":
+            calcmodel_value = request.form.getlist("calcmodel")
+            if len(calcmodel_value) < 1:
+                calcmodel_value = [defaultmodel]
+            language = model_props[defaultmodel]["lang"]
             positive_data_list = [positive_data, positive2_data]
             negative_list = []
             if len(negative_data.strip()) > 1:
@@ -856,7 +864,7 @@ def finder(lang):
                                 .replace(" ", "")
                                 .isalnum()
                 ):
-                    negative_list = [process_query(negative_data)]
+                    negative_list = [process_query(negative_data, language)]
 
             positive_list = []
             for w in positive_data_list:
@@ -868,11 +876,8 @@ def finder(lang):
                         .replace(" ", "")
                         .isalnum()
                 ):
-                    positive_list.append(process_query(w))
+                    positive_list.append(process_query(w, language))
 
-            calcmodel_value = request.form.getlist("calcmodel")
-            if len(calcmodel_value) < 1:
-                calcmodel_value = [defaultmodel]
 
             if len(positive_list) < 2 or len(negative_list) == 0:
                 error_value = "Incorrect query!"
@@ -978,24 +983,24 @@ def finder(lang):
 
         # Calculator
         if positive1_data != "":
+            calcmodel_value = request.form.getlist("calcmodel")
+            if len(calcmodel_value) < 1:
+                calcmodel_value = [defaultmodel]
+            language = model_props[defaultmodel]["lang"]
             negative_list = [
-                                process_query(w)
+                                process_query(w, language)
                                 for w in negative1_data.split()
                                 if len(w) > 1
                                    and w.replace("_", "").replace("-", "").replace("::",
                                                                                    "").isalnum()
                             ][:10]
             positive_list = [
-                                process_query(w)
+                                process_query(w, language)
                                 for w in positive1_data.split()
                                 if len(w) > 1
                                    and w.replace("_", "").replace("-", "").replace("::",
                                                                                    "").isalnum()
                             ][:10]
-
-            calcmodel_value = request.form.getlist("calcmodel")
-            if len(calcmodel_value) < 1:
-                calcmodel_value = [defaultmodel]
 
             if len(positive_list) == 0:
                 error_value = "Incorrect query!"
@@ -1131,6 +1136,7 @@ def contextual_page(lang):
     s.add(lang)
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
+    #language = 'russian'
 
     all_layers = ["top", "average"]
 
@@ -1157,6 +1163,7 @@ def contextual_page(lang):
         header = []
         sims = []
         model_indv_wordpage = contextual_model_props[model]["ref_static"]
+        language = contextual_model_props[model]["lang"]
         tokens, lemmas, poses = tag_ud(tagger_port, sentence, lang=language)  # For UDPipe
         # tokens, lemmas, poses = tagword(sentence, return_tokens=True)  # For CoreNLP
         if len(sentence) > 2:
@@ -1262,8 +1269,9 @@ def raw_finder(lang, model, userquery):
     model = model.strip()
     if not model.strip() in our_models:
         return redirect(url + lang + "/", code=303)
+    language = model_props[model]["lang"]
     if userquery.strip().replace("_", "").replace("-", "").replace("::", "").isalnum():
-        query = process_query(userquery.strip())
+        query = process_query(userquery.strip(), language)
         if tags:
             if query == "Incorrect tag!":
                 error_value = "Incorrect tag!"
@@ -1368,13 +1376,13 @@ def generate(word, model, api_format):
     """
 
     formats = {"csv", "json"}
-
+    language = model_props[model]["lang"]
     # check the sanity of the query word: no punctuation marks, not an empty string
     if not word.strip().replace("_", "").replace("-", "").replace("::", "").isalnum():
         word = "".join([char for char in word if char.isalnum()])
         yield word.strip() + "\t" + model.strip() + "\t" + "Word error!"
     else:
-        query = process_query(word.strip())
+        query = process_query(word.strip(), language)
 
         # if tags are used, check whether the word is tagged
         if tags:
@@ -1470,6 +1478,7 @@ def similarity_api(model, wordpair):
     all function arguments are strings
     """
     model = model.strip()
+    language = model_props[model]["lang"]
     wordpair = wordpair.split("__")
     if not model.strip() in our_models:
         return "The model " + model.strip() + " is unknown"
@@ -1487,8 +1496,8 @@ def similarity_api(model, wordpair):
             if char.isalnum() or char == "_" or char == "::" or char == "-"
         ]
     )
-    cleanword0 = process_query(cleanword0)
-    cleanword1 = process_query(cleanword1)
+    cleanword0 = process_query(cleanword0, language)
+    cleanword1 = process_query(cleanword1, language)
     if model_props[model]["tags"] == "False":
         cleanword0 = cleanword0.split("_")[0]
         cleanword1 = cleanword1.split("_")[0]

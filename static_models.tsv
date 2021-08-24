@@ -1,2 +1,2 @@
-identifier	name	path	string	default	tags	algo	size
-ruscorpora_upos_skipgram_300_5_2018	Russian National Corpus	~/webvectors/models/ruscorpora_upos_skipgram_300_5_2018.vec.gz	similar4	True	True	word2vec	250000000
+identifier	name	path	string	default	tags	algo	size	lang
+ruscorpora_upos_skipgram_300_5_2018	Russian National Corpus	~/webvectors/models/ruscorpora_upos_skipgram_300_5_2018.vec.gz	similar4	True	True	word2vec	250000000	russian
