@@ -41,10 +41,10 @@
    <div class="checkbox">
     <p>{{strings['visual25']}}</p>
     <fieldset>
-      <input type="radio" {%if viz_method != "TSNE" %} checked {% endif %} name="viz_method" id="PCA" value="PCA">
-      <label for="PCA">PCA</label>
-      <input type="radio" {%if viz_method == "TSNE" %} checked {% endif %}name="viz_method" id="TSNE" value="TSNE">
+      <input type="radio" {%if viz_method != "pca" %} checked {% endif %}name="viz_method" id="TSNE" value="tsne">
       <label for="TSNE">TSNE</label>
+      <input type="radio" {%if viz_method == "pca" %} checked {% endif %} name="viz_method" id="PCA" value="pca">
+      <label for="PCA">PCA</label>
     </fieldset>
   </div>
   <button type="submit" class="btn btn-primary">{{strings['visual15']}}</button>
@@ -107,10 +107,12 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
 {% else %}
     {% include 'pictures.html' %}
 {% endif %}
+{% if viz_method == "tsne"%}
 <hr/>
 <p><small><i>* <a href="https://lvdmaaten.github.io/tsne/"><b>t-SNE</b></a> {{strings['visual5']}}</i></small><br/>
   <small><i>L.J.P. van der Maaten and G.E. Hinton. <a href="https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf">
   Visualizing High-Dimensional Data Using t-SNE</a>.
   Journal of Machine Learning Research 9(Nov):2579-2605, 2008</i></small>
 </p>
+{% endif %}
 {% endblock %}

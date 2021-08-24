@@ -114,7 +114,7 @@ if tags:
 
 our_models = {}
 model_props = {}
-with open(root + config.get("Files and directories", "models"), "r") as csvfile:
+with open(modelsfile, "r") as csvfile:
     reader = csv.DictReader(csvfile, delimiter="\t")
     for row in reader:
         our_models[row["identifier"]] = row["string"]
@@ -128,9 +128,7 @@ with open(root + config.get("Files and directories", "models"), "r") as csvfile:
 
 contextual_models = {}
 contextual_model_props = {}
-with open(
-    root + config.get("Files and directories", "contextualized_models"), "r"
-) as csvfile:
+with open(contextual_modelsfile, "r") as csvfile:
     reader = csv.DictReader(csvfile, delimiter="\t")
     for row in reader:
         contextual_models[row["identifier"]] = row["string"]
@@ -517,7 +515,11 @@ def associates_page(lang):
             model_value = request.form.getlist("model")
             if len(model_value) < 1:
                 model_value = [defaultmodel]
-            language = model_props[defaultmodel]["lang"]
+            model_langs = set([model_props[el]["lang"] for el in model_value])
+            if len(model_langs) > 1:
+                language = model_props[defaultmodel]["lang"]
+            else:
+                language = list(model_langs)[0]
             list_data = list_data.strip()
             query = process_query(list_data, language)
 
@@ -1148,7 +1150,6 @@ def contextual_page(lang):
     s.add(lang)
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
-    #language = 'russian'
 
     all_layers = ["top", "average"]
 
@@ -1235,7 +1236,7 @@ def contextual_page(lang):
                         table_results[str(substitute)].append(neighbor)
                     else:
                         table_results[str(substitute)] = [neighbor]
-            elmo_history.append([header, table_results, model])
+            elmo_history.append([header, table_results, contextual_models[model]])
             if len(elmo_history) > 5:
                 elmo_history = elmo_history[-5:]
             str_elmo_history = json.dumps(elmo_history, ensure_ascii=False)
@@ -1348,7 +1349,7 @@ def raw_finder(lang, model, userquery):
             vector = result["vector"]
             for word in result["neighbors"]:
                 images[word[0].split("_")[0]] = None
-            m = hashlib.md5(liza)
+            m = hashlib.md5()
             name = query.encode("ascii", "backslashreplace")
             m.update(name)
             fname = m.hexdigest()

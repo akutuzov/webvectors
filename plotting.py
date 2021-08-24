@@ -81,7 +81,10 @@ def embed(words, matrix, classes, usermodel, fname, method="tsne"):
 
         lemma = word.split("_")[0].replace("::", " ")
         mid = len(lemma) / 2
-        mid *= 4  # TODO Should really think about how to adapt this variable to the real plot size
+        if method == "pca":
+            mid *= 0.02
+        else:
+            mid *= 4  # TODO Should really think about how to adapt this variable to the real plot size
         plot.annotate(
             lemma,
             xy=(x - mid, y),

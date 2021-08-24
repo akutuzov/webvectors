@@ -104,7 +104,7 @@
     <hr/>
     <h3>{{strings['contextual10']}}</h3>
       {% for el in elmo_hist[:-1]|reverse -%}
-      <h4><b>{{strings['contextual15']}}</b> - {{ el[-1]}}</h4>
+      <h4><b>{{strings['contextual15']}}</b>: {{ strings[el[-1]]}}</h4>
       <div class="table-responsive">
       <table class="table table-borderless">
 	<thead>
