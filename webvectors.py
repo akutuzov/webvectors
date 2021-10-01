@@ -968,7 +968,7 @@ def finder(lang):
                     continue
                 if "Unknown to the model" in result:
                     models_row[model] = [
-                        result["Unknown to the model"] + "is unknown to the model"
+                        result["Unknown to the model"] + " is unknown to the model"
                     ]
                     continue
                 for word in result["neighbors"]:
