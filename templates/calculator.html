@@ -65,12 +65,12 @@
             <h3><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h3>
             <ol id="{{ model }}" style="font-size: larger;" type="1">
               {%- for res in analogy_value[model] if res != "Incorrect tag!" %}
-              <li class="frequency-item-{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
               {% if 'is unknown' in res -%}
-              {{strings['similar18']}}
+              {{strings['similar18']}} "{{ res.split()[0] }}"
               {% elif 'No similar words' in res -%}
               {{strings['similar30']}}
               {% else -%}
+              <li class="frequency-item-{{frequencies[model][res[0]][1]}}" data-word="{{res[0]}}">
               <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
               title="{% if tags %}{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {% endif %}{{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
               class="frequency-{{frequencies[model][res[0]][1]}}">
