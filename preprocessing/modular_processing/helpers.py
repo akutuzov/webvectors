@@ -82,6 +82,7 @@ def clean_token(token, misc):
 
 def clean_lemma(lemma, pos, lowercase=True):
     """
+    :param lowercase:
     :param lemma:
     :param pos:
     :return:
@@ -104,6 +105,7 @@ def clean_lemma(lemma, pos, lowercase=True):
 
 def extract_proper(source_file, outfile, sentencebreaks=True, entities=None, lowercase=True):
     """
+    :param lowercase:
     :param source_file:
     :param outfile:
     :param sentencebreaks:
