@@ -32,6 +32,13 @@ contextual_modelsfile = config.get("Files and directories", "contextualized_mode
 cachefile = config.get("Files and directories", "image_cache")
 temp = config.get("Files and directories", "temp")
 url = config.get("Other", "url")
+vocabfile = config.get("Files and directories", "vocab")
+
+if vocabfile:
+    default_vocab = json.loads(open(os.path.join(root, vocabfile)).read())
+else:
+    default_vocab = None
+
 
 detect_tag = config.getboolean("Tags", "detect_tag")
 dbpedia = config.getboolean("Other", "dbpedia_images")
@@ -281,7 +288,7 @@ def home(lang):
                     error=error_value,
                     other_lang=other_lang,
                     languages=languages,
-                    url=url,
+                    url=url, vocab=default_vocab
                 )
             images = {query.split("_")[0]: None}
             models_row = {}
@@ -308,7 +315,7 @@ def home(lang):
                     other_lang=other_lang,
                     languages=languages,
                     url=url,
-                    word=query,
+                    word=query, vocab=default_vocab
                 )
             else:
                 inferred = set()
@@ -335,7 +342,7 @@ def home(lang):
                     inferred=inferred,
                     frequencies=frequencies,
                     visible_neighbors=10,
-                    edges=edges,
+                    edges=edges, vocab=default_vocab
                 )
         else:
             error_value = "Incorrect query!"
@@ -345,10 +352,11 @@ def home(lang):
                 tags=tags,
                 other_lang=other_lang,
                 languages=languages,
-                url=url,
+                url=url, vocab=default_vocab
             )
     return render_template(
-        "home.html", tags=tags, other_lang=other_lang, languages=languages, url=url
+        "home.html", tags=tags, other_lang=other_lang, languages=languages, url=url,
+        vocab=default_vocab
     )
 
 

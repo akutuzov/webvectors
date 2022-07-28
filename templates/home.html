@@ -11,7 +11,7 @@
       {%- if word %}
       <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
       {%- else -%}
-      <input type="text" class="typeahead" id="query" name="list_query" value="{{strings['home7']}}" maxlength=100>
+      <input type="text" class="typeahead" id="query" name="list_query" value="{{ vocab[range(0, vocab|length) | random] }}" maxlength=100>
       {% endif -%}
     </div>
     <button type="submit" class="btn btn-primary" id="send" name="list_query">{{strings['home3']}}</button>
