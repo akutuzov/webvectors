@@ -46,8 +46,9 @@ calc33,mother,mother
 calc34,daughter,daughter
 calc35,father,father
 description1,"РусВекторес: дистрибутивная семантика для русского языка, веб-интерфейс и модели для скачивания","WebVectors: word embeddings, web interface and models to download"
+home0,"сервис, в котором вы можете исследовать семантические отношения между словами при помощи дистрибутивных моделей.","tool to explore semantic relations between words in distributional models."
 home1,WebVectors: семантические модели для русского языка,WebVectors: word embeddings online
-home2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). <br/>Будет использована модель, обученная на русской Википедии и Национальном корпусе русского языка; другие модели вы можете найти на вкладке <a href=""associates/"">Похожие слова</a>.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates.<br/>English Wikipedia model will be&nbsp;used; for other models, visit <a href=""associates"">Similar Words</a> tab."
+home2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических ассоциатов (квази-синонимов):","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates:"
 home3,Найти похожие слова!,Find similar words!
 home4,Семантические ассоциаты для,Semantic associates for
 home5,вычисленные на&nbsp;модели,computed&nbsp;on

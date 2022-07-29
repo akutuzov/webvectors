@@ -39,7 +39,6 @@ if vocabfile:
 else:
     default_vocab = None
 
-
 detect_tag = config.getboolean("Tags", "detect_tag")
 dbpedia = config.getboolean("Other", "dbpedia_images")
 languages_list = config.get("Languages", "interface_languages").split(",")
@@ -268,11 +267,11 @@ def home(lang):
     if request.method == "POST":
         list_data = request.form["list_query"]
         if (
-            list_data.replace("_", "")
-            .replace("-", "")
-            .replace("::", "")
-            .replace(" ", "")
-            .isalnum()
+                list_data.replace("_", "")
+                        .replace("-", "")
+                        .replace("::", "")
+                        .replace(" ", "")
+                        .isalnum()
         ):
             model_value = request.form.getlist("model")
             if len(model_value) < 1:
@@ -404,10 +403,10 @@ def misc_page(lang):
                     words = []
                     for w in query[:2]:
                         if (
-                            w.replace("_", "")
-                            .replace("-", "")
-                            .replace("::", "")
-                            .isalnum()
+                                w.replace("_", "")
+                                        .replace("-", "")
+                                        .replace("::", "")
+                                        .isalnum()
                         ):
                             w = process_query(w, language=language)
                             if "Incorrect tag!" in w:
@@ -513,12 +512,12 @@ def associates_page(lang):
 
         # Nearest associates queries
         if (
-            list_data != "dummy"
-            and list_data.replace("_", "")
-            .replace("-", "")
-            .replace("::", "")
-            .replace(" ", "")
-            .isalnum()
+                list_data != "dummy"
+                and list_data.replace("_", "")
+                .replace("-", "")
+                .replace("::", "")
+                .replace(" ", "")
+                .isalnum()
         ):
             model_value = request.form.getlist("model")
             if len(model_value) < 1:
@@ -673,11 +672,11 @@ def visual_page(lang):
                         process_query(w, language)
                         for w in inputform.split(",")
                         if len(w) > 1
-                        and w.replace("_", "")
-                        .replace("-", "")
-                        .replace("::", "")
-                        .replace(" ", "")
-                        .isalnum()
+                           and w.replace("_", "")
+                               .replace("-", "")
+                               .replace("::", "")
+                               .replace(" ", "")
+                               .isalnum()
                     ][:30]
                 )
                 groups.append(group)
@@ -769,8 +768,8 @@ def visual_page(lang):
                         result = json.loads(serverquery(message).decode("utf-8"))
                         frequencies[model].update(result["frequencies"])
                         if (
-                            w.split("_")[0] in frequencies[model]
-                            and w not in frequencies[model]
+                                w.split("_")[0] in frequencies[model]
+                                and w not in frequencies[model]
                         ):
                             frequencies[model][w] = frequencies[model][w.split("_")[0]]
                         if w + " is unknown to the model" in result:
@@ -879,27 +878,26 @@ def finder(lang):
             negative_list = []
             if len(negative_data.strip()) > 1:
                 if (
-                    negative_data.strip()
-                    .replace("_", "")
-                    .replace("-", "")
-                    .replace("::", "")
-                    .replace(" ", "")
-                    .isalnum()
+                        negative_data.strip()
+                                .replace("_", "")
+                                .replace("-", "")
+                                .replace("::", "")
+                                .replace(" ", "")
+                                .isalnum()
                 ):
                     negative_list = [process_query(negative_data, language)]
 
             positive_list = []
             for w in positive_data_list:
                 if (
-                    len(w) > 1
-                    and w.replace("_", "")
-                    .replace("-", "")
-                    .replace("::", "")
-                    .replace(" ", "")
-                    .isalnum()
+                        len(w) > 1
+                        and w.replace("_", "")
+                        .replace("-", "")
+                        .replace("::", "")
+                        .replace(" ", "")
+                        .isalnum()
                 ):
                     positive_list.append(process_query(w, language))
-
 
             if len(positive_list) < 2 or len(negative_list) == 0:
                 error_value = "Incorrect query!"
@@ -1201,7 +1199,7 @@ def contextual_page(lang):
                 for n in word:
                     images[n[0].split("_")[0]] = None
             for num, word, neighbors, tag in zip(
-                range(len(tokens)), tokens, result["neighbors"], poses
+                    range(len(tokens)), tokens, result["neighbors"], poses
             ):
                 if word in ".,!?-\"':;":
                     continue
@@ -1500,7 +1498,7 @@ def api(model, word, api_format):
         mimetype=mime,
         headers={
             "Content-Disposition": "attachment;filename=%s.%s"
-            % (cleanword.encode("utf-8"), api_format.encode("utf-8"))
+                                   % (cleanword.encode("utf-8"), api_format.encode("utf-8"))
         },
     )
 
