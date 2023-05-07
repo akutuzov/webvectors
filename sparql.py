@@ -4,8 +4,10 @@
 from SPARQLWrapper import SPARQLWrapper, JSON, SPARQLExceptions
 import configparser
 
+import utils
+
 config = configparser.RawConfigParser()
-config.read("webvectors.cfg")
+config.read(utils.CONFIG)
 
 root = config.get("Files and directories", "root")
 cachefile = config.get("Files and directories", "image_cache")

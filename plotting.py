@@ -12,8 +12,10 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import configparser
 
+import utils
+
 config = configparser.RawConfigParser()
-config.read("webvectors.cfg")
+config.read(utils.CONFIG)
 
 root = config.get("Files and directories", "root")
 path = config.get("Files and directories", "font")

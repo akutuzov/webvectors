@@ -11,8 +11,10 @@ import csv
 from flask import Markup
 import configparser
 
+import utils
+
 config = configparser.RawConfigParser()
-config.read("webvectors.cfg")
+config.read(utils.CONFIG)
 
 root = config.get("Files and directories", "root")
 l10nfile = config.get("Files and directories", "l10n")
