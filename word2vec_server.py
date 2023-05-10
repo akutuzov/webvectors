@@ -12,7 +12,7 @@ import configparser
 import csv
 from smart_open import open
 
-import utils
+import config_path
 
 
 class WebVectorsThread(threading.Thread):
@@ -68,7 +68,7 @@ def create_model_graph(model_identifier, tmodelfile, ffile):
 
 
 config = configparser.RawConfigParser()
-config.read(utils.CONFIG)
+config.read(config_path.CONFIG)
 
 root = config.get("Files and directories", "root")
 HOST = config.get("Sockets", "host")  # Symbolic name meaning all available interfaces

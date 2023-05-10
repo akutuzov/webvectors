@@ -6,13 +6,13 @@ from lang_converter import LangConverter
 from webvectors import *
 import configparser
 
-import utils
+import config_path
 
 config = configparser.RawConfigParser()
-config.read(utils.CONFIG)
+config.read(config_path.CONFIG)
 url = config.get("Other", "url")
 
-app_syn = Flask(__name__, static_url_path=utils.DATA)
+app_syn = Flask(__name__, static_url_path="/data/")
 
 
 @app_syn.route(url + "data/<path:query>")

@@ -1,0 +1,1 @@
+CONFIG = "webvectors.cfg"

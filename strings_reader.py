@@ -11,10 +11,10 @@ import csv
 from flask import Markup
 import configparser
 
-import utils
+import config_path
 
 config = configparser.RawConfigParser()
-config.read(utils.CONFIG)
+config.read(config_path.CONFIG)
 
 root = config.get("Files and directories", "root")
 l10nfile = config.get("Files and directories", "l10n")

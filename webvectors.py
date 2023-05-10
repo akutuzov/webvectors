@@ -20,12 +20,12 @@ from sparql import getdbpediaimage
 
 # import strings data from respective module
 from strings_reader import language_dicts
-import utils
+import config_path
 
 languages = "/".join(list(language_dicts.keys())).upper()
 
 config = configparser.RawConfigParser()
-config.read(utils.CONFIG)
+config.read(config_path.CONFIG)
 
 root = config.get("Files and directories", "root")
 modelsfile = config.get("Files and directories", "models")

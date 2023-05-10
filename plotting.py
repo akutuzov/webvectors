@@ -12,10 +12,10 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import configparser
 
-import utils
+import config_path
 
 config = configparser.RawConfigParser()
-config.read(utils.CONFIG)
+config.read(config_path.CONFIG)
 
 root = config.get("Files and directories", "root")
 path = config.get("Files and directories", "font")
