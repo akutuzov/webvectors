@@ -6,8 +6,10 @@ from lang_converter import LangConverter
 from webvectors import *
 import configparser
 
+import config_path
+
 config = configparser.RawConfigParser()
-config.read("webvectors.cfg")
+config.read(config_path.CONFIG)
 url = config.get("Other", "url")
 
 app_syn = Flask(__name__, static_url_path="/data/")
