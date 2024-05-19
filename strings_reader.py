@@ -8,7 +8,7 @@ the strings, and lets the main app use it
 
 import sys
 import csv
-from flask import Markup
+from markupsafe import Markup
 import configparser
 
 import config_path
