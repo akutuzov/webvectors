@@ -50,7 +50,7 @@ def embed(words, matrix, classes, usermodel, fname, method="tsne"):
             n_components=2,
             perplexity=perplexity,
             metric="cosine",
-            n_iter=500,
+            max_iter=500,
             init="pca",
         )
     y = embedding.fit_transform(matrix)
