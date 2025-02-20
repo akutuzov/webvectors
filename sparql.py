@@ -3,8 +3,8 @@
 
 from SPARQLWrapper import SPARQLWrapper, JSON, SPARQLExceptions
 import configparser
-
 import config_path
+import socket
 
 config = configparser.RawConfigParser()
 config.read(config_path.CONFIG)
@@ -36,8 +36,13 @@ def getdbpediaimage(query, cache):
             % query
         )
         sparql.setReturnFormat(JSON)
+        sparql.setTimeout(5)
         try:
-            results = sparql.query().convert()
+            results = sparql.query()
+        except socket.timeout:
+            return None
+        try:
+            results = results.convert()
         except SPARQLExceptions.QueryBadFormed:
             return None
         if len(results["results"]["bindings"]) > 0:
